@@ -1,16 +1,17 @@
 import { StackNavigationProp } from "@react-navigation/stack";
+import { INavigatorProps } from "@src/types/navigator.types";
 import Routes from "@utils/Routes";
 import React from "react";
 import { Button, Image, StyleSheet, Text, View } from "react-native";
 
-type IProps = {
-  navigation: StackNavigationProp<any, any>;
-};
-export default function TwoStepScreen({ navigation }: IProps) {
+export default function TwoStepScreen({ navigation }: INavigatorProps) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Step 2: Getting Started</Text>
-      <Button title="Next" onPress={() => navigation.navigate(Routes.ThreeStepScreen)} />
+      <Button
+        title="Next"
+        onPress={() => navigation.navigate(Routes.ThreeStepScreen)}
+      />
     </View>
   );
 }

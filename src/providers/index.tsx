@@ -5,7 +5,7 @@ import "./Localization";
 import Notification from "./Notification";
 import ThemeProvider from "./ThemeProvider";
 import ThemeListener from "./ThemeListener";
-import Toast from 'react-native-toast-message';
+import Toast from "react-native-toast-message";
 
 type Props = {
   children: React.ReactNode;
@@ -20,8 +20,6 @@ function CustomProvider({ children }: Props) {
     <AppLoadingProvider>
       <NetworkInfoContainer>
         <ThemeProvider>
-          <Toast position="top"/>
-
           <Notification />
 
           {children}

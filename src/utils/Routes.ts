@@ -5,11 +5,12 @@ export enum Routes {
   OneStepScreen = "getting-screen-one",
   TwoStepScreen = "getting-screen-two",
   ThreeStepScreen = "getting-screen-three",
-  Home = 'Home',
-  Login = 'Login',
-  Profile = 'Profile',
-  Settings = 'Settings',
-  Post = 'Post'
+  Home = "Home",
+  Login = "Login",
+  Register = "Register",
+  Profile = "Profile",
+  Settings = "Settings",
+  Post = "Post",
 }
 
 /**
@@ -18,6 +19,7 @@ export enum Routes {
 export type RootStackParams = {
   [Routes.Home]: undefined;
   [Routes.Login]: undefined;
+  [Routes.Register]: undefined;
   [Routes.OneStepScreen]: undefined;
   [Routes.TwoStepScreen]: undefined;
   [Routes.ThreeStepScreen]: undefined;
@@ -29,7 +31,7 @@ export type RootStackParams = {
 export type ProfileStackParams = {
   [Routes.Profile]: undefined;
   [Routes.Settings]: undefined;
-  [Routes.Post]: { id: string, username: string };
+  [Routes.Post]: { id: string; username: string };
 };
 
 /**
@@ -37,4 +39,4 @@ export type ProfileStackParams = {
  */
 export type NavigationParams = RootStackParams;
 
-export default Routes
+export default Routes;

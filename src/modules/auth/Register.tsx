@@ -11,16 +11,22 @@ import {
 import { useDispatch } from "react-redux";
 import { setUser } from "@store/redux/appSlice";
 import Icon from "react-native-vector-icons/Ionicons";
-import { ILogin } from "@src/types/auth.types";
 import Toast from "react-native-toast-message";
-import Routes from "@utils/Routes";
 import { INavigatorProps } from "@src/types/navigator.types";
+import Routes from "@utils/Routes";
 
-export default function Login({ navigation }: INavigatorProps) {
+interface IRegister {
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
+
+export default function Register({ navigation }: INavigatorProps) {
   const dispatch = useDispatch();
-  const [form, setForm] = useState<ILogin>({
+  const [form, setForm] = useState<IRegister>({
     email: "",
     password: "",
+    confirmPassword: "",
   });
   const [showPassword, setShowPassword] = useState(false);
 
@@ -39,7 +45,7 @@ export default function Login({ navigation }: INavigatorProps) {
         source={require("../../assets/images/english_icon.png")}
         style={styles.logo}
       />
-      <Text style={styles.welcome}>Welcome to ENGLISH ACADEMY</Text>
+      <Text style={styles.welcome}>Register new account</Text>
       <TextInput
         style={styles.input}
         placeholder="Email"
@@ -70,8 +76,29 @@ export default function Login({ navigation }: INavigatorProps) {
           />
         </TouchableOpacity>
       </View>
+      <View style={styles.confirmPasswordContainer}>
+        <TextInput
+          style={styles.passwordInput}
+          placeholder="Password"
+          value={form.password}
+          onChangeText={(value: string) => {
+            setForm({ ...form, password: value });
+          }}
+          secureTextEntry={!showPassword}
+        />
+        <TouchableOpacity
+          onPress={() => setShowPassword((prev) => !prev)}
+          style={styles.togglePassword}
+        >
+          <Icon
+            name={showPassword ? "eye-off" : "eye"}
+            size={20}
+            color="#000"
+          />
+        </TouchableOpacity>
+      </View>
       <TouchableOpacity style={styles.buttonStyle} onPress={goHomePage}>
-        <Text style={styles.buttonText}>Login</Text>
+        <Text style={styles.buttonText}>Register</Text>
       </TouchableOpacity>
       <View style={styles.separator}>
         <View style={styles.line} />
@@ -81,10 +108,12 @@ export default function Login({ navigation }: INavigatorProps) {
       <TouchableOpacity
         style={styles.registerButton}
         onPress={() => {
-          navigation.navigate(Routes.Register);
+          navigation.goBack();
         }}
       >
-        <Text style={styles.registerText}>Don't have an account? Register</Text>
+        <Text style={styles.registerText}>
+          You have an account? Back to login
+        </Text>
       </TouchableOpacity>
     </View>
   );
@@ -127,6 +156,16 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     backgroundColor: "#fff",
+  },
+  confirmPasswordContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
+    borderColor: "#ccc",
+    borderWidth: 1,
+    borderRadius: 5,
+    backgroundColor: "#fff",
+    marginTop: 10,
   },
   passwordInput: {
     height: 50,

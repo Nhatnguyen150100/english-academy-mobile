@@ -14,13 +14,58 @@ import Login from "@modules/auth/Login";
 import OneStepScreen from "@modules/getting-started/OneStepScreen";
 import TwoStepScreen from "@modules/getting-started/TwoStepScreen";
 import ThreeStepScreen from "@modules/getting-started/ThreeStepScreen";
+import Toast from "react-native-toast-message";
+import Register from "@modules/auth/Register";
 
 enableScreens();
 
 const Stack = createStackNavigator<RootStackParams>();
 
-function RootNavigation() {
+const StackNavigation = () => {
+  const theme = useTheme();
   const isSignedIn = useAppSelector((s) => s.AppReducer?.isSignedIn);
+  return (
+    <Stack.Navigator
+      initialRouteName={isSignedIn ? Routes.Home : Routes.OneStepScreen}
+      screenOptions={{ ...ScreenOptions, headerTintColor: theme.primary }}
+    >
+      {isSignedIn ? (
+        <>
+          <Stack.Screen
+            name={Routes.Home}
+            component={BottomNavigation}
+            options={{
+              gestureEnabled: false,
+              headerShown: false,
+              headerTitle: translate("navigation.home"),
+            }}
+          />
+        </>
+      ) : (
+        <>
+          <Stack.Screen name={Routes.OneStepScreen} component={OneStepScreen} />
+          <Stack.Screen name={Routes.TwoStepScreen} component={TwoStepScreen} />
+          <Stack.Screen
+            name={Routes.ThreeStepScreen}
+            component={ThreeStepScreen}
+          />
+          <Stack.Screen
+            name={Routes.Login}
+            component={Login}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name={Routes.Register}
+            component={Register}
+            options={{ headerShown: false }}
+          />
+        </>
+      )}
+    </Stack.Navigator>
+  );
+};
+
+function RootNavigation() {
   const userColorScheme = useAppSelector((s) => s?.AppReducer?.userColorScheme);
   const theme = useTheme();
   const isDarkTheme = userColorScheme === "dark";
@@ -40,35 +85,8 @@ function RootNavigation() {
   return (
     <SafeAreaProvider>
       <NavigationContainer ref={navigationRef} theme={navigationTheme}>
-        <Stack.Navigator
-          initialRouteName={isSignedIn ? Routes.Home : Routes.OneStepScreen}
-          screenOptions={{ ...ScreenOptions, headerTintColor: theme.primary }}
-        >
-          {isSignedIn ? (
-            <>
-              <Stack.Screen
-                name={Routes.Home}
-                component={BottomNavigation}
-                options={{
-                  gestureEnabled: false,
-                  headerShown: false,
-                  headerTitle: translate("navigation.home"),
-                }}
-              />
-            </>
-          ) : (
-            <>
-              <Stack.Screen name={Routes.OneStepScreen} component={OneStepScreen}/>
-              <Stack.Screen name={Routes.TwoStepScreen} component={TwoStepScreen}/>
-              <Stack.Screen name={Routes.ThreeStepScreen} component={ThreeStepScreen}/>
-              <Stack.Screen
-                name={Routes.Login}
-                component={Login}
-                options={{ headerShown: false }}
-              />
-            </>
-          )}
-        </Stack.Navigator>
+        <StackNavigation />
+        <Toast />
       </NavigationContainer>
     </SafeAreaProvider>
   );
