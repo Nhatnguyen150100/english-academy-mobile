@@ -25,7 +25,6 @@ function ProfileStack() {
         component={Profile}
         options={{
           headerTitle: translate("navigation.profile"),
-          headerShown: false,
         }}
       />
 

@@ -1,6 +1,5 @@
 import { ToastColorEnum } from "@components/ToastMessage/ToastColorEnum";
-import { showToast } from "@helpers/toast/showToast";
-import { LoggedOut } from "@modules/app/redux/appSlice";
+import { loggedOut } from "@store/redux/appSlice";
 import Store from "@store/index";
 import axios, { AxiosResponse } from "axios";
 
@@ -29,15 +28,15 @@ const onRejectResponse = (error: any) => {
 
   if (status === 401 || status === 403) {
     axiosInstance.defaults.headers.common["Authorization"] = "";
-    showToast("Unauthorized", ToastColorEnum.Error);
+    // showToast("Unauthorized", ToastColorEnum.Error);
 
-    Store.dispatch(LoggedOut());
+    Store.dispatch(loggedOut());
   }
   if (!error.response || error.response.status >= 500) {
     return Promise.reject(error);
   }
 
-  showToast("An error occurred ", ToastColorEnum.Error);
+  // showToast("An error occurred ", ToastColorEnum.Error);
 
   return Promise.reject(error);
 };

@@ -2,6 +2,9 @@
  * Enum representing the available routes in the application.
  */
 export enum Routes {
+  OneStepScreen = "getting-screen-one",
+  TwoStepScreen = "getting-screen-two",
+  ThreeStepScreen = "getting-screen-three",
   Home = 'Home',
   Login = 'Login',
   Profile = 'Profile',
@@ -15,6 +18,9 @@ export enum Routes {
 export type RootStackParams = {
   [Routes.Home]: undefined;
   [Routes.Login]: undefined;
+  [Routes.OneStepScreen]: undefined;
+  [Routes.TwoStepScreen]: undefined;
+  [Routes.ThreeStepScreen]: undefined;
 };
 
 /**

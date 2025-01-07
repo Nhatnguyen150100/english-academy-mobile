@@ -4,7 +4,7 @@ import * as Constants from "expo-constants";
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
 import { useDispatch } from "react-redux";
-import { SetExpoToken } from "@modules/app/redux/appSlice";
+import { setExpoToken } from "@store/redux/appSlice";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -20,7 +20,7 @@ const Notification: React.FC<any> = () => {
   useEffect(() => {
     try {
       registerForPushNotificationsAsync().then((token) =>
-        dispatch(SetExpoToken(token))
+        dispatch(setExpoToken(token))
       );
     } catch (error) {}
 

@@ -1,6 +1,3 @@
-/**
- * @author Ali Burhan Keskin <alikeskin@milvasoft.com>
- */
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Home from "@modules/app/screens/Home";

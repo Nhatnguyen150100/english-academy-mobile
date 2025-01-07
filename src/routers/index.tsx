@@ -11,6 +11,9 @@ import BottomNavigation from "./BottomNavigation";
 import { ScreenOptions } from "@utils/ScreenOptions";
 import Routes, { RootStackParams } from "@utils/Routes";
 import Login from "@modules/auth/Login";
+import OneStepScreen from "@modules/getting-started/OneStepScreen";
+import TwoStepScreen from "@modules/getting-started/TwoStepScreen";
+import ThreeStepScreen from "@modules/getting-started/ThreeStepScreen";
 
 enableScreens();
 
@@ -38,7 +41,7 @@ function RootNavigation() {
     <SafeAreaProvider>
       <NavigationContainer ref={navigationRef} theme={navigationTheme}>
         <Stack.Navigator
-          initialRouteName={isSignedIn ? Routes.Home : Routes.Login}
+          initialRouteName={isSignedIn ? Routes.Home : Routes.OneStepScreen}
           screenOptions={{ ...ScreenOptions, headerTintColor: theme.primary }}
         >
           {isSignedIn ? (
@@ -55,6 +58,9 @@ function RootNavigation() {
             </>
           ) : (
             <>
+              <Stack.Screen name={Routes.OneStepScreen} component={OneStepScreen}/>
+              <Stack.Screen name={Routes.TwoStepScreen} component={TwoStepScreen}/>
+              <Stack.Screen name={Routes.ThreeStepScreen} component={ThreeStepScreen}/>
               <Stack.Screen
                 name={Routes.Login}
                 component={Login}
@@ -69,65 +75,3 @@ function RootNavigation() {
 }
 
 export default RootNavigation;
-
-// import * as Linking from 'expo-linking';
-// import * as Notifications from 'expo-notifications';
-// const prefix = Linking.createURL('/');
-
-// const notificationType = {
-//   Post: 1,
-// };
-
-// // Change ip
-// const baseUrl = 'exp://111.111.111.111:19000/--';
-
-// const config = {
-//   screens: {
-//     Home: {
-//       screens: {
-
-//         Profile: {
-
-//           screens: {
-//             Post: 'mypost/:id',
-//           },
-
-//         }
-
-//       },
-//     },
-//   },
-// };
-
-// const _linking = {
-//   prefixes: [prefix],
-//   config,
-//   subscribe(listener) {
-
-//     const onReceiveURL = ({ url }) => listener(url);
-
-//     Linking.addEventListener('url', onReceiveURL);
-
-//     const subscription = Notifications.addNotificationResponseReceivedListener((response) => {
-
-//       // From API
-//       const data = response?.notification?.request?.content.data;
-
-//       if (data?.NotificationId === notificationType.Post) {
-
-//         listener(`${baseUrl}/mypost/${data?.Data}`);
-
-//       }
-
-//     });
-
-//     return () => {
-
-//       Linking.removeEventListener('url', onReceiveURL);
-
-//       subscription.remove();
-
-//     };
-
-//   },
-// };

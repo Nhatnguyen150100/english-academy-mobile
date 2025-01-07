@@ -2,7 +2,7 @@
  * @author Ali Burhan Keskin <alikeskin@milvasoft.com>
 */
 import { combineReducers } from 'redux'
-import AppReducer from '@modules/app/redux/appSlice'
+import AppReducer from '@store/redux/appSlice'
 
 /**
  * Root reducer function that combines all the reducers.

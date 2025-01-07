@@ -1,6 +1,3 @@
-/**
- * @author Ali Burhan Keskin <alikeskin@milvasoft.com>
- */
 import React, { useEffect } from "react";
 import { enableScreens } from "react-native-screens";
 import "react-native-gesture-handler";
@@ -17,7 +14,7 @@ enableScreens();
 function App() {
   useEffect(() => {
     if (Platform.OS !== "web") {
-      // TODO: Orientation Congihuration
+      // TODO: Orientation Configuration
       ScreenOrientation.lockAsync(
         ScreenOrientation.OrientationLock.PORTRAIT_UP
       );
