@@ -8,7 +8,6 @@ import {
   Image,
 } from "react-native";
 import { useDispatch } from "react-redux";
-import Icon from "react-native-vector-icons/Ionicons";
 import Toast from "react-native-toast-message";
 import { INavigatorProps } from "@src/types/navigator.types";
 import SeparatorLine from "@components/base/SeparatorLine";
@@ -28,8 +27,6 @@ export default function Register({ navigation }: INavigatorProps) {
     password: "",
     confirmPassword: "",
   });
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const goHomePage = useCallback(async () => {
     if (!(form.email && form.password)) {
