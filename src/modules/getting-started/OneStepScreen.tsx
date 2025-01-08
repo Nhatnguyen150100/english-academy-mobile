@@ -29,23 +29,29 @@ export default function OneStepScreen({ navigation }: INavigatorProps) {
           source={require("@assets/images/academy_started.png")}
           style={styles.image}
         />
-        <View style={styles.startView}>
-          <Text style={styles.instruction}>
-            Start your English Academy journey.
-          </Text>
-          <BaseAuthButton onPress={handlePress} label="Login" />
-        </View>
-        <SeparatorLine />
-        <TouchableOpacity
-          style={styles.registerButton}
-          onPress={() => {
-            navigation.navigate(Routes.Register);
+        <View
+          style={{
+            width: "100%",
           }}
         >
-          <Text style={styles.registerText}>
-            Don't have an account? Register
-          </Text>
-        </TouchableOpacity>
+          <View style={styles.startView}>
+            <Text style={styles.instruction}>
+              Start your English Academy journey.
+            </Text>
+            <BaseAuthButton onPress={handlePress} label="Login" />
+          </View>
+          <SeparatorLine />
+          <TouchableOpacity
+            style={styles.registerButton}
+            onPress={() => {
+              navigation.navigate(Routes.Register);
+            }}
+          >
+            <Text style={styles.registerText}>
+              Don't have an account? Register
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -62,8 +68,8 @@ const styles = StyleSheet.create({
     height: 200,
     width: "100%",
     backgroundColor: "#0756b1",
-    borderBottomEndRadius: "30%",
-    borderBottomStartRadius: "30%",
+    borderBottomEndRadius: "42%",
+    borderBottomStartRadius: "42%",
     justifyContent: "center",
     alignItems: "center",
     padding: 30,
@@ -100,11 +106,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     textAlign: "center",
-    marginBottom: 20,
     color: "#b9052d",
   },
   registerButton: {
-    marginTop: 15,
+    marginTop: 5,
   },
   registerText: {
     color: "#0756b1",
