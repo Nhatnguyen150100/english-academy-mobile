@@ -7,12 +7,14 @@ import {
   TouchableOpacity,
   Image,
 } from "react-native";
-import { useDispatch } from "react-redux";
 import Toast from "react-native-toast-message";
-import { INavigatorProps } from "@src/types/navigator.types";
 import SeparatorLine from "@components/base/SeparatorLine";
 import BaseAuthButton from "@components/base/BaseAuthButton";
 import InputPassword from "@components/base/InputPassword";
+import { authService } from "@src/services";
+import Routes, { RootStackParams } from "@utils/Routes";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 interface IRegister {
   email: string;
@@ -20,8 +22,10 @@ interface IRegister {
   confirmPassword: string;
 }
 
-export default function Register({ navigation }: INavigatorProps) {
-  const dispatch = useDispatch();
+export default function Register() {
+  const navigation = useNavigation<StackNavigationProp<RootStackParams>>();
+
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [form, setForm] = useState<IRegister>({
     email: "",
     password: "",
@@ -43,7 +47,21 @@ export default function Register({ navigation }: INavigatorProps) {
       return;
     }
     try {
-    } catch (error) {}
+      setIsLoading(true);
+      const rs = await authService.register({
+        email: form.email,
+        password: form.password,
+      });
+      navigation.navigate(Routes.Login, {
+        email: rs.data.email,
+      })
+      Toast.show({
+        text1: rs.message,
+        type: "success",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   }, [form]);
 
   return (
@@ -77,7 +95,7 @@ export default function Register({ navigation }: INavigatorProps) {
           placeholder="Confirm password"
         />
       </View>
-      <BaseAuthButton onPress={goHomePage} label="Register" />
+      <BaseAuthButton onPress={goHomePage} label="Register" isLoading={isLoading} />
       <SeparatorLine />
       <TouchableOpacity
         style={styles.registerButton}

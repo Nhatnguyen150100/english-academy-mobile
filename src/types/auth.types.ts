@@ -9,3 +9,5 @@ export interface IResponseLogin {
   user: IUser;
   accessToken: string;
 }
+
+export type IResponseRegister = Partial<IUser>;

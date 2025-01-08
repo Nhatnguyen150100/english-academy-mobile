@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -11,22 +11,29 @@ import { useDispatch } from "react-redux";
 import { setUser } from "@store/redux/appSlice";
 import { ILogin } from "@src/types/auth.types";
 import Toast from "react-native-toast-message";
-import Routes from "@utils/Routes";
-import { INavigatorProps } from "@src/types/navigator.types";
 import SeparatorLine from "@components/base/SeparatorLine";
 import { authService } from "@src/services";
 import { addStoreDataAsync } from "@helpers/storage";
 import { StoreEnum } from "@helpers/storage/storeEnum";
 import BaseAuthButton from "@components/base/BaseAuthButton";
 import InputPassword from "@components/base/InputPassword";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import Routes, { RootStackParams } from "@utils/Routes";
 
-export default function Login({ navigation }: INavigatorProps) {
+export default function Login() {
+  const navigation = useNavigation<StackNavigationProp<RootStackParams>>();
+  const route = useRoute<RouteProp<RootStackParams, Routes.Login>>();
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [form, setForm] = useState<ILogin>({
     email: "",
     password: "",
   });
+
+  useEffect(() => {
+    if (route.params?.email) setForm({ ...form, email: route.params?.email });
+  }, [route.params?.email]);
 
   const handleLogin = async () => {
     if (!(form.email && form.password)) {

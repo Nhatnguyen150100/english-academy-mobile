@@ -16,7 +16,7 @@ export enum Routes {
  */
 export type RootStackParams = {
   [Routes.Home]: undefined;
-  [Routes.Login]: undefined;
+  [Routes.Login]: { email: string | undefined };
   [Routes.Register]: undefined;
   [Routes.OneStepScreen]: undefined;
 };

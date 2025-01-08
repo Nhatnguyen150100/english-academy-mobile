@@ -1,6 +1,6 @@
 
 import axiosRequest from '@src/network/axiosRequest';
-import { ILogin, IResponseLogin } from '@src/types/auth.types';
+import { ILogin, IResponseLogin, IResponseRegister } from '@src/types/auth.types';
 import { IBaseResponse } from '@src/types/response.types';
 
 class AuthService {
@@ -15,7 +15,7 @@ class AuthService {
     }
   }
 
-  public async register(data: ILogin): Promise<IBaseResponse<any>> {
+  public async register(data: ILogin): Promise<IBaseResponse<IResponseRegister>> {
     try {
       const rs = await axiosRequest.post(`${this._prefixURL}/register`, data);
       return Promise.resolve(rs.data);
