@@ -7,16 +7,12 @@ export const appSlice = createSlice({
   name: "appReducer",
   initialState,
   reducers: {
-    setAuthToken: (state, action: PayloadAction<any>) => {
-      state = { ...state, authToken: action.payload };
-      return state;
-    },
     setUser: (state, action: PayloadAction<any>) => {
       state = { ...state, isSignedIn: true, user: action.payload };
       return state;
     },
     loggedOut: (state) => {
-      state = { ...state, user: null, isSignedIn: false, authToken: "" };
+      state = { ...state, user: null, isSignedIn: false };
       return state;
     },
     setColorScheme: (state, action: PayloadAction<any>) => {
@@ -31,7 +27,6 @@ export const appSlice = createSlice({
 });
 
 export const {
-  setAuthToken,
   setUser,
   loggedOut,
   setColorScheme,

@@ -1,7 +1,11 @@
 export interface IUser {
-  id: string;
+  _id: string;
   email: string;
-  role: IRole;
+  name: string;
+  role: string;
+  phone_number: string;
+  address: string;
+  __v: number;
   createdAt: string;
   updatedAt: string;
 }

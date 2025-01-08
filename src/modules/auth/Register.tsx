@@ -4,16 +4,16 @@ import {
   Text,
   StyleSheet,
   TextInput,
-  Button,
   TouchableOpacity,
   Image,
 } from "react-native";
 import { useDispatch } from "react-redux";
-import { setUser } from "@store/redux/appSlice";
 import Icon from "react-native-vector-icons/Ionicons";
 import Toast from "react-native-toast-message";
 import { INavigatorProps } from "@src/types/navigator.types";
-import Routes from "@utils/Routes";
+import SeparatorLine from "@components/base/SeparatorLine";
+import BaseAuthButton from "@components/base/BaseAuthButton";
+import InputPassword from "@components/base/InputPassword";
 
 interface IRegister {
   email: string;
@@ -29,14 +29,24 @@ export default function Register({ navigation }: INavigatorProps) {
     confirmPassword: "",
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const goHomePage = useCallback(() => {
+  const goHomePage = useCallback(async () => {
     if (!(form.email && form.password)) {
       Toast.show({
         type: "error",
         text1: "Please enter your email address and password",
       });
     }
+    if (form.password !== form.confirmPassword) {
+      Toast.show({
+        type: "error",
+        text1: "Passwords do not match",
+      });
+      return;
+    }
+    try {
+    } catch (error) {}
   }, [form]);
 
   return (
@@ -55,56 +65,23 @@ export default function Register({ navigation }: INavigatorProps) {
         }}
         autoCapitalize="none"
       />
-      <View style={styles.passwordContainer}>
-        <TextInput
-          style={styles.passwordInput}
-          placeholder="Password"
-          value={form.password}
-          onChangeText={(value: string) => {
-            setForm({ ...form, password: value });
-          }}
-          secureTextEntry={!showPassword}
-        />
-        <TouchableOpacity
-          onPress={() => setShowPassword((prev) => !prev)}
-          style={styles.togglePassword}
-        >
-          <Icon
-            name={showPassword ? "eye-off" : "eye"}
-            size={20}
-            color="#000"
-          />
-        </TouchableOpacity>
-      </View>
+      <InputPassword
+        value={form.password}
+        onChangeText={(value: string) => {
+          setForm({ ...form, password: value });
+        }}
+      />
       <View style={styles.confirmPasswordContainer}>
-        <TextInput
-          style={styles.passwordInput}
-          placeholder="Password"
-          value={form.password}
+        <InputPassword
+          value={form.confirmPassword}
           onChangeText={(value: string) => {
-            setForm({ ...form, password: value });
+            setForm({ ...form, confirmPassword: value });
           }}
-          secureTextEntry={!showPassword}
+          placeholder="Confirm password"
         />
-        <TouchableOpacity
-          onPress={() => setShowPassword((prev) => !prev)}
-          style={styles.togglePassword}
-        >
-          <Icon
-            name={showPassword ? "eye-off" : "eye"}
-            size={20}
-            color="#000"
-          />
-        </TouchableOpacity>
       </View>
-      <TouchableOpacity style={styles.buttonStyle} onPress={goHomePage}>
-        <Text style={styles.buttonText}>Register</Text>
-      </TouchableOpacity>
-      <View style={styles.separator}>
-        <View style={styles.line} />
-        <Text style={styles.separatorText}>or</Text>
-        <View style={styles.line} />
-      </View>
+      <BaseAuthButton onPress={goHomePage} label="Register" />
+      <SeparatorLine />
       <TouchableOpacity
         style={styles.registerButton}
         onPress={() => {
@@ -124,7 +101,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: 20,
+    padding: 30,
     backgroundColor: "#f5f5f5",
   },
   logo: {
@@ -148,70 +125,17 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     backgroundColor: "#fff",
   },
-  passwordContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    width: "100%",
-    borderColor: "#ccc",
-    borderWidth: 1,
-    borderRadius: 5,
-    backgroundColor: "#fff",
-  },
   confirmPasswordContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    width: "100%",
-    borderColor: "#ccc",
-    borderWidth: 1,
-    borderRadius: 5,
-    backgroundColor: "#fff",
     marginTop: 10,
-  },
-  passwordInput: {
-    height: 50,
-    flex: 1,
-    paddingHorizontal: 10,
   },
   togglePassword: {
     padding: 10,
-  },
-  buttonStyle: {
-    marginTop: 32,
-    width: "100%",
-    height: 46,
-    backgroundColor: "#007BFF",
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 24,
-    marginBottom: 20,
-  },
-  separator: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginVertical: 20,
-    width: "100%",
-  },
-  line: {
-    flex: 1,
-    height: 1,
-    backgroundColor: "#ccc",
-  },
-  separatorText: {
-    marginHorizontal: 10,
-    fontSize: 16,
-    color: "#888",
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
-    textAlign: "center",
   },
   registerButton: {
     marginTop: 15,
   },
   registerText: {
-    color: "#007BFF",
+    color: "#0756b1",
     textAlign: "center",
   },
 });

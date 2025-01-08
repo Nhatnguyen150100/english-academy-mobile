@@ -12,8 +12,6 @@ import { ScreenOptions } from "@utils/ScreenOptions";
 import Routes, { RootStackParams } from "@utils/Routes";
 import Login from "@modules/auth/Login";
 import OneStepScreen from "@modules/getting-started/OneStepScreen";
-import TwoStepScreen from "@modules/getting-started/TwoStepScreen";
-import ThreeStepScreen from "@modules/getting-started/ThreeStepScreen";
 import Toast from "react-native-toast-message";
 import Register from "@modules/auth/Register";
 
@@ -24,6 +22,7 @@ const Stack = createStackNavigator<RootStackParams>();
 const StackNavigation = () => {
   const theme = useTheme();
   const isSignedIn = useAppSelector((s) => s.AppReducer?.isSignedIn);
+
   return (
     <Stack.Navigator
       initialRouteName={isSignedIn ? Routes.Home : Routes.OneStepScreen}
@@ -43,12 +42,9 @@ const StackNavigation = () => {
         </>
       ) : (
         <>
-          <Stack.Screen name={Routes.OneStepScreen} component={OneStepScreen} />
-          <Stack.Screen name={Routes.TwoStepScreen} component={TwoStepScreen} />
-          <Stack.Screen
-            name={Routes.ThreeStepScreen}
-            component={ThreeStepScreen}
-          />
+          <Stack.Screen name={Routes.OneStepScreen} component={OneStepScreen} options={{
+            headerShown: false
+          }}/>
           <Stack.Screen
             name={Routes.Login}
             component={Login}

@@ -72,7 +72,7 @@ export const getStoreStringAsync = async (key: StoreEnum):Promise<string> => {
     return '';
   
   } catch (e) {
-
+    console.log(e);
     return '';
   
   } 

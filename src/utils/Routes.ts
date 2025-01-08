@@ -3,8 +3,6 @@
  */
 export enum Routes {
   OneStepScreen = "getting-screen-one",
-  TwoStepScreen = "getting-screen-two",
-  ThreeStepScreen = "getting-screen-three",
   Home = "Home",
   Login = "Login",
   Register = "Register",
@@ -21,8 +19,6 @@ export type RootStackParams = {
   [Routes.Login]: undefined;
   [Routes.Register]: undefined;
   [Routes.OneStepScreen]: undefined;
-  [Routes.TwoStepScreen]: undefined;
-  [Routes.ThreeStepScreen]: undefined;
 };
 
 /**
