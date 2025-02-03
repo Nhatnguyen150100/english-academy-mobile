@@ -1,18 +1,19 @@
 import { IAppReducer } from "@store/types/IAppReducer";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-const initialState: IAppReducer = {};
+const initialState: IAppReducer = {
+};
 
 export const appSlice = createSlice({
   name: "appReducer",
   initialState,
   reducers: {
     setUser: (state, action: PayloadAction<any>) => {
-      state = { ...state, isSignedIn: true, user: action.payload };
+      state = { ...state, user: action.payload };
       return state;
     },
     loggedOut: (state) => {
-      state = { ...state, user: null, isSignedIn: false };
+      state = { ...state, user: undefined };
       return state;
     },
     setColorScheme: (state, action: PayloadAction<any>) => {

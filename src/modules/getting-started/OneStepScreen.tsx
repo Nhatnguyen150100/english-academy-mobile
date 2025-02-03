@@ -6,7 +6,7 @@ import { CommonActions } from "@react-navigation/native";
 import { INavigatorProps } from "@src/types/navigator.types";
 import Routes from "@utils/Routes";
 import React from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, StatusBar, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function OneStepScreen({ navigation }: INavigatorProps) {
   const handlePress = () => {
@@ -21,6 +21,7 @@ export default function OneStepScreen({ navigation }: INavigatorProps) {
 
   return (
     <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#0756b1" />
       <View style={styles.viewTitle}>
         <Text style={styles.title}>The English Academy</Text>
       </View>
@@ -68,8 +69,8 @@ const styles = StyleSheet.create({
     height: 200,
     width: "100%",
     backgroundColor: "#0756b1",
-    borderBottomEndRadius: "42%",
-    borderBottomStartRadius: "42%",
+    borderBottomEndRadius: 92,
+    borderBottomStartRadius: 92,
     justifyContent: "center",
     alignItems: "center",
     padding: 30,

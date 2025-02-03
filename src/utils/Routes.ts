@@ -5,6 +5,8 @@ export enum Routes {
   OneStepScreen = "getting-screen-one",
   Home = "Home",
   Login = "Login",
+  Courses = "Courses",
+  Ranks = "Ranks",
   Register = "Register",
   Profile = "Profile",
   Settings = "Settings",

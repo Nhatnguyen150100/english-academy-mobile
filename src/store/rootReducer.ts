@@ -1,6 +1,3 @@
-/**
- * @author Ali Burhan Keskin <alikeskin@milvasoft.com>
-*/
 import { combineReducers } from 'redux'
 import AppReducer from '@store/redux/appSlice'
 

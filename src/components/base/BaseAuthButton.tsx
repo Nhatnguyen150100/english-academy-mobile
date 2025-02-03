@@ -22,8 +22,8 @@ export default function BaseAuthButton({
     <TouchableOpacity
       style={[styles.buttonStyle, isLoading && styles.buttonLoading]}
       onPress={onPress}
-      disabled={isLoading}
-    >
+      disabled={isLoading} 
+    > 
       <Text style={styles.buttonText}>{label}</Text>
       <Visibility visibility={isLoading}>
         <ActivityIndicator color="white" />

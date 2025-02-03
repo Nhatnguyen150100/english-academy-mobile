@@ -10,7 +10,7 @@ import { StoreEnum } from "./storeEnum";
  * @param value - The value to store.
  * @returns A Promise that resolves when the data is successfully stored, or rejects if there was an error.
  */
-export const addStoreDataAsync = async (key: StoreEnum, value: string): Promise<void> => {
+export const addStoreDataAsync = async (key: StoreEnum, value: any): Promise<void> => {
 
   try {
 

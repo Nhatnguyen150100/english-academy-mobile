@@ -5,7 +5,7 @@ import "./Localization";
 import Notification from "./Notification";
 import ThemeProvider from "./ThemeProvider";
 import ThemeListener from "./ThemeListener";
-import { PaperProvider } from 'react-native-paper';
+import { PaperProvider } from "react-native-paper";
 type Props = {
   children: React.ReactNode;
 };
@@ -21,10 +21,8 @@ function CustomProvider({ children }: Props) {
         <ThemeProvider>
           <PaperProvider>
             <Notification />
-
             {children}
           </PaperProvider>
-
           <ThemeListener />
         </ThemeProvider>
       </NetworkInfoContainer>

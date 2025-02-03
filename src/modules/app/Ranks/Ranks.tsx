@@ -1,16 +1,14 @@
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Text, View, StyleSheet, Button } from "react-native";
-import translate from "@helpers/localization";
 
-function Home() {
+function Ranks() {
   return (
     <SafeAreaView style={styles.safeView}>
       <View style={styles.root}>
         <View style={styles.container}>
-          <Text style={styles.fontBlack}>MİLVASOFT</Text>
+          <Text style={styles.fontBlack}>Ranks</Text>
         </View>
-        <Text style={styles.fontBlack}>{translate("name")}</Text>
       </View>
     </SafeAreaView>
   );
@@ -39,4 +37,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Home;
+export default Ranks;

@@ -1,9 +1,9 @@
+import { IUser } from '@src/types/user.types';
 import { ColorSchemeName } from 'react-native'; 
 
 export interface IAppReducer {
-  isSignedIn?: boolean,
   userColorScheme?: ColorSchemeName,
-  user?: any,
+  user?: IUser,
   expoToken?: string,
 }
 

@@ -54,6 +54,10 @@ export default function Login() {
       Toast.show({
         text1: rs.message,
       });
+      navigation.reset({
+        index: 0,
+        routes: [{ name: Routes.Home }],
+      });
     } finally {
       setIsLoading(false);
     }

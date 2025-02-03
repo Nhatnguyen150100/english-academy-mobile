@@ -5,6 +5,7 @@ import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
 import { useDispatch } from "react-redux";
 import { setExpoToken } from "@store/redux/appSlice";
+import Toast from "react-native-toast-message";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -18,20 +19,23 @@ const Notification: React.FC<any> = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    try {
-      registerForPushNotificationsAsync().then((token) =>
-        dispatch(setExpoToken(token))
-      );
-    } catch (error) {}
+    const subscription = Notifications.addNotificationReceivedListener((notification) => {
+      if (notification.request.content.title && notification.request.content.body) {
+        alert(`Title: ${notification.request.content.title}, Body: ${notification.request.content.body}`);
+      }
+    });
 
-    // Notifications.addNotificationReceivedListener((notification) => {
-    //   setNotification(notification);
-    // });
+    registerForPushNotificationsAsync().then((token) =>
+      dispatch(setExpoToken(token))
+    );
+
+    return () => {
+      Notifications.removeNotificationSubscription(subscription);
+    };
   }, []);
 
   return <></>;
 };
-
 export default Notification;
 
 async function registerForPushNotificationsAsync() {
@@ -67,7 +71,10 @@ async function registerForPushNotificationsAsync() {
     ).data;
     console.log(token);
   } else {
-    alert("Must use physical device for Push Notifications");
+    Toast.show({
+      text1: "Must use physical device for Push Notifications",
+      type: "error",
+    })
   }
 
   return token;
