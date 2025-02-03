@@ -13,7 +13,7 @@ import Login from "@modules/auth/Login";
 import OneStepScreen from "@modules/getting-started/OneStepScreen";
 import Toast from "react-native-toast-message";
 import Register from "@modules/auth/Register";
-import { getStoreDataAsync } from "@helpers/storage";
+import { getStoreDataAsync, removeStoreDataAsync } from "@helpers/storage";
 import { StoreEnum } from "@helpers/storage/storeEnum";
 import { authService } from "@src/services";
 import { useDispatch } from "react-redux";
@@ -30,6 +30,10 @@ const StackNavigation = () => {
 
   const handleGetInfo = async () => {
     const rs = await authService.getInfo();
+    if(!rs.data) {
+      removeStoreDataAsync(StoreEnum.AccessToken);
+      return;
+    }
     dispatch(setUser(rs.data));
   };
 
