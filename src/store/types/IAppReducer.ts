@@ -5,5 +5,6 @@ export interface IAppReducer {
   userColorScheme?: ColorSchemeName,
   user?: IUser,
   expoToken?: string,
+  numberMissionDaily?: number,
 }
 

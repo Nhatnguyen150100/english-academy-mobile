@@ -51,9 +51,6 @@ export default function Login() {
       });
       await addStoreDataAsync(StoreEnum.AccessToken, rs.data.accessToken);
       dispatch(setUser(rs.data.user));
-      Toast.show({
-        text1: rs.message,
-      });
       navigation.reset({
         index: 0,
         routes: [{ name: Routes.Home }],

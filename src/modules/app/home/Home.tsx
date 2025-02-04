@@ -2,6 +2,8 @@ import React from "react";
 import { Text, StyleSheet, View } from "react-native";
 import TheLayout from "@components/layout/TheLayOut";
 import Slider from "@components/base/Slider";
+import TopRank from "./components/TopRank";
+import MyAchievements from "./components/MyAchievements";
 
 function Home() {
   return (
@@ -10,20 +12,18 @@ function Home() {
       <View
         style={{
           flex: 1,
+          display: "flex",
+          justifyContent: "flex-start",
+          alignItems: "flex-start",
+          width: "100%",
+          paddingTop: 30,
         }}
       >
-        <Text style={styles.fontBlack}>Home</Text>
+        <TopRank />
+        <MyAchievements />
       </View>
     </TheLayout>
   );
 }
-
-const styles = StyleSheet.create({
-  fontBlack: {
-    fontFamily: "Black",
-    marginTop: 20,
-    fontSize: 20,
-  },
-});
 
 export default Home;

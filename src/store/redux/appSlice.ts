@@ -12,6 +12,10 @@ export const appSlice = createSlice({
       state = { ...state, user: action.payload };
       return state;
     },
+    setNumberMissionDaily: (state, action: PayloadAction<number>) => {
+      state = { ...state, numberMissionDaily: action.payload };
+      return state;
+    },
     loggedOut: (state) => {
       state = { ...state, user: undefined };
       return state;
@@ -32,6 +36,7 @@ export const {
   loggedOut,
   setColorScheme,
   setExpoToken,
+  setNumberMissionDaily
 } = appSlice.actions;
 
 export default appSlice.reducer;

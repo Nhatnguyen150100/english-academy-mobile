@@ -3,9 +3,9 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 import { useTheme } from "@src/hooks";
 import ProfileStack from "./ProfileStack";
-import Home from "@modules/app/Home";
 import Courses from "@modules/app/Courses/Courses";
 import Ranks from "@modules/app/Ranks/Ranks";
+import Home from "@modules/app/home/Home";
 
 const Tab = createBottomTabNavigator();
 
@@ -35,6 +35,16 @@ export default function TabNavigator() {
         options={{
           tabBarIcon: ({ color }) => (
             <AntDesign name="book" size={24} color={color} />
+          ),
+        }}
+      />
+
+      <Tab.Screen
+        name="Blogs"
+        component={Ranks}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <AntDesign name="form" size={24} color={color} />
           ),
         }}
       />

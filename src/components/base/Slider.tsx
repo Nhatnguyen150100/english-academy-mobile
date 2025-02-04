@@ -43,7 +43,6 @@ function Slider() {
 const styles = StyleSheet.create({
   container: {
     height: 160,
-    marginVertical: 20,
   },
   slide: {
     justifyContent: "center",
