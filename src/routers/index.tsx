@@ -13,11 +13,12 @@ import Login from "@modules/auth/Login";
 import OneStepScreen from "@modules/getting-started/OneStepScreen";
 import Toast from "react-native-toast-message";
 import Register from "@modules/auth/Register";
-import { getStoreDataAsync, removeStoreDataAsync } from "@helpers/storage";
+import { getStoreStringAsync, removeStoreDataAsync } from "@helpers/storage";
 import { StoreEnum } from "@helpers/storage/storeEnum";
 import { authService } from "@src/services";
 import { useDispatch } from "react-redux";
 import { setUser } from "@store/redux/appSlice";
+import LoadingScreen from "@components/base/LoadingScreen";
 
 enableScreens();
 
@@ -26,20 +27,39 @@ const Stack = createStackNavigator<RootStackParams>();
 const StackNavigation = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
-  const isSignedIn = !!getStoreDataAsync(StoreEnum.AccessToken);
+  const [isSignedIn, setIsSignedIn] = React.useState(false);
+  const [loading, setLoading] = React.useState(true);
 
   const handleGetInfo = async () => {
     const rs = await authService.getInfo();
-    if(!rs.data) {
-      removeStoreDataAsync(StoreEnum.AccessToken);
-      return;
+    if (!rs.data) {
+      await removeStoreDataAsync(StoreEnum.AccessToken);
+      setIsSignedIn(false);
+    } else {
+      dispatch(setUser(rs.data));
+      setIsSignedIn(true);
     }
-    dispatch(setUser(rs.data));
+    setLoading(false);
   };
 
   React.useEffect(() => {
-    if (isSignedIn) handleGetInfo();
-  });
+    const checkSignInStatus = async () => {
+      const token = await getStoreStringAsync(StoreEnum.AccessToken);
+      if (token) {
+        setIsSignedIn(true);
+        await handleGetInfo();
+      } else {
+        setIsSignedIn(false);
+        setLoading(false);
+      }
+    };
+
+    checkSignInStatus();
+  }, [dispatch]);
+
+  if (loading) {
+    return <LoadingScreen />;
+  }
 
   return (
     <Stack.Navigator
@@ -65,13 +85,10 @@ const StackNavigation = () => {
           component={Register}
           options={{ headerShown: false }}
         />
-
         <Stack.Screen
           name={Routes.OneStepScreen}
           component={OneStepScreen}
-          options={{
-            headerShown: false,
-          }}
+          options={{ headerShown: false }}
         />
       </>
     </Stack.Navigator>

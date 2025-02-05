@@ -1,12 +1,11 @@
 import { rankService } from "@src/services";
-import { IMyRank, IRank } from "@src/types/rank.types";
+import { IMyRank } from "@src/types/rank.types";
 import React, { useState } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 import Toast from "react-native-toast-message";
 
 export default function MyAchievements() {
   const [myRank, setMyRank] = useState<IMyRank>();
-  console.log("🚀 ~ MyAchievements ~ myRank:", myRank);
 
   const handleGetMyRank = async () => {
     try {

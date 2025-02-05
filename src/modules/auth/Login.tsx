@@ -55,6 +55,12 @@ export default function Login() {
         index: 0,
         routes: [{ name: Routes.Home }],
       });
+    } catch (error) {
+      console.log("��� ~ handleLogin ~ error:", error);
+      Toast.show({
+        type: "error",
+        text1: "Login failed. Please check your email and password",
+      });
     } finally {
       setIsLoading(false);
     }

@@ -18,7 +18,7 @@ function ProfileStack() {
   return (
     <Stack.Navigator
       initialRouteName={Routes.Profile}
-      screenOptions={{ ...ScreenOptions, headerTintColor: theme.primary }}
+      screenOptions={{ ...ScreenOptions, headerTintColor: theme.primary, headerShown: false }}
     >
       <Stack.Screen
         name={Routes.Profile}

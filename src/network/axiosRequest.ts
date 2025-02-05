@@ -1,9 +1,8 @@
-import { loggedOut } from "@store/redux/appSlice";
-import Store from "@store/index";
 import axios, { AxiosResponse } from "axios";
 import Toast from "react-native-toast-message";
 import { getStoreStringAsync } from "@helpers/storage";
 import { StoreEnum } from "@helpers/storage/storeEnum";
+import { signOut } from "@src/services/appService";
 
 const apiUrl = process.env.EXPO_PUBLIC_BASE_URL;
 
@@ -26,7 +25,7 @@ const onFulFillResponse = (
   return value;
 };
 
-const onRejectResponse = (error: any) => {
+const onRejectResponse = async (error: any) => {
   const { status, data } = error.response;
 
   if (status === 401 || status === 403) {
@@ -35,10 +34,11 @@ const onRejectResponse = (error: any) => {
       text1: "Unauthorized",
       type: "error",
     });
+    signOut();
 
-    Store.dispatch(loggedOut());
+    return;
   }
-  
+
   if (!error.response || error.response.status >= 500) {
     return Promise.reject(error);
   }
@@ -56,9 +56,9 @@ const onRejectResponse = (error: any) => {
 axiosRequest.interceptors.request.use(async (config) => {
   const fullUrl = `${config.baseURL}${config.url}`;
   console.log(fullUrl, `Method: ${config.method}`, `Payload: ${config.data}`);
-  
+
   const accessToken = await getAccessToken();
-  
+
   if (accessToken) {
     config.headers["Authorization"] = `Bearer ${accessToken}`;
   }

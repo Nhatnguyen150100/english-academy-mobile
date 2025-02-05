@@ -2,7 +2,7 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 import { useTheme } from "@src/hooks";
-import ProfileStack from "./ProfileStack";
+import ProfileStack from "./stack/ProfileStack";
 import Courses from "@modules/app/Courses/Courses";
 import Ranks from "@modules/app/Ranks/Ranks";
 import Home from "@modules/app/home/Home";

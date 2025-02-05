@@ -1,8 +1,5 @@
-import ConfirmDialog from "@components/base/ConfirmDialog";
 import { AntDesign } from "@expo/vector-icons";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { removeStoreDataAsync } from "@helpers/storage";
-import { StoreEnum } from "@helpers/storage/storeEnum";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { missionDailyService } from "@src/services";
@@ -10,8 +7,8 @@ import { IMissionDaily } from "@src/types/missionDaily.types";
 import { IRootState } from "@store/index";
 import { setNumberMissionDaily } from "@store/redux/appSlice";
 import { LightTheme } from "@styles/theme";
-import Routes, { RootStackParams } from "@utils/Routes";
-import React, { useEffect, useMemo, useState } from "react";
+import { RootStackParams } from "@utils/Routes";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Badge } from "react-native-paper";
 import { useDispatch } from "react-redux";
@@ -25,19 +22,8 @@ export default function TheHeader({}: Props) {
   const numberMissionDaily = useSelector(
     (state: IRootState) => state.AppReducer.numberMissionDaily
   );
-  const [isShowDialog, setIsShowDialog] = useState(false);
   const dispatch = useDispatch();
 
-  const handleLogOut = async () => {
-    setIsShowDialog(false);
-    await removeStoreDataAsync(StoreEnum.AccessToken);
-    await removeStoreDataAsync(StoreEnum.User);
-    await removeStoreDataAsync(StoreEnum.isStarted);
-    navigation.reset({
-      index: 0,
-      routes: [{ name: Routes.Login }],
-    });
-  };
 
   const getNumberMission = (missionDaily: IMissionDaily | null) => {
     if (!missionDaily) return 3;
@@ -78,22 +64,6 @@ export default function TheHeader({}: Props) {
       <View style={styles.appbarRight}>
         <Ionicons name="today-outline" size={24} color="white" />
         {numberMissionDaily && <Badge style={styles.badge}>{numberMissionDaily}</Badge>}
-        {/* <AntDesign
-          name="logout"
-          size={24}
-          color="white"
-          onPress={() => {
-            setIsShowDialog(true);
-          }}
-        /> */}
-        <ConfirmDialog
-          showDialog={isShowDialog}
-          content={"Do you want to log out?"}
-          handleAccept={handleLogOut}
-          handleReject={() => {
-            setIsShowDialog(false);
-          }}
-        />
       </View>
     </View>
   );
@@ -123,6 +93,7 @@ const styles = StyleSheet.create({
     backgroundColor: LightTheme.primary,
     paddingVertical: 24,
     paddingHorizontal: 20,
+    height: 80,
     width: "auto",
     justifyContent: "space-between",
     alignItems: "center",

@@ -11,6 +11,6 @@ export const ScreenOptions: StackNavigationOptions = {
     cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
     headerStyle: { backgroundColor: '#FFF', },
     headerTitleStyle: { fontFamily: 'Bold', },  
-    headerTitleAlign: 'center'     
+    headerTitleAlign: 'center'
   };
   

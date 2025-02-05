@@ -5,14 +5,15 @@ import TheHeader from "./TheHeader";
 import { LightTheme } from "@styles/theme";
 
 interface IProps {
-  children: React.ReactNode
+  children: React.ReactNode,
+  header?: React.ReactElement
 }
 
-function TheLayout({children}: IProps) {
+function TheLayout({children, header}: IProps) {
   return (
     <SafeAreaView style={styles.safeView}>
       <StatusBar barStyle="light-content" backgroundColor={LightTheme.primary} />
-      <TheHeader />
+      {header ?? <TheHeader />}
       <View style={styles.root}>
         <View style={styles.container}>
           {children}
@@ -39,7 +40,7 @@ const styles = StyleSheet.create({
 
   container: {
     flex: 1,
-    justifyContent: "flex-start",
+    justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 20,
     paddingVertical: 20,
