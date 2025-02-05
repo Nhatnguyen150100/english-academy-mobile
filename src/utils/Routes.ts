@@ -21,6 +21,7 @@ export type RootStackParams = {
   [Routes.Login]: { email: string | undefined };
   [Routes.Register]: undefined;
   [Routes.OneStepScreen]: undefined;
+  [Routes.Profile]: undefined;
 };
 
 /**

@@ -1,49 +1,23 @@
-import ConfirmDialog from "@components/base/ConfirmDialog";
-import { AntDesign } from "@expo/vector-icons";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { removeStoreDataAsync } from "@helpers/storage";
-import { StoreEnum } from "@helpers/storage/storeEnum";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { missionDailyService } from "@src/services";
-import { IMissionDaily } from "@src/types/missionDaily.types";
-import { IRootState } from "@store/index";
-import { setNumberMissionDaily } from "@store/redux/appSlice";
 import { LightTheme } from "@styles/theme";
-import Routes, { RootStackParams } from "@utils/Routes";
-import React, { useEffect, useState } from "react";
+import { RootStackParams } from "@utils/Routes";
+import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { Badge, IconButton } from "react-native-paper";
-import { useDispatch } from "react-redux";
-import { useSelector } from "react-redux";
 
 interface IProps {
   title: string;
   isShowBackBtn?: boolean;
+  rightSection?: React.ReactNode;
 }
 
 export default function TheBaseHeader({
   title,
   isShowBackBtn = false,
+  rightSection,
 }: IProps) {
   const navigation = useNavigation<StackNavigationProp<RootStackParams>>();
-  const user = useSelector((state: IRootState) => state.AppReducer.user);
-  const numberMissionDaily = useSelector(
-    (state: IRootState) => state.AppReducer.numberMissionDaily
-  );
-  const [isShowDialog, setIsShowDialog] = useState(false);
-  const dispatch = useDispatch();
-
-  // const handleLogOut = async () => {
-  //   setIsShowDialog(false);
-  //   await removeStoreDataAsync(StoreEnum.AccessToken);
-  //   await removeStoreDataAsync(StoreEnum.User);
-  //   await removeStoreDataAsync(StoreEnum.isStarted);
-  //   navigation.reset({
-  //     index: 0,
-  //     routes: [{ name: Routes.Login }],
-  //   });
-  // };
 
   const handleBack = () => {
     navigation.goBack();
@@ -65,25 +39,7 @@ export default function TheBaseHeader({
 
       <Text style={styles.appbarTitle}>{title}</Text>
 
-      <View></View>
-      {/* <View style={styles.appbarRight}>
-        <AntDesign
-          name="logout"
-          size={24}
-          color="white"
-          onPress={() => {
-            setIsShowDialog(true);
-          }}
-        />
-        <ConfirmDialog
-          showDialog={isShowDialog}
-          content={"Do you want to log out?"}
-          handleAccept={handleLogOut}
-          handleReject={() => {
-            setIsShowDialog(false);
-          }}
-        />
-      </View> */}
+      {rightSection ? rightSection : <View></View>}
     </View>
   );
 }
@@ -109,6 +65,7 @@ const styles = StyleSheet.create({
     opacity: 0.2,
   },
   appbar: {
+    position: "relative",
     backgroundColor: LightTheme.primary,
     paddingVertical: 24,
     paddingHorizontal: 20,
@@ -119,6 +76,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   appbarTitle: {
+    position: "absolute",
+    left: 178,
+    top: 26,
     fontSize: 20,
     fontWeight: "bold",
     color: "white",

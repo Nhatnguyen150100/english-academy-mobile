@@ -7,9 +7,9 @@ import { IMissionDaily } from "@src/types/missionDaily.types";
 import { IRootState } from "@store/index";
 import { setNumberMissionDaily } from "@store/redux/appSlice";
 import { LightTheme } from "@styles/theme";
-import { RootStackParams } from "@utils/Routes";
-import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import Routes, { RootStackParams } from "@utils/Routes";
+import React, { useEffect } from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Badge } from "react-native-paper";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
@@ -23,7 +23,6 @@ export default function TheHeader({}: Props) {
     (state: IRootState) => state.AppReducer.numberMissionDaily
   );
   const dispatch = useDispatch();
-
 
   const getNumberMission = (missionDaily: IMissionDaily | null) => {
     if (!missionDaily) return 3;
@@ -51,7 +50,12 @@ export default function TheHeader({}: Props) {
     <View style={styles.appbar}>
       <View style={styles.decorator}></View>
       <View style={styles.appbarLeft}>
-        <View style={styles.row}>
+        <TouchableOpacity
+          style={styles.row}
+          onPress={() => {
+            navigation.navigate(Routes.Profile);
+          }}
+        >
           <View style={styles.avatar}>
             <AntDesign name="user" size={24} color="white" />
           </View>
@@ -59,11 +63,13 @@ export default function TheHeader({}: Props) {
             <Text style={styles.appbarTitle}>{user?.name ?? user?.email}</Text>
             <Text style={styles.subTitle}>{user?._id}</Text>
           </View>
-        </View>
+        </TouchableOpacity>
       </View>
       <View style={styles.appbarRight}>
         <Ionicons name="today-outline" size={24} color="white" />
-        {numberMissionDaily && <Badge style={styles.badge}>{numberMissionDaily}</Badge>}
+        {numberMissionDaily && (
+          <Badge style={styles.badge}>{numberMissionDaily}</Badge>
+        )}
       </View>
     </View>
   );

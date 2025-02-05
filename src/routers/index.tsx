@@ -19,6 +19,7 @@ import { authService } from "@src/services";
 import { useDispatch } from "react-redux";
 import { setUser } from "@store/redux/appSlice";
 import LoadingScreen from "@components/base/LoadingScreen";
+import Profile from "@modules/app/profile/Profile";
 
 enableScreens();
 
@@ -90,6 +91,13 @@ const StackNavigation = () => {
           component={OneStepScreen}
           options={{ headerShown: false }}
         />
+
+        <Stack.Screen
+          name={Routes.Profile}
+          component={Profile}
+          options={{ headerShown: false }}
+        />
+
       </>
     </Stack.Navigator>
   );

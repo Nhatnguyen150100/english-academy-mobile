@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Image } from "react-native";
-import { Text, Button } from "react-native-paper";
+import { View, StyleSheet } from "react-native";
+import { Text, Button, Chip } from "react-native-paper";
 import { useSelector } from "react-redux";
 import { IRootState } from "@store/index";
 import { signOut } from "@src/services/appService";
@@ -13,8 +13,9 @@ import ConfirmDialog from "@components/base/ConfirmDialog";
 import { LightTheme } from "@styles/theme";
 import { AntDesign } from "@expo/vector-icons";
 import MyAchievements from "@modules/app/home/components/MyAchievements";
+import AccountChip from "@components/base/AccountChip";
 
-function Profile() {
+function Setting() {
   const navigation = useNavigation<StackNavigationProp<RootStackParams>>();
   const user = useSelector((state: IRootState) => state.AppReducer.user);
   const [isShowDialog, setIsShowDialog] = useState(false);
@@ -29,42 +30,83 @@ function Profile() {
   };
 
   return (
-    <TheLayout header={<TheBaseHeader title="Profile" />}>
+    <TheLayout header={<TheBaseHeader title="Setting" isShowBackBtn/>}>
       <View style={styles.container}>
         <View style={styles.headerContainer}>
           <View style={styles.avatarContainer}>
             <AntDesign name="user" size={44} color={LightTheme.primary} />
           </View>
-          <Text style={styles.title}>{user?.name ?? user?.email}</Text>
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              marginBottom: 10,
+            }}
+          >
+            <Text style={styles.title}>{user?.name ?? user?.email}</Text>
+            <Text style={styles.subTitle}>{user?._id}</Text>
+            <AccountChip accountType={user?.accountType ?? "FREE"} />
+          </View>
           <View style={styles.infoContainer}>
             <View style={styles.rowInfo}>
-              <Text style={styles.label}>Name: </Text>
-              <Text style={styles.info}>{user?.name}</Text>
+              <Text style={styles.label}>Email </Text>
+              <Text style={styles.info}>{user?.email}</Text>
             </View>
-
-            <Text style={styles.label}>Email: </Text>
-            <Text style={styles.info}>{user?.email}</Text>
-
-            <Text style={styles.label}>Phone: </Text>
-            <Text style={styles.info}>{user?.phone_number}</Text>
-
-            <Text style={styles.label}>Address: </Text>
-            <Text style={styles.info}>{user?.address}</Text>
-
-            <Text style={styles.label}>Role: </Text>
-            <Text style={styles.info}>{user?.role}</Text>
+            <View style={styles.rowInfo}>
+              <Text style={styles.label}>Phone number </Text>
+              <Text style={styles.info}>{user?.phone_number}</Text>
+            </View>
+            <View style={styles.rowInfo}>
+              <Text style={styles.label}>Address </Text>
+              <Text style={styles.info}>{user?.address}</Text>
+            </View>
+            <View style={styles.rowInfo}>
+              <Text style={styles.label}>Role </Text>
+              <Chip
+                style={{
+                  backgroundColor: "#e0c684",
+                  borderRadius: 50,
+                  paddingHorizontal: 10,
+                  paddingVertical: 5,
+                }}
+              >
+                <Text style={{ color: "#fff", fontWeight: "bold" }}>
+                  {user?.role}
+                </Text>
+              </Chip>
+            </View>
+            <View style={{...styles.row, flex: 1, display: "flex", justifyContent: "flex-end", height: "100%"}}>
+              <Button
+                mode="contained"
+                buttonColor={LightTheme.primary}
+                // onPress={() => setIsShowDialog(true)}
+                style={styles.editInfoButton}
+              >
+                Edit information
+              </Button>
+              <Button
+                mode="contained"
+                buttonColor={LightTheme.primary}
+                // onPress={() => setIsShowDialog(true)}
+                style={styles.editInfoButton}
+              >
+                Update plan
+              </Button>
+            </View>
           </View>
           <MyAchievements />
         </View>
 
-        <Button
+        {/* <Button
           mode="contained"
           buttonColor={LightTheme.primary}
           onPress={() => setIsShowDialog(true)}
           style={styles.logoutButton}
         >
           Log Out
-        </Button>
+        </Button> */}
 
         <ConfirmDialog
           showDialog={isShowDialog}
@@ -115,11 +157,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    borderWidth: 0.8,
-    borderColor: "#333",
-    borderRadius: 20,
-    padding: 8,
-    marginBottom: 4,
+    marginBottom: 20,
   },
   avatar: {
     width: "100%",
@@ -129,10 +167,16 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: "bold",
-    marginBottom: 20,
     textAlign: "center",
+    marginBottom: 5,
+  },
+  subTitle: {
+    fontSize: 10,
+    color: "#888",
+    marginBottom: 5,
   },
   infoContainer: {
+    flex: 1,
     backgroundColor: "#fff",
     padding: 20,
     borderRadius: 20,
@@ -146,8 +190,14 @@ const styles = StyleSheet.create({
     elevation: 5,
     width: "100%",
   },
+  row: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
   label: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "bold",
   },
   info: {
@@ -157,6 +207,10 @@ const styles = StyleSheet.create({
     marginTop: 20,
     width: "100%",
   },
+  editInfoButton: {
+    width: "48%",
+    backgroundColor: LightTheme.primary,
+  },
 });
 
-export default Profile;
+export default Setting;
