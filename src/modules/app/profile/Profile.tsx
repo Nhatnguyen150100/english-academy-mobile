@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Platform } from "react-native";
+import { View, StyleSheet, Platform, KeyboardAvoidingView } from "react-native";
 import { Text, Button, Divider, Chip, TextInput } from "react-native-paper";
 import { useSelector } from "react-redux";
 import { IRootState } from "@store/index";
@@ -13,7 +13,8 @@ import ConfirmDialog from "@components/base/ConfirmDialog";
 import { LightTheme } from "@styles/theme";
 import { AntDesign } from "@expo/vector-icons";
 import AccountChip from "@components/base/AccountChip";
-import {KeyboardAwareScrollView} from "react-native-keyboard-controller"
+import MyAchievements from "../home/components/MyAchievements";
+import Icon from "react-native-vector-icons/Ionicons";
 
 function Profile() {
   const navigation = useNavigation<StackNavigationProp<RootStackParams>>();
@@ -29,11 +30,20 @@ function Profile() {
     });
   };
 
+  const iconNext = (
+    <Icon
+      name="chevron-forward-outline"
+      size={16}
+      style={{
+        marginLeft: 3,
+      }}
+      color="#8c8c8c"
+    />
+  );
+
   return (
     <TheLayout header={<TheBaseHeader title="Profile" isShowBackBtn />}>
-      <KeyboardAwareScrollView
-        style={styles.container}
-      >
+      <KeyboardAvoidingView style={styles.container}>
         <View style={styles.container}>
           <View style={styles.headerContainer}>
             <View style={styles.avatarContainer}>
@@ -43,7 +53,7 @@ function Profile() {
               style={{
                 display: "flex",
                 flexDirection: "column",
-                justifyContent: "center",
+                justifyContent: "space-between",
                 alignItems: "center",
                 marginBottom: 20,
               }}
@@ -54,31 +64,28 @@ function Profile() {
             </View>
             <View style={styles.infoContainer}>
               <View style={styles.rowInfo}>
-                <Text style={styles.label}>Email </Text>
-                {/* <Text style={styles.info}>{user?.email}</Text> */}
-                <TextInput
-                  style={styles.input}
-                  placeholder="Email"
-                  value={user?.email}
-                  underlineStyle={{
-                    display: "none"
-                  }}
-                  // onChangeText={(value: string) => {
-                  //   setForm({ ...form, email: value });
-                  // }}
-                  autoCapitalize="none"
-                />
+                <Text style={styles.label}>Email</Text>
+                <View style={styles.row}>
+                  <Text style={styles.info}>{user?.email}</Text>
+                  {iconNext}
+                </View>
               </View>
               <View style={styles.rowInfo}>
-                <Text style={styles.label}>Phone number </Text>
-                <Text style={styles.info}>{user?.phone_number}</Text>
+                <Text style={styles.label}>Phone number</Text>
+                <View style={styles.row}>
+                  <Text style={styles.info}>{user?.phone_number}</Text>
+                  {iconNext}
+                </View>
               </View>
               <View style={styles.rowInfo}>
-                <Text style={styles.label}>Address </Text>
-                <Text style={styles.info}>{user?.address}</Text>
+                <Text style={styles.label}>Address</Text>
+                <View style={styles.row}>
+                  <Text style={styles.info}>{user?.address}</Text>
+                  {iconNext}
+                </View>
               </View>
               <View style={styles.rowInfo}>
-                <Text style={styles.label}>Role </Text>
+                <Text style={styles.label}>Role</Text>
                 <Chip
                   style={{
                     backgroundColor: "#e0c684",
@@ -92,15 +99,6 @@ function Profile() {
                   </Text>
                 </Chip>
               </View>
-              <View style={{ ...styles.row, flex: 1 }}>
-              <Button
-                mode="contained"
-                buttonColor={LightTheme.primary}
-                // onPress={() => setIsShowDialog(true)}
-                style={styles.editInfoButton}
-              >
-                Edit information
-              </Button>
               <Button
                 mode="contained"
                 buttonColor={LightTheme.primary}
@@ -109,9 +107,19 @@ function Profile() {
               >
                 Update plan
               </Button>
+              {/* <View style={{ ...styles.row, flex: 1 }}>
+                <Button
+                  mode="contained"
+                  buttonColor={LightTheme.primary}
+                  // onPress={() => setIsShowDialog(true)}
+                  style={styles.editInfoButton}
+                >
+                  Edit information
+                </Button>
+                
+              </View> */}
             </View>
-            </View>
-            {/* <MyAchievements /> */}
+            <MyAchievements />
           </View>
 
           {/* <Button
@@ -132,7 +140,7 @@ function Profile() {
             }}
           />
         </View>
-      </KeyboardAwareScrollView>
+      </KeyboardAvoidingView>
     </TheLayout>
   );
 }
@@ -173,7 +181,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 20,
+    width: "100%",
   },
   avatar: {
     width: "100%",
@@ -205,6 +213,9 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
     width: "100%",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
   },
   row: {
     display: "flex",
@@ -238,7 +249,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   editInfoButton: {
-    width: "48%",
+    width: "100%",
     backgroundColor: LightTheme.primary,
   },
 });
