@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { View, StyleSheet } from "react-native";
-import { Text, Button, Divider, Chip } from "react-native-paper";
+import { View, StyleSheet, Platform } from "react-native";
+import { Text, Button, Divider, Chip, TextInput } from "react-native-paper";
 import { useSelector } from "react-redux";
 import { IRootState } from "@store/index";
 import { signOut } from "@src/services/appService";
@@ -12,8 +12,8 @@ import Routes, { RootStackParams } from "@utils/Routes";
 import ConfirmDialog from "@components/base/ConfirmDialog";
 import { LightTheme } from "@styles/theme";
 import { AntDesign } from "@expo/vector-icons";
-import MyAchievements from "@modules/app/home/components/MyAchievements";
 import AccountChip from "@components/base/AccountChip";
+import {KeyboardAwareScrollView} from "react-native-keyboard-controller"
 
 function Profile() {
   const navigation = useNavigation<StackNavigationProp<RootStackParams>>();
@@ -30,54 +30,69 @@ function Profile() {
   };
 
   return (
-    <TheLayout header={<TheBaseHeader title="Profile" isShowBackBtn/>}>
-      <View style={styles.container}>
-        <View style={styles.headerContainer}>
-          <View style={styles.avatarContainer}>
-            <AntDesign name="user" size={44} color={LightTheme.primary} />
-          </View>
-          <View
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              marginBottom: 10,
-            }}
-          >
-            <Text style={styles.title}>{user?.name ?? user?.email}</Text>
-            <Text style={styles.subTitle}>{user?._id}</Text>
-            <AccountChip accountType={user?.accountType ?? "FREE"} />
-          </View>
-          <View style={styles.infoContainer}>
-            <View style={styles.rowInfo}>
-              <Text style={styles.label}>Email </Text>
-              <Text style={styles.info}>{user?.email}</Text>
+    <TheLayout header={<TheBaseHeader title="Profile" isShowBackBtn />}>
+      <KeyboardAwareScrollView
+        style={styles.container}
+      >
+        <View style={styles.container}>
+          <View style={styles.headerContainer}>
+            <View style={styles.avatarContainer}>
+              <AntDesign name="user" size={44} color={LightTheme.primary} />
             </View>
-            <View style={styles.rowInfo}>
-              <Text style={styles.label}>Phone number </Text>
-              <Text style={styles.info}>{user?.phone_number}</Text>
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                marginBottom: 20,
+              }}
+            >
+              <Text style={styles.title}>{user?.name ?? user?.email}</Text>
+              <Text style={styles.subTitle}>{user?._id}</Text>
+              <AccountChip accountType={user?.accountType ?? "FREE"} />
             </View>
-            <View style={styles.rowInfo}>
-              <Text style={styles.label}>Address </Text>
-              <Text style={styles.info}>{user?.address}</Text>
-            </View>
-            <View style={styles.rowInfo}>
-              <Text style={styles.label}>Role </Text>
-              <Chip
-                style={{
-                  backgroundColor: "#e0c684",
-                  borderRadius: 50,
-                  paddingHorizontal: 10,
-                  paddingVertical: 5,
-                }}
-              >
-                <Text style={{ color: "#fff", fontWeight: "bold" }}>
-                  {user?.role}
-                </Text>
-              </Chip>
-            </View>
-            <View style={{...styles.row, flex: 1}}>
+            <View style={styles.infoContainer}>
+              <View style={styles.rowInfo}>
+                <Text style={styles.label}>Email </Text>
+                {/* <Text style={styles.info}>{user?.email}</Text> */}
+                <TextInput
+                  style={styles.input}
+                  placeholder="Email"
+                  value={user?.email}
+                  underlineStyle={{
+                    display: "none"
+                  }}
+                  // onChangeText={(value: string) => {
+                  //   setForm({ ...form, email: value });
+                  // }}
+                  autoCapitalize="none"
+                />
+              </View>
+              <View style={styles.rowInfo}>
+                <Text style={styles.label}>Phone number </Text>
+                <Text style={styles.info}>{user?.phone_number}</Text>
+              </View>
+              <View style={styles.rowInfo}>
+                <Text style={styles.label}>Address </Text>
+                <Text style={styles.info}>{user?.address}</Text>
+              </View>
+              <View style={styles.rowInfo}>
+                <Text style={styles.label}>Role </Text>
+                <Chip
+                  style={{
+                    backgroundColor: "#e0c684",
+                    borderRadius: 50,
+                    paddingHorizontal: 10,
+                    paddingVertical: 5,
+                  }}
+                >
+                  <Text style={{ color: "#fff", fontWeight: "bold" }}>
+                    {user?.role}
+                  </Text>
+                </Chip>
+              </View>
+              <View style={{ ...styles.row, flex: 1 }}>
               <Button
                 mode="contained"
                 buttonColor={LightTheme.primary}
@@ -95,28 +110,29 @@ function Profile() {
                 Update plan
               </Button>
             </View>
+            </View>
+            {/* <MyAchievements /> */}
           </View>
-          <MyAchievements />
+
+          {/* <Button
+            mode="contained"
+            buttonColor={LightTheme.primary}
+            onPress={() => setIsShowDialog(true)}
+            style={styles.logoutButton}
+          >
+            Log Out
+          </Button> */}
+
+          <ConfirmDialog
+            showDialog={isShowDialog}
+            content={"Do you want to log out?"}
+            handleAccept={handleLogOut}
+            handleReject={() => {
+              setIsShowDialog(false);
+            }}
+          />
         </View>
-
-        {/* <Button
-          mode="contained"
-          buttonColor={LightTheme.primary}
-          onPress={() => setIsShowDialog(true)}
-          style={styles.logoutButton}
-        >
-          Log Out
-        </Button> */}
-
-        <ConfirmDialog
-          showDialog={isShowDialog}
-          content={"Do you want to log out?"}
-          handleAccept={handleLogOut}
-          handleReject={() => {
-            setIsShowDialog(false);
-          }}
-        />
-      </View>
+      </KeyboardAwareScrollView>
     </TheLayout>
   );
 }
@@ -199,6 +215,20 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     fontWeight: "bold",
+  },
+  input: {
+    height: 30,
+    borderStyle: "solid",
+    borderColor: "#ccc",
+    borderWidth: 1,
+    fontSize: 14,
+    borderTopStartRadius: 8,
+    borderTopEndRadius: 8,
+    borderBottomStartRadius: 8,
+    borderBottomEndRadius: 8,
+    width: 220,
+    paddingHorizontal: 8,
+    backgroundColor: "transparent",
   },
   info: {
     color: "#555",
