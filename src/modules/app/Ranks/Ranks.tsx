@@ -1,13 +1,19 @@
 import React, { useState } from "react";
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet, Image } from "react-native";
 import Toast from "react-native-toast-message";
 import { IRank } from "@src/types/rank.types";
 import { rankService } from "@src/services";
 import TheLayout from "@components/layout/TheLayOut";
 import TheBaseHeader from "@components/layout/TheBaseHeader";
-import TopRank from "../home/components/TopRank";
 import { FlatList } from "react-native-gesture-handler";
 import { LightTheme } from "@styles/theme";
+import Visibility from "@components/base/visibility";
+
+const rankImages = [
+  require("@assets/images/rank/rank_1.png"),
+  require("@assets/images/rank/rank_2.png"),
+  require("@assets/images/rank/rank_3.png"),
+];
 
 function Ranks() {
   const [listRanks, setListRanks] = useState<IRank[]>([]);
@@ -16,7 +22,7 @@ function Ranks() {
     try {
       const rs = await rankService.getAllRank();
       if (rs.data) {
-        setListRanks(rs.data.slice(3));
+        setListRanks(rs.data);
       }
     } catch (error) {
       Toast.show({
@@ -33,7 +39,17 @@ function Ranks() {
   const renderItem = ({ item }: { item: IRank }) => (
     <View style={styles.rankContainer}>
       <View style={styles.rankInfo}>
-        <Text style={styles.rankNumber}>{item.score}</Text>
+        <Visibility
+          visibility={item.rankNumber < 4}
+          suspenseComponent={
+            <Text style={styles.rankNumber}>{item.rankNumber}</Text>
+          }
+        >
+          <Image
+            source={rankImages[item.rankNumber - 1]}
+            style={styles.rankImage}
+          />
+        </Visibility>
         <View
           style={{
             display: "flex",
@@ -52,11 +68,13 @@ function Ranks() {
   return (
     <TheLayout header={<TheBaseHeader title="Ranks" />}>
       <View style={styles.container}>
-        <TopRank />
         <FlatList
           data={listRanks}
           keyExtractor={(item) => item._id}
           renderItem={renderItem}
+          style={{
+            paddingHorizontal: 5,
+          }}
         />
       </View>
     </TheLayout>
@@ -80,9 +98,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 10,
     backgroundColor: "#f9f9ff",
     borderRadius: 20,
+    marginBottom: 10,
     padding: 12,
     width: "100%",
     shadowColor: "#000",
@@ -123,8 +141,9 @@ const styles = StyleSheet.create({
     fontSize: 22,
     color: "#000000",
     marginRight: 25,
+    marginLeft: 12,
     marginBottom: 5,
-  }
+  },
 });
 
 export default Ranks;

@@ -3,6 +3,7 @@ export interface IRank {
   name: string;
   score: number;
   accountType: string;
+  rankNumber: number
 }
 
 

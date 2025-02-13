@@ -18,7 +18,7 @@ export default function TopRank() {
     try {
       const rs = await rankService.getAllRank();
       if (rs.data) {
-        setListRanks(rs.data.slice(0, 3));
+        setListRanks(rs.data.filter((_item) => _item.rankNumber < 4));
       }
     } catch (error) {
       Toast.show({
