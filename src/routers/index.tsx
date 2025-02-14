@@ -20,6 +20,7 @@ import { useDispatch } from "react-redux";
 import { setUser } from "@store/redux/appSlice";
 import LoadingScreen from "@components/base/LoadingScreen";
 import Profile from "@modules/app/profile/Profile";
+import ProfileStack from "./stacks/ProfileStack";
 
 enableScreens();
 
@@ -94,7 +95,7 @@ const StackNavigation = () => {
 
         <Stack.Screen
           name={Routes.Profile}
-          component={Profile}
+          component={ProfileStack}
           options={{ headerShown: false }}
         />
 
