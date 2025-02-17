@@ -22,3 +22,9 @@ export interface IQueryUser {
 }
 
 export type IRole = 'USER' | 'ADMIN';
+
+export interface IUserUpdate {
+  name: string;
+  phoneNumber?: string;
+  address?: string;
+}

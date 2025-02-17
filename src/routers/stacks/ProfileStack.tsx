@@ -1,4 +1,3 @@
-import EditInfoAppBar from "@modules/app/profile/edit-info/EditInfoAppBar";
 import useTheme from "@hooks/useTheme";
 import EditInformation from "@modules/app/profile/edit-info/EditInformation";
 import Profile from "@modules/app/profile/Profile";
@@ -7,10 +6,9 @@ import Routes, { RootStackParams } from "@utils/Routes";
 import { ScreenOptions } from "@utils/ScreenOptions";
 import React from "react";
 
-type Props = {};
 const Stack = createStackNavigator<RootStackParams>();
 
-export default function ProfileStack({}: Props) {
+export default function ProfileStack() {
   const theme = useTheme();
 
   return (
@@ -28,7 +26,6 @@ export default function ProfileStack({}: Props) {
         <Stack.Screen
           name={Routes.EditProfile}
           component={EditInformation}
-          options={{ header: () => <EditInfoAppBar /> }}
         />
 
       </>

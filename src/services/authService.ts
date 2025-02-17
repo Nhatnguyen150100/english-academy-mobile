@@ -24,6 +24,15 @@ class AuthService {
     }
   }
 
+  public async updateUserInfo(data: Record<string, any>): Promise<IBaseResponse<IUser>> {
+    try {
+      const rs = await axiosRequest.put(`${this._prefixURL}/update`, data);
+      return Promise.resolve(rs.data);
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
+
   public async register(data: ILogin): Promise<IBaseResponse<IResponseRegister>> {
     try {
       const rs = await axiosRequest.post(`${this._prefixURL}/register`, data);
