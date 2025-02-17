@@ -9,6 +9,7 @@ export enum Routes {
   Ranks = "Ranks",
   Register = "Register",
   Profile = "Profile",
+  EditProfile = "EditProfile",
   Settings = "Settings",
   Post = "Post",
 }
@@ -22,6 +23,7 @@ export type RootStackParams = {
   [Routes.Register]: undefined;
   [Routes.OneStepScreen]: undefined;
   [Routes.Profile]: undefined;
+  [Routes.EditProfile]: undefined;
 };
 
 /**
@@ -29,8 +31,7 @@ export type RootStackParams = {
  */
 export type ProfileStackParams = {
   [Routes.Profile]: undefined;
-  [Routes.Settings]: undefined;
-  [Routes.Post]: { id: string; username: string };
+  [Routes.EditProfile]: undefined;
 };
 
 /**

@@ -1,34 +1,46 @@
-import React, { useState } from "react";
-import { View, StyleSheet, Platform, KeyboardAvoidingView } from "react-native";
-import { Text, Button, Divider, Chip, TextInput } from "react-native-paper";
+import React from "react";
+import { View, StyleSheet, KeyboardAvoidingView, TouchableOpacity } from "react-native";
+import { Text, Button, Chip } from "react-native-paper";
 import { useSelector } from "react-redux";
 import { IRootState } from "@store/index";
-import { signOut } from "@src/services/appService";
 import TheLayout from "@components/layout/TheLayOut";
 import TheBaseHeader from "@components/layout/TheBaseHeader";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import Routes, { RootStackParams } from "@utils/Routes";
-import ConfirmDialog from "@components/base/ConfirmDialog";
 import { LightTheme } from "@styles/theme";
 import { AntDesign } from "@expo/vector-icons";
 import AccountChip from "@components/base/AccountChip";
 import MyAchievements from "../home/components/MyAchievements";
 import Icon from "react-native-vector-icons/Ionicons";
 
-function Profile() {
+function InformationSection({
+  label,
+  value,
+  iconNext,
+}: {
+  label: string;
+  value?: string;
+  iconNext: React.ReactNode;
+}) {
   const navigation = useNavigation<StackNavigationProp<RootStackParams>>();
-  const user = useSelector((state: IRootState) => state.AppReducer.user);
-  const [isShowDialog, setIsShowDialog] = useState(false);
+  return (
+    <TouchableOpacity onPress={() => {
+      navigation.navigate(Routes.EditProfile);
+    }}>
+      <View style={styles.rowInfo}>
+      <Text style={styles.label}>{label}</Text>
+      <View style={styles.row}>
+        <Text style={styles.info}>{value}</Text>
+        {iconNext}
+      </View>
+    </View>
+    </TouchableOpacity>
+  );
+}
 
-  const handleLogOut = () => {
-    setIsShowDialog(false);
-    signOut();
-    navigation.reset({
-      index: 0,
-      routes: [{ name: Routes.Login }],
-    });
-  };
+function Profile() {
+  const user = useSelector((state: IRootState) => state.AppReducer.user);
 
   const iconNext = (
     <Icon
@@ -63,27 +75,9 @@ function Profile() {
               <AccountChip accountType={user?.accountType ?? "FREE"} />
             </View>
             <View style={styles.infoContainer}>
-              <View style={styles.rowInfo}>
-                <Text style={styles.label}>Email</Text>
-                <View style={styles.row}>
-                  <Text style={styles.info}>{user?.email}</Text>
-                  {iconNext}
-                </View>
-              </View>
-              <View style={styles.rowInfo}>
-                <Text style={styles.label}>Phone number</Text>
-                <View style={styles.row}>
-                  <Text style={styles.info}>{user?.phone_number}</Text>
-                  {iconNext}
-                </View>
-              </View>
-              <View style={styles.rowInfo}>
-                <Text style={styles.label}>Address</Text>
-                <View style={styles.row}>
-                  <Text style={styles.info}>{user?.address}</Text>
-                  {iconNext}
-                </View>
-              </View>
+              <InformationSection label="Email" value={user?.email} iconNext={iconNext} />
+              <InformationSection label="Phone number" value={user?.phone_number} iconNext={iconNext} />
+              <InformationSection label="Address" value={user?.address} iconNext={iconNext} />
               <View style={styles.rowInfo}>
                 <Text style={styles.label}>Role</Text>
                 <Chip
@@ -107,38 +101,9 @@ function Profile() {
               >
                 Update plan
               </Button>
-              {/* <View style={{ ...styles.row, flex: 1 }}>
-                <Button
-                  mode="contained"
-                  buttonColor={LightTheme.primary}
-                  // onPress={() => setIsShowDialog(true)}
-                  style={styles.editInfoButton}
-                >
-                  Edit information
-                </Button>
-                
-              </View> */}
             </View>
             <MyAchievements />
           </View>
-
-          {/* <Button
-            mode="contained"
-            buttonColor={LightTheme.primary}
-            onPress={() => setIsShowDialog(true)}
-            style={styles.logoutButton}
-          >
-            Log Out
-          </Button> */}
-
-          <ConfirmDialog
-            showDialog={isShowDialog}
-            content={"Do you want to log out?"}
-            handleAccept={handleLogOut}
-            handleReject={() => {
-              setIsShowDialog(false);
-            }}
-          />
         </View>
       </KeyboardAvoidingView>
     </TheLayout>
