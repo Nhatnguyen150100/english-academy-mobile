@@ -8,6 +8,8 @@ import TheBaseHeader from "@components/layout/TheBaseHeader";
 import { FlatList } from "react-native-gesture-handler";
 import { LightTheme } from "@styles/theme";
 import Visibility from "@components/base/visibility";
+import { Searchbar } from "react-native-paper";
+import useDebounce from "@hooks/useDebounce";
 
 const rankImages = [
   require("@assets/images/rank/rank_1.png"),
@@ -17,10 +19,14 @@ const rankImages = [
 
 function Ranks() {
   const [listRanks, setListRanks] = useState<IRank[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
 
-  const handleGetListRanks = async () => {
+  const handleGetListRanks = React.useCallback(async () => {
     try {
-      const rs = await rankService.getAllRank();
+      const rs = await rankService.getAllRank({
+        name: debouncedSearchQuery
+      });
       if (rs.data) {
         setListRanks(rs.data);
       }
@@ -30,11 +36,11 @@ function Ranks() {
         type: "error",
       });
     }
-  };
+  }, [debouncedSearchQuery]);
 
   React.useEffect(() => {
     handleGetListRanks();
-  }, []);
+  }, [debouncedSearchQuery]);
 
   const renderItem = ({ item }: { item: IRank }) => (
     <View style={styles.rankContainer}>
@@ -68,6 +74,15 @@ function Ranks() {
   return (
     <TheLayout header={<TheBaseHeader title="Ranks" />}>
       <View style={styles.container}>
+        <Searchbar
+          placeholder="Search user..."
+          onChangeText={setSearchQuery}
+          value={searchQuery}
+          style={styles.searchBar}
+          inputStyle={styles.searchInput}
+          iconColor="#000000"
+          placeholderTextColor="#000000"
+        />
         <FlatList
           data={listRanks}
           keyExtractor={(item) => item._id}
@@ -87,7 +102,20 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "center",
   },
-
+  searchBar: {
+    borderRadius: 25,
+    backgroundColor: "transparent",
+    borderWidth: 1,
+    borderColor: "#000000",
+    shadowColor: "transparent",
+    elevation: 0,
+    width: "98%",
+    marginBottom: 10
+  },
+  searchInput: {
+    fontSize: 12,
+    color: "#000000",
+  },
   fontBlack: {
     fontFamily: "Black",
     marginTop: 20,

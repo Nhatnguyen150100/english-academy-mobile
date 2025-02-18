@@ -1,14 +1,18 @@
-
-import axiosRequest from '@src/network/axiosRequest';
-import { IMyRank, IRank } from '@src/types/rank.types';
-import { IBaseResponse } from '@src/types/response.types';
+import axiosRequest from "@src/network/axiosRequest";
+import { IMyRank, IRank } from "@src/types/rank.types";
+import { IBaseResponse } from "@src/types/response.types";
+import onRemoveParams from "@utils/functions/on-remove-params";
 
 class RankService {
-  private _prefixURL = '/v1/rank';
+  private _prefixURL = "/v1/rank";
 
-  public async getAllRank(): Promise<IBaseResponse<IRank[]>> {
+  public async getAllRank(
+    parameters?: Record<string, any>
+  ): Promise<IBaseResponse<IRank[]>> {
     try {
-      const rs = await axiosRequest.get(this._prefixURL);
+      const rs = await axiosRequest.get(this._prefixURL, {
+        params: onRemoveParams(parameters || {}),
+      });
       return Promise.resolve(rs.data);
     } catch (error) {
       return Promise.reject(error);
