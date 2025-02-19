@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Text, View, StyleSheet, Image } from "react-native";
+import { Text, View, StyleSheet, Image, TouchableOpacity } from "react-native";
 import Toast from "react-native-toast-message";
 import { IRank } from "@src/types/rank.types";
 import { rankService } from "@src/services";
@@ -10,6 +10,9 @@ import { LightTheme } from "@styles/theme";
 import Visibility from "@components/base/visibility";
 import { Searchbar } from "react-native-paper";
 import useDebounce from "@hooks/useDebounce";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import Routes, { RootStackParams } from "@utils/Routes";
 
 const rankImages = [
   require("@assets/images/rank/rank_1.png"),
@@ -18,9 +21,11 @@ const rankImages = [
 ];
 
 function Ranks() {
+  const navigation = useNavigation<StackNavigationProp<RootStackParams>>();
   const [listRanks, setListRanks] = useState<IRank[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
+  
 
   const handleGetListRanks = React.useCallback(async () => {
     try {
@@ -43,6 +48,12 @@ function Ranks() {
   }, [debouncedSearchQuery]);
 
   const renderItem = ({ item }: { item: IRank }) => (
+    <TouchableOpacity onPress={() => {
+      navigation.navigate(Routes.UserProfile, {
+        userId: item._id
+      })
+    }}>
+
     <View style={styles.rankContainer}>
       <View style={styles.rankInfo}>
         <Visibility
@@ -69,6 +80,7 @@ function Ranks() {
       </View>
       <Text style={styles.rankScore}>{item.score}</Text>
     </View>
+    </TouchableOpacity>
   );
 
   return (

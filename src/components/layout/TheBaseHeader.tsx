@@ -26,16 +26,16 @@ export default function TheBaseHeader({
   return (
     <View style={styles.appbar}>
       <View style={styles.decorator}></View>
-      {isShowBackBtn ? (
-        <Ionicons
-          name="arrow-back"
-          size={24}
-          color="white"
-          onPress={handleBack}
-        />
-      ) : (
-        <View></View>
-      )}
+      <View style={styles.backIcon}>
+        {isShowBackBtn && (
+          <Ionicons
+            name="arrow-back"
+            size={24}
+            color="white"
+            onPress={handleBack}
+          />
+        )}
+      </View>
 
       <Text style={styles.appbarTitle}>{title}</Text>
 
@@ -48,6 +48,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F0F4F8",
+  },
+  backIcon: {
+    position: "absolute",
+    left: 20,
+    top: 28,
+    zIndex: 10,
+    backgroundColor: "transparent",
   },
   decorator: {
     height: 280,
@@ -71,14 +78,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     height: 80,
     width: "auto",
-    justifyContent: "space-between",
+    justifyContent: "center",
     alignItems: "center",
     flexDirection: "row",
   },
   appbarTitle: {
-    position: "absolute",
-    left: 178,
-    top: 26,
     fontSize: 20,
     fontWeight: "bold",
     color: "white",

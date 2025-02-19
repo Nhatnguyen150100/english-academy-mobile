@@ -11,7 +11,7 @@ function MissionDaily() {
   const user = useSelector((state: IRootState) => state.AppReducer.user);
 
   return (
-    <TheLayout header={<TheBaseHeader title="Mission" isShowBackBtn />}>
+    <TheLayout header={<TheBaseHeader title="Mission Daily" isShowBackBtn />}>
       <Text>
         Mission daily
       </Text>

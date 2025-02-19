@@ -41,6 +41,15 @@ class AuthService {
       return Promise.reject(error);
     }
   }
+
+  public async getUserInfo(userId: string): Promise<IBaseResponse<IUser>> {
+    try {
+      const rs = await axiosRequest.get(`${this._prefixURL}/user-info/${userId}`);
+      return Promise.resolve(rs.data);
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
 }
 
 export default AuthService;

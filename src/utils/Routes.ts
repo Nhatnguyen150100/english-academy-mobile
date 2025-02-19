@@ -13,6 +13,7 @@ export enum Routes {
   Settings = "Settings",
   Post = "Post",
   MissionDaily = "MissionDaily",
+  UserProfile = "UserProfile",
 }
 
 /**
@@ -26,14 +27,16 @@ export type RootStackParams = {
   [Routes.Profile]: undefined;
   [Routes.EditProfile]: undefined;
   [Routes.MissionDaily]: undefined;
+  [Routes.Ranks]: undefined;
+  [Routes.UserProfile]: { userId: string | undefined };
 };
 
 /**
  * Represents the parameter types for the profile stack routes.
  */
-export type ProfileStackParams = {
-  [Routes.Profile]: undefined;
-  [Routes.EditProfile]: undefined;
+export type RanksStackParams = {
+  [Routes.Ranks]: undefined;
+  [Routes.UserProfile]: { userId: string | undefined };
 };
 
 /**

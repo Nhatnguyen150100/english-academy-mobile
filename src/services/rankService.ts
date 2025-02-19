@@ -27,6 +27,15 @@ class RankService {
       return Promise.reject(error);
     }
   }
+
+  public async getUserRank(userId: string): Promise<IBaseResponse<IMyRank>> {
+    try {
+      const rs = await axiosRequest.get(`${this._prefixURL}/${userId}`);
+      return Promise.resolve(rs.data);
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
 }
 
 export default RankService;

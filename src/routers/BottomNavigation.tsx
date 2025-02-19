@@ -6,6 +6,7 @@ import Courses from "@modules/app/Courses/Courses";
 import Ranks from "@modules/app/Ranks/Ranks";
 import Home from "@modules/app/home/Home";
 import Setting from "@modules/app/settings/Setting";
+import RankStack from "./stacks/RankStack";
 
 const Tab = createBottomTabNavigator();
 
@@ -51,7 +52,7 @@ export default function TabNavigator() {
 
       <Tab.Screen
         name="Ranks"
-        component={Ranks}
+        component={RankStack}
         options={{
           tabBarIcon: ({ color }) => (
             <AntDesign name="barchart" size={24} color={color} />
