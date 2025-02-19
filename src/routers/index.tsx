@@ -21,6 +21,7 @@ import { setUser } from "@store/redux/appSlice";
 import LoadingScreen from "@components/base/LoadingScreen";
 import Profile from "@modules/app/profile/Profile";
 import ProfileStack from "./stacks/ProfileStack";
+import MissionDaily from "@modules/app/mission-daily/MissionDaily";
 
 enableScreens();
 
@@ -30,18 +31,21 @@ const StackNavigation = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const [isSignedIn, setIsSignedIn] = React.useState(false);
-  const [loading, setLoading] = React.useState(true);
+  const [loading, setLoading] = React.useState(false);
 
   const handleGetInfo = async () => {
-    const rs = await authService.getInfo();
-    if (!rs.data) {
-      await removeStoreDataAsync(StoreEnum.AccessToken);
-      setIsSignedIn(false);
-    } else {
-      dispatch(setUser(rs.data));
-      setIsSignedIn(true);
+    try {
+      const rs = await authService.getInfo();
+      if (!rs.data) {
+        await removeStoreDataAsync(StoreEnum.AccessToken);
+        setIsSignedIn(false);
+      } else {
+        dispatch(setUser(rs.data));
+        setIsSignedIn(true);
+      }
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   React.useEffect(() => {
@@ -99,6 +103,11 @@ const StackNavigation = () => {
           options={{ headerShown: false }}
         />
 
+        <Stack.Screen
+          name={Routes.MissionDaily}
+          component={MissionDaily}
+          options={{ headerShown: false }}
+        />
       </>
     </Stack.Navigator>
   );

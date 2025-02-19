@@ -66,7 +66,14 @@ export default function TheHeader({}: Props) {
         </TouchableOpacity>
       </View>
       <View style={styles.appbarRight}>
-        <Ionicons name="today-outline" size={24} color="white" />
+        <Ionicons
+          name="today-outline"
+          size={24}
+          color="white"
+          onPress={() => {
+            navigation.navigate(Routes.MissionDaily);
+          }}
+        />
         {numberMissionDaily && (
           <Badge style={styles.badge}>{numberMissionDaily}</Badge>
         )}

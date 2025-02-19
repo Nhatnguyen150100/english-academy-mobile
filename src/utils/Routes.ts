@@ -12,6 +12,7 @@ export enum Routes {
   EditProfile = "EditProfile",
   Settings = "Settings",
   Post = "Post",
+  MissionDaily = "MissionDaily",
 }
 
 /**
@@ -24,6 +25,7 @@ export type RootStackParams = {
   [Routes.OneStepScreen]: undefined;
   [Routes.Profile]: undefined;
   [Routes.EditProfile]: undefined;
+  [Routes.MissionDaily]: undefined;
 };
 
 /**
