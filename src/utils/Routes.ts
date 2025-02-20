@@ -28,6 +28,7 @@ export type RootStackParams = {
   [Routes.EditProfile]: undefined;
   [Routes.MissionDaily]: undefined;
   [Routes.Ranks]: undefined;
+  [Routes.Courses]: undefined;
   [Routes.UserProfile]: { userId: string | undefined };
 };
 

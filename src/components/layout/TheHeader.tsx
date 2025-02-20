@@ -7,6 +7,7 @@ import { IMissionDaily } from "@src/types/missionDaily.types";
 import { IRootState } from "@store/index";
 import { setNumberMissionDaily } from "@store/redux/appSlice";
 import { LightTheme } from "@styles/theme";
+import getNumberMission from "@utils/functions/get-number-misson";
 import Routes, { RootStackParams } from "@utils/Routes";
 import React, { useEffect } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -23,14 +24,6 @@ export default function TheHeader({}: Props) {
     (state: IRootState) => state.AppReducer.numberMissionDaily
   );
   const dispatch = useDispatch();
-
-  const getNumberMission = (missionDaily: IMissionDaily | null) => {
-    if (!missionDaily) return 3;
-    if (!(missionDaily.completedExam || missionDaily.loggedIn)) return 3;
-    if (!missionDaily.completedExam || !missionDaily.loggedIn) return 2;
-    if (missionDaily.completedExam && missionDaily.loggedIn) return 1;
-    return 0;
-  };
 
   const getMissionDaily = async () => {
     try {
@@ -75,7 +68,14 @@ export default function TheHeader({}: Props) {
           }}
         />
         {numberMissionDaily && (
-          <Badge style={styles.badge}>{numberMissionDaily}</Badge>
+          <Badge
+            style={styles.badge}
+            onPress={() => {
+              navigation.navigate(Routes.MissionDaily);
+            }}
+          >
+            {numberMissionDaily}
+          </Badge>
         )}
       </View>
     </View>
