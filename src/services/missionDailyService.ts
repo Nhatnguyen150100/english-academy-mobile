@@ -23,6 +23,15 @@ class MissionDailyService {
       return Promise.reject(error);
     }
   }
+  
+  public async claimRewardMissionDaily(id: string): Promise<IBaseResponse<undefined>> {
+    try {
+      const rs = await axiosRequest.post(`${this._prefixURL}/confirm/${id}`);
+      return Promise.resolve(rs.data);
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
 }
 
 export default MissionDailyService;

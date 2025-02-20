@@ -21,6 +21,7 @@ import { setNumberMissionDaily } from "@store/redux/appSlice";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import Routes, { RootStackParams } from "@utils/Routes";
+import Toast from "react-native-toast-message";
 
 type TaskRowProps = {
   title: string;
@@ -59,6 +60,29 @@ const MissionDaily: React.FC = () => {
       setLoading(false);
     }
   }, []);
+
+  const claimReward = async () => {
+    if(!mission?._id) {
+      Toast.show({
+        type: "error",
+        text1: "No mission to claim",
+      });
+      return;
+    }
+    try {
+      setLoading(true);
+      const rs = await missionDailyService.claimRewardMissionDaily(mission!._id);
+      fetchMissionDaily();
+      Toast.show({
+        type: "success",
+        text1: rs.message,
+      });
+    } catch (error) {
+      console.error("Fetch mission error:", error);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   const handleCheckInDaily = async() => {
     try {
@@ -149,7 +173,7 @@ const MissionDaily: React.FC = () => {
               <TouchableOpacity
                 style={styles.combinedButtonContent}
                 disabled={!bothCompleted}
-                onPress={() => console.log("Claim combined reward")}
+                onPress={claimReward}
               >
                 <Icon name="trophy" size={24} color="white" />
                 <Text style={styles.combinedButtonText}>
