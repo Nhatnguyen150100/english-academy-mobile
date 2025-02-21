@@ -1,6 +1,7 @@
 import useTheme from "@hooks/useTheme";
-import EditInformation from "@modules/app/profile/edit-info/EditInformation";
-import Ranks from "@modules/app/ranks/Ranks";
+import CourseDetail from "@modules/app/courses/CourseDetail";
+import Courses from "@modules/app/courses/Courses";
+import Exam from "@modules/app/courses/Exam";
 import UserProfile from "@modules/app/ranks/UserProfile";
 import { createStackNavigator } from "@react-navigation/stack";
 import Routes, { RootStackParams } from "@utils/Routes";
@@ -9,24 +10,30 @@ import React from "react";
 
 const Stack = createStackNavigator<RootStackParams>();
 
-export default function RankStack() {
+export default function CourseStack() {
   const theme = useTheme();
 
   return (
     <Stack.Navigator
-      initialRouteName={Routes.Ranks}
+      initialRouteName={Routes.Courses}
       screenOptions={{ ...ScreenOptions, headerTintColor: theme.primary }}
     >
       <>
         <Stack.Screen
-          name={Routes.Ranks}
-          component={Ranks}
+          name={Routes.Courses}
+          component={Courses}
           options={{ headerShown: false }}
         />
 
         <Stack.Screen
-          name={Routes.UserProfile}
-          component={UserProfile}
+          name={Routes.CourseDetail}
+          component={CourseDetail}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name={Routes.Exam}
+          component={Exam}
           options={{ headerShown: false }}
         />
 

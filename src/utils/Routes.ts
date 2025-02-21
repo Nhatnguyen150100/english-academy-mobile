@@ -6,6 +6,7 @@ export enum Routes {
   Home = "Home",
   Login = "Login",
   Courses = "Courses",
+  CourseDetail = "CourseDetail",
   Ranks = "Ranks",
   Register = "Register",
   Profile = "Profile",
@@ -14,6 +15,7 @@ export enum Routes {
   Post = "Post",
   MissionDaily = "MissionDaily",
   UserProfile = "UserProfile",
+  Exam = "Exam",
 }
 
 /**
@@ -28,8 +30,19 @@ export type RootStackParams = {
   [Routes.EditProfile]: undefined;
   [Routes.MissionDaily]: undefined;
   [Routes.Ranks]: undefined;
-  [Routes.Courses]: undefined;
   [Routes.UserProfile]: { userId: string | undefined };
+  [Routes.Courses]: undefined;
+  [Routes.CourseDetail]: { courseId: string | undefined };
+  [Routes.Exam]: { examId: string | undefined };
+};
+
+/**
+ * Represents the parameter types for the profile stack routes.
+ */
+export type CourseStackParams = {
+  [Routes.Courses]: undefined;
+  [Routes.CourseDetail]: { courseId: string | undefined };
+  [Routes.Exam]: { examId: string | undefined };
 };
 
 /**

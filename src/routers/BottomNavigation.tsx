@@ -2,11 +2,11 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { AntDesign } from "@expo/vector-icons";
 import { useTheme } from "@src/hooks";
-import Courses from "@modules/app/Courses/Courses";
-import Ranks from "@modules/app/Ranks/Ranks";
+import Ranks from "@modules/app/ranks/Ranks";
 import Home from "@modules/app/home/Home";
 import Setting from "@modules/app/settings/Setting";
 import RankStack from "./stacks/RankStack";
+import CourseStack from "./stacks/CourseStack";
 
 const Tab = createBottomTabNavigator();
 
@@ -32,7 +32,7 @@ export default function TabNavigator() {
 
       <Tab.Screen
         name="Courses"
-        component={Courses}
+        component={CourseStack}
         options={{
           tabBarIcon: ({ color }) => (
             <AntDesign name="book" size={24} color={color} />

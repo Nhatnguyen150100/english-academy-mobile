@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { Text, View, StyleSheet, Image, TouchableOpacity } from "react-native";
 import Toast from "react-native-toast-message";
 import { IRank } from "@src/types/rank.types";
@@ -6,13 +6,17 @@ import { rankService } from "@src/services";
 import TheLayout from "@components/layout/TheLayOut";
 import TheBaseHeader from "@components/layout/TheBaseHeader";
 import { FlatList } from "react-native-gesture-handler";
-import { LightTheme } from "@styles/theme";
 import Visibility from "@components/base/visibility";
 import { Searchbar } from "react-native-paper";
 import useDebounce from "@hooks/useDebounce";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import Routes, { RootStackParams } from "@utils/Routes";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import { colors } from "@styles/theme";
+import { spacing } from "@styles/spacing";
+import typography from "@styles/typography";
 
 const rankImages = [
   require("@assets/images/rank/rank_1.png"),
@@ -25,62 +29,27 @@ function Ranks() {
   const [listRanks, setListRanks] = useState<IRank[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
-  
 
-  const handleGetListRanks = React.useCallback(async () => {
+  const handleGetListRanks = useCallback(async () => {
     try {
-      const rs = await rankService.getAllRank({
-        name: debouncedSearchQuery
-      });
-      if (rs.data) {
-        setListRanks(rs.data);
-      }
+      const rs = await rankService.getAllRank({ name: debouncedSearchQuery });
+      setListRanks(rs.data || []);
     } catch (error) {
       Toast.show({
-        text1: "Error fetching data",
         type: "error",
+        text1: "Load ranks failed",
+        text2: "Please try again later",
       });
     }
   }, [debouncedSearchQuery]);
 
   React.useEffect(() => {
     handleGetListRanks();
-  }, [debouncedSearchQuery]);
+  }, [debouncedSearchQuery, handleGetListRanks]);
 
-  const renderItem = ({ item }: { item: IRank }) => (
-    <TouchableOpacity onPress={() => {
-      navigation.navigate(Routes.UserProfile, {
-        userId: item._id
-      })
-    }}>
-
-    <View style={styles.rankContainer}>
-      <View style={styles.rankInfo}>
-        <Visibility
-          visibility={item.rankNumber < 4}
-          suspenseComponent={
-            <Text style={styles.rankNumber}>{item.rankNumber}</Text>
-          }
-        >
-          <Image
-            source={rankImages[item.rankNumber - 1]}
-            style={styles.rankImage}
-          />
-        </Visibility>
-        <View
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-          }}
-        >
-          <Text style={styles.rankName}>{item.name}</Text>
-          <Text style={styles.rankId}>{item._id}</Text>
-        </View>
-      </View>
-      <Text style={styles.rankScore}>{item.score}</Text>
-    </View>
-    </TouchableOpacity>
+  const renderItem = useCallback(
+    ({ item }: { item: IRank }) => <RankItem item={item} onPress={navigation.navigate} />,
+    [navigation.navigate]
   );
 
   return (
@@ -88,101 +57,185 @@ function Ranks() {
       <View style={styles.container}>
         <Searchbar
           placeholder="Search user..."
+          placeholderTextColor={colors.gray500}
           onChangeText={setSearchQuery}
           value={searchQuery}
           style={styles.searchBar}
           inputStyle={styles.searchInput}
-          iconColor="#000000"
-          placeholderTextColor="#000000"
+          icon={() => (
+            <MaterialCommunityIcons
+              name="magnify"
+              size={24}
+              color={colors.primary}
+            />
+          )}
         />
+
         <FlatList
           data={listRanks}
           keyExtractor={(item) => item._id}
           renderItem={renderItem}
-          style={{
-            paddingHorizontal: 5,
-          }}
+          contentContainerStyle={styles.listContent}
+          showsVerticalScrollIndicator={false}
+          initialNumToRender={10}
+          maxToRenderPerBatch={5}
+          windowSize={10}
         />
       </View>
     </TheLayout>
   );
 }
 
+const RankItem = React.memo(({ 
+  item, 
+  onPress 
+}: { 
+  item: IRank;
+  onPress: StackNavigationProp<RootStackParams>["navigate"];
+}) => (
+  <TouchableOpacity 
+    activeOpacity={0.9}
+    onPress={() => onPress(Routes.UserProfile, { userId: item._id })}
+  >
+    <LinearGradient
+      colors={item.rankNumber < 4 ? ["#f8f9ff", "#eef2ff"] : ["#ffffff", "#f8fafc"]}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.rankContainer}
+    >
+      <View style={styles.rankInfo}>
+        <Visibility
+          visibility={item.rankNumber < 4}
+          suspenseComponent={
+            <View style={styles.rankNumberWrapper}>
+              <Text style={styles.rankNumber}>#{item.rankNumber}</Text>
+            </View>
+          }
+        >
+          <Image
+            source={rankImages[item.rankNumber - 1]}
+            style={styles.rankImage}
+            resizeMode="contain"
+          />
+        </Visibility>
+
+        <View style={styles.userInfo}>
+          <Text style={styles.rankName} numberOfLines={1}>{item.name}</Text>
+          <View style={styles.accountTypeWrapper}>
+            <MaterialCommunityIcons
+              name={getAccountTypeIcon(item.accountType)}
+              size={14}
+              color={colors.primary}
+            />
+            <Text style={styles.accountTypeText}>{item.accountType}</Text>
+          </View>
+        </View>
+      </View>
+
+      <View style={styles.scoreWrapper}>
+        <MaterialCommunityIcons
+          name="trophy"
+          size={20}
+          color={colors.primary}
+        />
+        <Text style={styles.rankScore}>{item.score.toLocaleString()}</Text>
+      </View>
+    </LinearGradient>
+  </TouchableOpacity>
+));
+
+const getAccountTypeIcon = (type: string) => {
+  switch (type.toLowerCase()) {
+    case 'premium': return 'crown';
+    case 'vip': return 'star';
+    default: return 'account';
+  }
+};
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "flex-start",
-    alignItems: "center",
+    paddingHorizontal: spacing[0],
+    width: "100%"
   },
   searchBar: {
-    borderRadius: 25,
-    backgroundColor: "transparent",
-    borderWidth: 1,
-    borderColor: "#000000",
-    shadowColor: "transparent",
-    elevation: 0,
-    width: "98%",
-    marginBottom: 10
+    borderRadius: 12,
+    backgroundColor: colors.white,
+    marginVertical: spacing[3],
+    shadowColor: colors.gray800,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 2,
   },
   searchInput: {
-    fontSize: 12,
-    color: "#000000",
+    ...typography.body2,
+    color: colors.gray800,
   },
-  fontBlack: {
-    fontFamily: "Black",
-    marginTop: 20,
-    fontSize: 20,
+  listContent: {
+    paddingBottom: spacing[6],
   },
   rankContainer: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    backgroundColor: "#f9f9ff",
-    borderRadius: 20,
-    marginBottom: 10,
-    padding: 12,
-    width: "100%",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderRadius: 16,
+    marginBottom: spacing[3],
+    padding: spacing[4],
+    shadowColor: colors.gray800,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
   },
   rankInfo: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
   },
   rankImage: {
-    height: 44,
-    width: 44,
-    marginRight: 10,
+    width: 48,
+    height: 48,
+    marginRight: spacing[3],
   },
-  rankName: {
-    fontSize: 14,
-    color: "Black",
-    fontFamily: "Bold",
-  },
-  rankId: {
-    fontSize: 12,
-    color: "gray",
-  },
-  rankScore: {
-    fontFamily: "Black",
-    fontSize: 22,
-    color: LightTheme.primary,
-    marginBottom: 5,
+  rankNumberWrapper: {
+    width: 48,
+    height: 48,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: spacing[3],
   },
   rankNumber: {
-    fontFamily: "Black",
-    fontSize: 22,
-    color: "#000000",
-    marginRight: 25,
-    marginLeft: 12,
-    marginBottom: 5,
+    ...typography.subtitle1,
+    color: colors.gray600,
+  },
+  userInfo: {
+    flex: 1,
+    marginRight: spacing[2],
+  },
+  rankName: {
+    ...typography.subtitle2,
+    color: colors.gray900,
+    marginBottom: spacing[1],
+  },
+  accountTypeWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing[2],
+  },
+  accountTypeText: {
+    ...typography.caption,
+    color: colors.primary,
+    textTransform: 'capitalize',
+  },
+  scoreWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing[2],
+  },
+  rankScore: {
+    ...typography.subtitle1,
+    color: colors.primary,
   },
 });
 

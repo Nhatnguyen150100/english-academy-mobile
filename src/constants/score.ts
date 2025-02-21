@@ -1,0 +1,8 @@
+const DEFINE_SCORE = {
+  SCORE_MISSION_DAILY: 10,
+  EASY: 15,
+  MEDIUM: 20,
+  HARD: 25,
+};
+
+export default DEFINE_SCORE;

@@ -1,4 +1,4 @@
-import padding from './padding';
-import typography from './typography';
+import padding from "./padding";
+import typography from "./typography";
 
-export {padding, typography};
+export { padding, typography };
