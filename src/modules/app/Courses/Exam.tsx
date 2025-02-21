@@ -21,6 +21,11 @@ import { examService } from "@src/services";
 import Toast from "react-native-toast-message";
 import getScoreFromExam from "@utils/functions/get-score";
 
+interface IAnswer {
+  questionId: string;
+  answer: string;
+}
+
 function Exam() {
   const navigation = useNavigation<StackNavigationProp<RootStackParams>>();
   const route = useRoute<RouteProp<CourseStackParams, Routes.Exam>>();
@@ -28,7 +33,7 @@ function Exam() {
   const [exam, setExam] = useState<IExamDetail>();
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<{
-    [key: string]: string;
+    [key: string]: IAnswer;
   }>({});
   const [timeLeft, setTimeLeft] = useState(0);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -75,10 +80,13 @@ function Exam() {
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
-  const handleAnswerSelect = (questionId: string, optionId: string) => {
+  const handleAnswerSelect = (questionId: string, answer: string) => {
     setSelectedAnswers((prev) => ({
       ...prev,
-      [questionId]: optionId,
+      [questionId]: {
+        questionId,
+        answer
+      },
     }));
   };
 
@@ -211,20 +219,20 @@ function Exam() {
               key={option._id}
               style={[
                 styles.optionButton,
-                selectedAnswers[question._id] === option._id &&
+                selectedAnswers[question._id]?.answer === option.content &&
                   styles.selectedOption,
               ]}
-              onPress={() => handleAnswerSelect(question._id, option._id)}
+              onPress={() => handleAnswerSelect(question._id, option.content)}
             >
               <MaterialCommunityIcons
                 name={
-                  selectedAnswers[question._id] === option._id
+                  selectedAnswers[question._id]?.answer === option.content
                     ? "checkbox-marked-circle"
                     : "checkbox-blank-circle-outline"
                 }
                 size={20}
                 color={
-                  selectedAnswers[question._id] === option._id
+                  selectedAnswers[question._id]?.answer === option.content
                     ? colors.primary
                     : colors.gray400
                 }
@@ -283,7 +291,7 @@ function Exam() {
 
   return (
     <TheLayout
-      header={<TheBaseHeader title={exam?.name ?? ""} isShowBackBtn />}
+      header={<TheBaseHeader title={exam?.name ?? ""} />}
     >
       <View style={styles.container}>
         {isStarted ? renderQuestion() : renderIntro()}
