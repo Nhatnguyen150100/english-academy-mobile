@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Alert,
   ScrollView,
+  GestureResponderEvent,
 } from "react-native";
 import TheLayout from "@components/layout/TheLayOut";
 import TheBaseHeader from "@components/layout/TheBaseHeader";
@@ -20,6 +21,8 @@ import { IExamDetail } from "@src/types/exam.types";
 import { examService } from "@src/services";
 import Toast from "react-native-toast-message";
 import getScoreFromExam from "@utils/functions/get-score";
+import ConfirmDialog from "@components/base/ConfirmDialog";
+import ExamControlButton from "./_components/ExamControlButton";
 
 interface IAnswer {
   questionId: string;
@@ -38,6 +41,8 @@ function Exam() {
   const [timeLeft, setTimeLeft] = useState(0);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isStarted, setIsStarted] = useState(false);
+  const [isShowDialog, setIsShowDialog] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleGetExamDetail = async () => {
     if (!examId) {
@@ -85,7 +90,7 @@ function Exam() {
       ...prev,
       [questionId]: {
         questionId,
-        answer
+        answer,
       },
     }));
   };
@@ -172,7 +177,8 @@ function Exam() {
           color={colors.warning}
         />
         <Text style={styles.rewardText}>
-          Complete excellently and get {getScoreFromExam(exam?.level ?? "EASY")} points!
+          Complete excellently and get {getScoreFromExam(exam?.level ?? "EASY")}{" "}
+          points!
         </Text>
       </View>
 
@@ -240,50 +246,65 @@ function Exam() {
               <Text style={styles.optionText}>{option.content}</Text>
             </TouchableOpacity>
           ))}
-        </ScrollView>
+          <View style={styles.navigationButtons}>
+            <TouchableOpacity
+              style={[
+                styles.navButton,
+                currentQuestion === 0 && styles.disabledButton,
+              ]}
+              disabled={currentQuestion === 0}
+              onPress={() => setCurrentQuestion((prev) => prev - 1)}
+            >
+              <MaterialCommunityIcons
+                name="arrow-left"
+                size={20}
+                color={colors.white}
+              />
+              <Text style={styles.navButtonText}>Previous</Text>
+            </TouchableOpacity>
 
-        <View style={styles.navigationButtons}>
+            {currentQuestion < (exam?.questions?.length ?? 1) - 1 && (
+              <TouchableOpacity
+                style={styles.navButton}
+                onPress={() => setCurrentQuestion((prev) => prev + 1)}
+              >
+                <Text style={styles.navButtonText}>Next</Text>
+                <MaterialCommunityIcons
+                  name="arrow-right"
+                  size={20}
+                  color={colors.white}
+                />
+              </TouchableOpacity>
+            )}
+          </View>
+        </ScrollView>
+        <View style={styles.submitButtons}>
+          <ExamControlButton
+            onPress={handleSubmit}
+            labelSection={
+              <>
+                <Text style={styles.submitButtonText}>Submit</Text>
+                <MaterialCommunityIcons
+                  name="check-circle"
+                  size={20}
+                  color={colors.white}
+                />
+              </>
+            }
+            isLoading={loading}
+            buttonStyle={styles.submitButton}
+          />
           <TouchableOpacity
-            style={[
-              styles.navButton,
-              currentQuestion === 0 && styles.disabledButton,
-            ]}
-            disabled={currentQuestion === 0}
-            onPress={() => setCurrentQuestion((prev) => prev - 1)}
+            style={styles.cancelButton}
+            onPress={() => setIsShowDialog(true)}
           >
+            <Text style={styles.submitButtonText}>Cancel</Text>
             <MaterialCommunityIcons
-              name="arrow-left"
+              name="book-cancel-outline"
               size={20}
               color={colors.white}
             />
-            <Text style={styles.navButtonText}>Previous</Text>
           </TouchableOpacity>
-
-          {currentQuestion < (exam?.questions?.length ?? 1) - 1 ? (
-            <TouchableOpacity
-              style={styles.navButton}
-              onPress={() => setCurrentQuestion((prev) => prev + 1)}
-            >
-              <Text style={styles.navButtonText}>Next</Text>
-              <MaterialCommunityIcons
-                name="arrow-right"
-                size={20}
-                color={colors.white}
-              />
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity
-              style={styles.submitButton}
-              onPress={handleSubmit}
-            >
-              <Text style={styles.submitButtonText}>Submit</Text>
-              <MaterialCommunityIcons
-                name="check-circle"
-                size={20}
-                color={colors.white}
-              />
-            </TouchableOpacity>
-          )}
         </View>
       </View>
     );
@@ -291,11 +312,26 @@ function Exam() {
 
   return (
     <TheLayout
-      header={<TheBaseHeader title={exam?.name ?? ""} />}
+      header={
+        <TheBaseHeader
+          title={exam?.name ?? ""}
+          isShowBackBtn={isStarted ? false : true}
+        />
+      }
     >
       <View style={styles.container}>
         {isStarted ? renderQuestion() : renderIntro()}
       </View>
+      <ConfirmDialog
+        showDialog={isShowDialog}
+        content={"Do you want to cancel?"}
+        handleAccept={() => {
+          navigation.goBack();
+        }}
+        handleReject={() => {
+          setIsShowDialog(false);
+        }}
+      />
     </TheLayout>
   );
 }
@@ -355,8 +391,13 @@ const styles = StyleSheet.create({
   navigationButtons: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: spacing[4],
-    paddingBottom: spacing[4],
+    marginVertical: spacing[4],
+  },
+  submitButtons: {
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between",
+    marginVertical: spacing[1],
   },
   navButton: {
     flexDirection: "row",
@@ -375,9 +416,23 @@ const styles = StyleSheet.create({
     color: colors.white,
   },
   submitButton: {
+    height: 44,
+    justifyContent: "center",
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: colors.success,
+    borderRadius: 8,
+    paddingVertical: spacing[2],
+    paddingHorizontal: spacing[3],
+    gap: spacing[2],
+    marginBottom: spacing[5],
+  },
+  cancelButton: {
+    height: 44,
+    justifyContent: "center",
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: colors.error,
     borderRadius: 8,
     paddingVertical: spacing[2],
     paddingHorizontal: spacing[3],
