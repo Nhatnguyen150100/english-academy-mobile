@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import TheLayout from "@components/layout/TheLayOut";
 import TheBaseHeader from "@components/layout/TheBaseHeader";
-import { Searchbar } from "react-native-paper";
+import { ActivityIndicator, Searchbar } from "react-native-paper";
 import { ICourse } from "@src/types/course.types";
 import { courseService } from "@src/services";
 import Visibility from "@components/base/visibility";
@@ -22,35 +22,92 @@ import typography from "@styles/typography";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import Routes, { RootStackParams } from "@utils/Routes";
+import { RefreshControl } from "react-native-gesture-handler";
 
 function Courses() {
   const navigation = useNavigation<StackNavigationProp<RootStackParams>>();
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState<boolean>(false);
   const [listCourses, setListCourses] = useState<Array<ICourse>>([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
-  const handleGetListCourse = useCallback(async () => {
+  const handleGetListCourse = useCallback(async (isLoadMore = false) => {
     try {
-      setLoading(true);
-      const rs = await courseService.getAllCourse({ name: searchQuery });
-      setListCourses(rs.data.data);
+      if (isLoadMore) {
+        if (page >= totalPages) return;
+        setIsLoadingMore(true);
+      } else {
+        setLoading(true);
+      }
+
+      const rs = await courseService.getAllCourse({ page, name: searchQuery });
+      
+      setListCourses(prev => 
+        isLoadMore ? [...prev, ...rs.data.data] : rs.data.data
+      );
+      setTotalPages(rs.data.totalPages);
+      
+      if (!isLoadMore) setPage(1);
     } catch (error) {
       console.error(error);
     } finally {
-      setLoading(false);
+      if (isLoadMore) {
+        setIsLoadingMore(false);
+      } else {
+        setLoading(false);
+      }
+    }
+  }, [searchQuery, page, totalPages]);
+
+  const handleRefresh = useCallback(async () => {
+    try {
+      setRefreshing(true);
+      setPage(1);
+      const rs = await courseService.getAllCourse({ page: 1, name: searchQuery });
+      setListCourses(rs.data.data);
+      setTotalPages(rs.data.totalPages);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setRefreshing(false);
     }
   }, [searchQuery]);
+
+  const loadMoreCourses = () => {
+    if (!isLoadingMore && page < totalPages) {
+      setPage(prev => prev + 1);
+      handleGetListCourse(true);
+    }
+  };
 
   React.useEffect(() => {
     handleGetListCourse();
   }, [searchQuery, handleGetListCourse]);
 
+  const renderFooter = () => {
+    if (!isLoadingMore) return null;
+    
+    return (
+      <View style={styles.loadingFooter}>
+        <ActivityIndicator size="small" color={colors.primary} />
+      </View>
+    );
+  };
+
   const renderItem = useCallback(
-    ({ item }: { item: ICourse }) => <CourseItem item={item} onPress={(item) => {
-      navigation.navigate(Routes.CourseDetail, {
-        courseId: item._id
-      })
-    }}/>,
+    ({ item }: { item: ICourse }) => (
+      <CourseItem 
+        item={item} 
+        onPress={(item) => {
+          navigation.navigate(Routes.CourseDetail, {
+            courseId: item._id
+          })
+        }}
+      />
+    ),
     []
   );
 
@@ -86,6 +143,17 @@ function Courses() {
             initialNumToRender={10}
             maxToRenderPerBatch={5}
             windowSize={10}
+            onEndReached={loadMoreCourses}
+            onEndReachedThreshold={0.5}
+            ListFooterComponent={renderFooter}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={handleRefresh}
+                colors={[colors.primary]}
+                progressBackgroundColor={colors.white}
+              />
+            }
           />
         </Visibility>
       </View>
@@ -169,7 +237,7 @@ const styles = StyleSheet.create({
   },
   courseContainer: {
     flexDirection: "row",
-    alignItems: "flex-start",
+    alignItems: "center",
     backgroundColor: colors.white,
     borderRadius: 16,
     marginBottom: spacing[5],
@@ -219,6 +287,14 @@ const styles = StyleSheet.create({
   metaText: {
     ...typography.caption,
     color: colors.gray500,
+  },
+  loadingFooter: {
+    paddingVertical: spacing[4],
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  refreshControl: {
+    backgroundColor: colors.white,
   },
 });
 

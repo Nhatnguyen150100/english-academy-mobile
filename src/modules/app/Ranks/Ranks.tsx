@@ -5,9 +5,9 @@ import { IRank } from "@src/types/rank.types";
 import { rankService } from "@src/services";
 import TheLayout from "@components/layout/TheLayOut";
 import TheBaseHeader from "@components/layout/TheBaseHeader";
-import { FlatList } from "react-native-gesture-handler";
+import { FlatList, RefreshControl } from "react-native-gesture-handler";
 import Visibility from "@components/base/visibility";
-import { Searchbar } from "react-native-paper";
+import { ActivityIndicator, Searchbar } from "react-native-paper";
 import useDebounce from "@hooks/useDebounce";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -29,26 +29,66 @@ function Ranks() {
   const [listRanks, setListRanks] = useState<IRank[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleGetListRanks = useCallback(async () => {
     try {
-      const rs = await rankService.getAllRank({ name: debouncedSearchQuery });
-      setListRanks(rs.data || []);
+      console.log(page);
+      setLoading(true);
+      const rs = await rankService.getAllRank({
+        name: debouncedSearchQuery,
+        page,
+        limit: 10,
+      });
+
+      setListRanks((prev) =>
+        page !== 1 ? [...prev, ...rs.data.data] : rs.data.data
+      );
+      setTotalPages(rs.data.totalPages);
     } catch (error) {
       Toast.show({
         type: "error",
         text1: "Load ranks failed",
         text2: "Please try again later",
       });
+    } finally {
+      setIsLoadingMore(false);
+      setLoading(false);
     }
-  }, [debouncedSearchQuery]);
+  }, [debouncedSearchQuery, page, totalPages]);
+
+  const loadMoreRanks = () => {
+    if (!isLoadingMore && page < totalPages) {
+      setIsLoadingMore(true);
+      setPage(page + 1);
+    }
+  };
+
+  const handleRefresh = () => {
+    setPage(1);
+    handleGetListRanks();
+  };
 
   React.useEffect(() => {
     handleGetListRanks();
-  }, [debouncedSearchQuery, handleGetListRanks]);
+  }, [debouncedSearchQuery, handleGetListRanks, page]);
+
+  const renderFooter = () => {
+    if (!isLoadingMore) return null;
+    return (
+      <View style={styles.loadingFooter}>
+        <ActivityIndicator size="small" color={colors.primary} />
+      </View>
+    );
+  };
 
   const renderItem = useCallback(
-    ({ item }: { item: IRank }) => <RankItem item={item} onPress={navigation.navigate} />,
+    ({ item }: { item: IRank }) => (
+      <RankItem item={item} onPress={navigation.navigate} />
+    ),
     [navigation.navigate]
   );
 
@@ -80,75 +120,95 @@ function Ranks() {
           initialNumToRender={10}
           maxToRenderPerBatch={5}
           windowSize={10}
+          refreshControl={
+            <RefreshControl
+              refreshing={loading}
+              onRefresh={handleRefresh}
+              colors={[colors.primary]}
+              progressBackgroundColor={colors.white}
+            />
+          }
+          onEndReached={loadMoreRanks}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={renderFooter}
         />
       </View>
     </TheLayout>
   );
 }
 
-const RankItem = React.memo(({ 
-  item, 
-  onPress 
-}: { 
-  item: IRank;
-  onPress: StackNavigationProp<RootStackParams>["navigate"];
-}) => (
-  <TouchableOpacity 
-    activeOpacity={0.9}
-    onPress={() => onPress(Routes.UserProfile, { userId: item._id })}
-  >
-    <LinearGradient
-      colors={item.rankNumber < 4 ? ["#f8f9ff", "#eef2ff"] : ["#ffffff", "#f8fafc"]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      style={styles.rankContainer}
+const RankItem = React.memo(
+  ({
+    item,
+    onPress,
+  }: {
+    item: IRank;
+    onPress: StackNavigationProp<RootStackParams>["navigate"];
+  }) => (
+    <TouchableOpacity
+      activeOpacity={0.9}
+      onPress={() => onPress(Routes.UserProfile, { userId: item._id })}
     >
-      <View style={styles.rankInfo}>
-        <Visibility
-          visibility={item.rankNumber < 4}
-          suspenseComponent={
-            <View style={styles.rankNumberWrapper}>
-              <Text style={styles.rankNumber}>#{item.rankNumber}</Text>
-            </View>
-          }
-        >
-          <Image
-            source={rankImages[item.rankNumber - 1]}
-            style={styles.rankImage}
-            resizeMode="contain"
-          />
-        </Visibility>
-
-        <View style={styles.userInfo}>
-          <Text style={styles.rankName} numberOfLines={1}>{item.name}</Text>
-          <View style={styles.accountTypeWrapper}>
-            <MaterialCommunityIcons
-              name={getAccountTypeIcon(item.accountType)}
-              size={14}
-              color={colors.primary}
+      <LinearGradient
+        colors={
+          item.rankNumber < 4 ? ["#f8f9ff", "#eef2ff"] : ["#ffffff", "#f8fafc"]
+        }
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.rankContainer}
+      >
+        <View style={styles.rankInfo}>
+          <Visibility
+            visibility={item.rankNumber < 4}
+            suspenseComponent={
+              <View style={styles.rankNumberWrapper}>
+                <Text style={styles.rankNumber}>#{item.rankNumber}</Text>
+              </View>
+            }
+          >
+            <Image
+              source={rankImages[item.rankNumber - 1]}
+              style={styles.rankImage}
+              resizeMode="contain"
             />
-            <Text style={styles.accountTypeText}>{item.accountType}</Text>
+          </Visibility>
+
+          <View style={styles.userInfo}>
+            <Text style={styles.rankName} numberOfLines={1}>
+              {item.name}
+            </Text>
+            <View style={styles.accountTypeWrapper}>
+              <MaterialCommunityIcons
+                name={getAccountTypeIcon(item.accountType)}
+                size={14}
+                color={colors.primary}
+              />
+              <Text style={styles.accountTypeText}>{item.accountType}</Text>
+            </View>
           </View>
         </View>
-      </View>
 
-      <View style={styles.scoreWrapper}>
-        <MaterialCommunityIcons
-          name="trophy"
-          size={20}
-          color={colors.primary}
-        />
-        <Text style={styles.rankScore}>{item.score.toLocaleString()}</Text>
-      </View>
-    </LinearGradient>
-  </TouchableOpacity>
-));
+        <View style={styles.scoreWrapper}>
+          <MaterialCommunityIcons
+            name="trophy"
+            size={20}
+            color={colors.primary}
+          />
+          <Text style={styles.rankScore}>{item.score.toLocaleString()}</Text>
+        </View>
+      </LinearGradient>
+    </TouchableOpacity>
+  )
+);
 
 const getAccountTypeIcon = (type: string) => {
   switch (type.toLowerCase()) {
-    case 'premium': return 'crown';
-    case 'vip': return 'star';
-    default: return 'account';
+    case "premium":
+      return "crown";
+    case "vip":
+      return "star";
+    default:
+      return "account";
   }
 };
 
@@ -156,7 +216,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: spacing[0],
-    width: "100%"
+    width: "100%",
   },
   searchBar: {
     borderRadius: 12,
@@ -176,9 +236,9 @@ const styles = StyleSheet.create({
     paddingBottom: spacing[6],
   },
   rankContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     borderRadius: 16,
     marginBottom: spacing[3],
     padding: spacing[4],
@@ -189,8 +249,8 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   rankInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     flex: 1,
   },
   rankImage: {
@@ -201,8 +261,8 @@ const styles = StyleSheet.create({
   rankNumberWrapper: {
     width: 48,
     height: 48,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginRight: spacing[3],
   },
   rankNumber: {
@@ -219,23 +279,28 @@ const styles = StyleSheet.create({
     marginBottom: spacing[1],
   },
   accountTypeWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: spacing[2],
   },
   accountTypeText: {
     ...typography.caption,
     color: colors.primary,
-    textTransform: 'capitalize',
+    textTransform: "capitalize",
   },
   scoreWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: spacing[2],
   },
   rankScore: {
     ...typography.subtitle1,
     color: colors.primary,
+  },
+  loadingFooter: {
+    paddingVertical: spacing[4],
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
 

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { View } from 'react-native';
 
 interface IVisibilityProps {
   visibility: any;
@@ -18,7 +19,7 @@ export default function Visibility({
       {Boolean(visibility) ? (
         children
       ) : boundaryComponent ? (
-        <div />
+        <View />
       ) : (
         suspenseComponent
       )}

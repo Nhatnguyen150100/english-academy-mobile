@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   Alert,
   ScrollView,
   GestureResponderEvent,
+  Image,
 } from "react-native";
 import TheLayout from "@components/layout/TheLayOut";
 import TheBaseHeader from "@components/layout/TheBaseHeader";
@@ -23,10 +24,13 @@ import Toast from "react-native-toast-message";
 import getScoreFromExam from "@utils/functions/get-score";
 import ConfirmDialog from "@components/base/ConfirmDialog";
 import ExamControlButton from "./_components/ExamControlButton";
+import Visibility from "@components/base/visibility";
+import Fireworks from "@components/base/Fireworks";
 
 interface IAnswer {
   questionId: string;
   answer: string;
+  correctAnswer?: string;
 }
 
 function Exam() {
@@ -43,6 +47,8 @@ function Exam() {
   const [isStarted, setIsStarted] = useState(false);
   const [isShowDialog, setIsShowDialog] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isShowDialogSubmit, setIsShowDialogSubmit] = useState(false);
+  const [score, setScore] = useState(0);
 
   const handleGetExamDetail = async () => {
     if (!examId) {
@@ -76,8 +82,16 @@ function Exam() {
       }
     }, 1000);
 
+    if (isSubmitted) clearInterval(timer);
+
     return () => clearInterval(timer);
   }, [timeLeft, isSubmitted, isStarted]);
+
+  const averageScore = useMemo(() => {
+    if (!exam?.questions) return 0;
+    const totalQuestions = exam.questions.length;
+    return Math.round((score / totalQuestions) * 100);
+  }, [score, exam?.questions]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -95,13 +109,35 @@ function Exam() {
     }));
   };
 
-  const handleSubmit = () => {
-    setIsSubmitted(true);
-    Alert.alert(
-      "Exam Submitted",
-      `Your score: ${calculateScore()}/${exam?.questions.length}`,
-      [{ text: "OK", onPress: () => navigation.goBack() }]
-    );
+  const handleSubmit = async () => {
+    try {
+      setLoading(true);
+      const listAnswer = Object.values(selectedAnswers).map((answer) => answer);
+      const rs = await examService.submitExam({
+        examId,
+        listAnswer,
+      });
+      setIsSubmitted(true);
+      const results = rs.data.results;
+      const convertedAnswer = selectedAnswers;
+      for (let index = 0; index < results?.length; index++) {
+        const element = results[index];
+        convertedAnswer[element.questionId] = {
+          ...convertedAnswer[element.questionId],
+          correctAnswer: element.correctAnswer,
+        };
+      }
+      setScore(rs.data.score);
+      setSelectedAnswers(convertedAnswer);
+    } catch (error) {
+      Toast.show({
+        text1: error.message,
+        type: "error",
+      });
+    } finally {
+      setLoading(false);
+      setIsShowDialogSubmit(false);
+    }
   };
 
   const getLevelIcon = (level: string) => {
@@ -170,15 +206,27 @@ function Exam() {
         </View>
       </View>
 
-      <View style={styles.rewardContainer}>
+      <View
+        style={[
+          styles.rewardContainer,
+          {
+            backgroundColor: exam?.isCompleted
+              ? colors.gray200
+              : colors.warningLight,
+          },
+        ]}
+      >
         <MaterialCommunityIcons
           name="trophy-award"
           size={40}
           color={colors.warning}
         />
         <Text style={styles.rewardText}>
-          Complete excellently and get {getScoreFromExam(exam?.level ?? "EASY")}{" "}
-          points!
+          {!exam?.isCompleted
+            ? `Complete excellently and get ${getScoreFromExam(
+                exam?.level ?? "EASY"
+              )} points!`
+            : "You have completed this exam and will not receive additional points for this exam."}
         </Text>
       </View>
 
@@ -196,9 +244,27 @@ function Exam() {
     </View>
   );
 
-  const calculateScore = () => {
-    return Object.keys(selectedAnswers).length;
-  };
+  const imageSource = useMemo(() => {
+    if (!averageScore) return;
+    if (averageScore === 100) {
+      return require("@assets/images/exam-score/star.png");
+    } else if (averageScore >= 70) {
+      return require("@assets/images/exam-score/smile.png");
+    } else {
+      return require("@assets/images/exam-score/sad.png");
+    }
+  }, [averageScore]);
+
+  const colorFinishExam = useMemo(() => {
+    if (!averageScore) return;
+    if (averageScore === 100) {
+      return colors.success;
+    } else if (averageScore >= 70) {
+      return colors.warning;
+    } else {
+      return colors.error;
+    }
+  }, [averageScore]);
 
   const renderQuestion = () => {
     const question = exam?.questions[currentQuestion];
@@ -207,13 +273,33 @@ function Exam() {
       <View style={styles.questionContainer}>
         <View style={styles.questionHeader}>
           <MaterialCommunityIcons
-            name="clock-outline"
+            name={isSubmitted ? "star-check" : "clock-outline"}
             size={24}
-            color={colors.gray600}
+            color={isSubmitted ? colorFinishExam : colors.gray600}
           />
-          <Text style={styles.timerText}>{formatTime(timeLeft)}</Text>
+          <Visibility
+            visibility={isSubmitted}
+            suspenseComponent={
+              <Text style={styles.timerText}>{formatTime(timeLeft)}</Text>
+            }
+          >
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Text style={[styles.scoreText, { color: colorFinishExam }]}>
+                Score: {averageScore}
+              </Text>
+              <Image source={imageSource} style={styles.iconScoreExam} />
+            </View>
+          </Visibility>
+
           <Text style={styles.progressText}>
-            {currentQuestion + 1}/{exam?.questions.length}
+            {currentQuestion + 1}/{exam?.questions?.length}
           </Text>
         </View>
 
@@ -227,18 +313,38 @@ function Exam() {
                 styles.optionButton,
                 selectedAnswers[question._id]?.answer === option.content &&
                   styles.selectedOption,
+                isSubmitted &&
+                  option.content === selectedAnswers[question._id]?.answer &&
+                  styles.wrongAnswer,
+                isSubmitted &&
+                  option.content ===
+                    selectedAnswers[question._id]?.correctAnswer &&
+                  styles.correctAnswer,
               ]}
+              disabled={isSubmitted}
               onPress={() => handleAnswerSelect(question._id, option.content)}
             >
               <MaterialCommunityIcons
                 name={
-                  selectedAnswers[question._id]?.answer === option.content
+                  isSubmitted
+                    ? selectedAnswers[question._id]?.correctAnswer ===
+                      option.content
+                      ? "checkbox-marked-circle"
+                      : "cancel"
+                    : selectedAnswers[question._id]?.answer === option.content
                     ? "checkbox-marked-circle"
                     : "checkbox-blank-circle-outline"
                 }
                 size={20}
                 color={
-                  selectedAnswers[question._id]?.answer === option.content
+                  isSubmitted
+                    ? option.content ===
+                      selectedAnswers[question._id]?.correctAnswer
+                      ? colors.success
+                      : option.content === selectedAnswers[question._id]?.answer
+                      ? colors.error
+                      : colors.gray400
+                    : selectedAnswers[question._id]?.answer === option.content
                     ? colors.primary
                     : colors.gray400
                 }
@@ -247,21 +353,23 @@ function Exam() {
             </TouchableOpacity>
           ))}
           <View style={styles.navigationButtons}>
-            <TouchableOpacity
-              style={[
-                styles.navButton,
-                currentQuestion === 0 && styles.disabledButton,
-              ]}
-              disabled={currentQuestion === 0}
-              onPress={() => setCurrentQuestion((prev) => prev - 1)}
-            >
-              <MaterialCommunityIcons
-                name="arrow-left"
-                size={20}
-                color={colors.white}
-              />
-              <Text style={styles.navButtonText}>Previous</Text>
-            </TouchableOpacity>
+            <Visibility visibility={currentQuestion !== 0} boundaryComponent>
+              <TouchableOpacity
+                style={[
+                  styles.navButton,
+                  currentQuestion === 0 && styles.disabledButton,
+                ]}
+                disabled={currentQuestion === 0}
+                onPress={() => setCurrentQuestion((prev) => prev - 1)}
+              >
+                <MaterialCommunityIcons
+                  name="arrow-left"
+                  size={20}
+                  color={colors.white}
+                />
+                <Text style={styles.navButtonText}>Previous</Text>
+              </TouchableOpacity>
+            </Visibility>
 
             {currentQuestion < (exam?.questions?.length ?? 1) - 1 && (
               <TouchableOpacity
@@ -278,34 +386,59 @@ function Exam() {
             )}
           </View>
         </ScrollView>
-        <View style={styles.submitButtons}>
-          <ExamControlButton
-            onPress={handleSubmit}
-            labelSection={
-              <>
-                <Text style={styles.submitButtonText}>Submit</Text>
-                <MaterialCommunityIcons
-                  name="check-circle"
-                  size={20}
-                  color={colors.white}
-                />
-              </>
-            }
-            isLoading={loading}
-            buttonStyle={styles.submitButton}
-          />
-          <TouchableOpacity
-            style={styles.cancelButton}
-            onPress={() => setIsShowDialog(true)}
-          >
-            <Text style={styles.submitButtonText}>Cancel</Text>
-            <MaterialCommunityIcons
-              name="book-cancel-outline"
-              size={20}
-              color={colors.white}
+        <Visibility
+          visibility={!isSubmitted}
+          suspenseComponent={
+            <ExamControlButton
+              onPress={() => {
+                navigation.goBack();
+              }}
+              labelSection={
+                <>
+                  <Text style={styles.submitButtonText}>Finish exam</Text>
+                  <MaterialCommunityIcons
+                    name="check-circle"
+                    size={20}
+                    color={colors.white}
+                  />
+                </>
+              }
+              isLoading={loading}
+              buttonStyle={styles.finishButton}
             />
-          </TouchableOpacity>
-        </View>
+          }
+        >
+          <View style={styles.submitButtons}>
+            <ExamControlButton
+              onPress={() => {
+                setIsShowDialogSubmit(true);
+              }}
+              labelSection={
+                <>
+                  <Text style={styles.submitButtonText}>Submit</Text>
+                  <MaterialCommunityIcons
+                    name="check-circle"
+                    size={20}
+                    color={colors.white}
+                  />
+                </>
+              }
+              isLoading={loading}
+              buttonStyle={styles.submitButton}
+            />
+            <TouchableOpacity
+              style={styles.cancelButton}
+              onPress={() => setIsShowDialog(true)}
+            >
+              <Text style={styles.submitButtonText}>Cancel</Text>
+              <MaterialCommunityIcons
+                name="book-cancel-outline"
+                size={20}
+                color={colors.white}
+              />
+            </TouchableOpacity>
+          </View>
+        </Visibility>
       </View>
     );
   };
@@ -332,6 +465,15 @@ function Exam() {
           setIsShowDialog(false);
         }}
       />
+      <ConfirmDialog
+        showDialog={isShowDialogSubmit}
+        content={"Do you want to submit exam?"}
+        handleAccept={handleSubmit}
+        handleReject={() => {
+          setIsShowDialogSubmit(false);
+        }}
+      />
+      <Fireworks play={averageScore === 100} />
     </TheLayout>
   );
 }
@@ -356,6 +498,10 @@ const styles = StyleSheet.create({
     ...typography.subtitle1,
     color: colors.error,
   },
+  scoreText: {
+    ...typography.subtitle1,
+    color: colors.success,
+  },
   progressText: {
     ...typography.body1,
     color: colors.gray600,
@@ -378,9 +524,23 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.gray200,
   },
+  iconScoreExam: {
+    width: 24,
+    height: 24,
+    resizeMode: "cover",
+    marginLeft: spacing[2],
+  },
   selectedOption: {
     borderColor: colors.primary,
     backgroundColor: colors.primaryLight,
+  },
+  correctAnswer: {
+    backgroundColor: colors.successLight,
+    borderColor: colors.success,
+  },
+  wrongAnswer: {
+    backgroundColor: colors.errorLight,
+    borderColor: colors.error,
   },
   optionText: {
     ...typography.body1,
@@ -426,6 +586,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing[3],
     gap: spacing[2],
     marginBottom: spacing[5],
+  },
+  finishButton: {
+    height: 44,
+    justifyContent: "center",
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: colors.primary,
+    borderRadius: 8,
+    paddingVertical: spacing[2],
+    paddingHorizontal: spacing[3],
+    gap: spacing[2],
   },
   cancelButton: {
     height: 44,
@@ -491,6 +662,7 @@ const styles = StyleSheet.create({
   rewardText: {
     ...typography.subtitle2,
     color: colors.warningDark,
+    fontWeight: "bold",
     flex: 1,
   },
   startButton: {

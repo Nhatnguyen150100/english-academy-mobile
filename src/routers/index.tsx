@@ -31,7 +31,7 @@ const StackNavigation = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const [isSignedIn, setIsSignedIn] = React.useState(false);
-  const [loading, setLoading] = React.useState(false);
+  const [loading, setLoading] = React.useState(true);
 
   const handleGetInfo = async () => {
     try {

@@ -22,6 +22,9 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import Routes, { RootStackParams } from "@utils/Routes";
 import Toast from "react-native-toast-message";
+import Fireworks from "@components/base/Fireworks";
+import { useSelector } from "react-redux";
+import { IRootState } from "@store/index";
 
 type TaskRowProps = {
   title: string;
@@ -44,6 +47,10 @@ const MissionDaily: React.FC = () => {
   const [mission, setMission] = useState<IMissionDaily | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [pulseAnim] = useState<Animated.Value>(new Animated.Value(1));
+  const [claimSuccess, setClaimSuccess] = useState<boolean>(false);
+  const numberMissionDaily = useSelector(
+    (state: IRootState) => state.AppReducer.numberMissionDaily
+  );
 
   const dispatch = useDispatch();
 
@@ -62,7 +69,7 @@ const MissionDaily: React.FC = () => {
   }, []);
 
   const claimReward = async () => {
-    if(!mission?._id) {
+    if (!mission?._id) {
       Toast.show({
         type: "error",
         text1: "No mission to claim",
@@ -71,20 +78,21 @@ const MissionDaily: React.FC = () => {
     }
     try {
       setLoading(true);
-      const rs = await missionDailyService.claimRewardMissionDaily(mission!._id);
+      const rs = await missionDailyService.claimRewardMissionDaily(
+        mission!._id
+      );
       fetchMissionDaily();
       Toast.show({
         type: "success",
         text1: rs.message,
       });
-    } catch (error) {
-      console.error("Fetch mission error:", error);
+      setClaimSuccess(true);
     } finally {
       setLoading(false);
     }
-  }
+  };
 
-  const handleCheckInDaily = async() => {
+  const handleCheckInDaily = async () => {
     try {
       setLoading(true);
       await missionDailyService.createMissionDaily();
@@ -94,7 +102,7 @@ const MissionDaily: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
     fetchMissionDaily();
@@ -105,7 +113,7 @@ const MissionDaily: React.FC = () => {
   );
 
   useEffect(() => {
-    if (bothCompleted) {
+    if (bothCompleted && numberMissionDaily) {
       Animated.loop(
         Animated.sequence([
           Animated.timing(pulseAnim, {
@@ -164,7 +172,7 @@ const MissionDaily: React.FC = () => {
           <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
             <LinearGradient
               colors={
-                bothCompleted ? ["#FF9800", "#F44336"] : ["#E0E0E0", "#BDBDBD"]
+                numberMissionDaily === 0 ? ["#82f394", "#28A745", "#218838"] : bothCompleted ? ["#FF9800", "#F44336"] : ["#E0E0E0", "#BDBDBD"]
               }
               style={styles.combinedButton}
               start={{ x: 0, y: 0 }}
@@ -172,12 +180,14 @@ const MissionDaily: React.FC = () => {
             >
               <TouchableOpacity
                 style={styles.combinedButtonContent}
-                disabled={!bothCompleted}
+                disabled={!bothCompleted || numberMissionDaily === 0}
                 onPress={claimReward}
               >
                 <Icon name="trophy" size={24} color="white" />
                 <Text style={styles.combinedButtonText}>
-                  {bothCompleted
+                  {numberMissionDaily === 0
+                    ? "Claim Daily success!"
+                    : bothCompleted
                     ? "Claim Daily Reward!"
                     : "Complete Both Tasks"}
                 </Text>
@@ -192,6 +202,7 @@ const MissionDaily: React.FC = () => {
           theme={theme}
         />
       </View>
+      <Fireworks play={claimSuccess} />
     </TheLayout>
   );
 };
@@ -226,12 +237,16 @@ const RewardsSection: React.FC<{
   testReward: number;
   theme: any;
 }> = ({ checkInReward, testReward, theme }) => (
-  <View
-  >
+  <View>
     <Text variant="titleMedium" style={styles.sectionTitle}>
       Today's Rewards
     </Text>
-    <View style={[styles.rewardsContainer, { backgroundColor: theme.colors.surface }]}>
+    <View
+      style={[
+        styles.rewardsContainer,
+        { backgroundColor: theme.colors.surface },
+      ]}
+    >
       <RewardItem
         icon="coin"
         value={checkInReward}

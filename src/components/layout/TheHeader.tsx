@@ -3,7 +3,6 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { missionDailyService } from "@src/services";
-import { IMissionDaily } from "@src/types/missionDaily.types";
 import { IRootState } from "@store/index";
 import { setNumberMissionDaily } from "@store/redux/appSlice";
 import { LightTheme } from "@styles/theme";
@@ -15,9 +14,7 @@ import { Badge } from "react-native-paper";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 
-type Props = {};
-
-export default function TheHeader({}: Props) {
+export default function TheHeader() {
   const navigation = useNavigation<StackNavigationProp<RootStackParams>>();
   const user = useSelector((state: IRootState) => state.AppReducer.user);
   const numberMissionDaily = useSelector(
@@ -26,13 +23,9 @@ export default function TheHeader({}: Props) {
   const dispatch = useDispatch();
 
   const getMissionDaily = async () => {
-    try {
-      const rs = await missionDailyService.getMissionDaily();
-      const numberMissionDailyFetch = getNumberMission(rs.data);
-      dispatch(setNumberMissionDaily(numberMissionDailyFetch));
-    } catch (error) {
-      console.log("🚀 ~ getMissionDaily ~ error:", error);
-    }
+    const rs = await missionDailyService.getMissionDaily();
+    const numberMissionDailyFetch = getNumberMission(rs.data);
+    dispatch(setNumberMissionDaily(numberMissionDailyFetch));
   };
 
   useEffect(() => {
@@ -67,7 +60,7 @@ export default function TheHeader({}: Props) {
             navigation.navigate(Routes.MissionDaily);
           }}
         />
-        {numberMissionDaily && (
+        {numberMissionDaily ? (
           <Badge
             style={styles.badge}
             onPress={() => {
@@ -76,7 +69,7 @@ export default function TheHeader({}: Props) {
           >
             {numberMissionDaily}
           </Badge>
-        )}
+        ) : null}
       </View>
     </View>
   );

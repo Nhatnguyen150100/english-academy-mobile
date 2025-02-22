@@ -23,6 +23,7 @@ export interface IExamDetail {
   __v: number;
   createdAt: string;
   updatedAt: string;
+  isCompleted: boolean;
 }
 
 export interface IQuestion {
@@ -35,4 +36,15 @@ export interface IQuestion {
 export interface IOption {
   content: string;
   _id: string;
+}
+
+export interface IResponseAnswerExam {
+  results: Array<IResult>;
+  score: number;
+}
+
+export interface IResult {
+  questionId: string;
+  correctAnswer: string;
+  userAnser: string;
 }

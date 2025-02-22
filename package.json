@@ -27,6 +27,7 @@
     "i18n-js": "^4.4.3",
     "jest-expo": "~52.0.2",
     "lodash.throttle": "^4.1.1",
+    "lottie-react-native": "^7.2.2",
     "metro-react-native-babel-preset": "^0.66.2",
     "moment": "^2.29.4",
     "react": "18.3.1",

@@ -1,6 +1,9 @@
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { rankService } from "@src/services";
 import { IRank } from "@src/types/rank.types";
-import { LightTheme } from "@styles/theme";
+import { spacing } from "@styles/spacing";
+import { colors, LightTheme } from "@styles/theme";
+import typography from "@styles/typography";
 import React, { useState } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 import Toast from "react-native-toast-message";
@@ -16,9 +19,11 @@ export default function TopRank() {
 
   const handleGetListRanks = async () => {
     try {
-      const rs = await rankService.getAllRank();
+      const rs = await rankService.getAllRank({
+        limit: 3,
+      });
       if (rs.data) {
-        setListRanks(rs.data.filter((_item) => _item.rankNumber < 4));
+        setListRanks(rs.data.data.filter((_item) => _item.rankNumber < 4));
       }
     } catch (error) {
       Toast.show({
@@ -31,6 +36,17 @@ export default function TopRank() {
   React.useEffect(() => {
     handleGetListRanks();
   }, []);
+
+  const getAccountTypeIcon = (type: string) => {
+    switch (type.toLowerCase()) {
+      case "premium":
+        return "crown";
+      case "vip":
+        return "star";
+      default:
+        return "account";
+    }
+  };
 
   return (
     <View style={styles.root}>
@@ -48,10 +64,26 @@ export default function TopRank() {
                 }}
               >
                 <Text style={styles.rankName}>{rank.name}</Text>
-                <Text style={styles.rankId}>{rank._id}</Text>
+                <View style={styles.accountTypeWrapper}>
+                  <MaterialCommunityIcons
+                    name={getAccountTypeIcon(rank.accountType)}
+                    size={14}
+                    color={colors.primary}
+                  />
+                  <Text style={styles.accountTypeText}>{rank.accountType}</Text>
+                </View>
               </View>
             </View>
-            <Text style={styles.rankScore}>{rank.score}</Text>
+            <View style={styles.scoreWrapper}>
+              <MaterialCommunityIcons
+                name="trophy"
+                size={20}
+                color={colors.primary}
+              />
+              <Text style={styles.rankScore}>
+                {rank.score.toLocaleString()}
+              </Text>
+            </View>
           </View>
         ))}
       </View>
@@ -114,10 +146,23 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "gray",
   },
+  accountTypeWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing[2],
+  },
+  accountTypeText: {
+    ...typography.caption,
+    color: colors.primary,
+    textTransform: "capitalize",
+  },
+  scoreWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing[2],
+  },
   rankScore: {
-    fontFamily: "Black",
-    fontSize: 22,
-    color: LightTheme.primary,
-    marginBottom: 5, 
+    ...typography.subtitle1,
+    color: colors.primary,
   },
 });

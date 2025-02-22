@@ -1,5 +1,10 @@
-import React from "react";
-import { View, StyleSheet, KeyboardAvoidingView, TouchableOpacity } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  StyleSheet,
+  KeyboardAvoidingView,
+  TouchableOpacity,
+} from "react-native";
 import { Text, Button, Chip } from "react-native-paper";
 import { useSelector } from "react-redux";
 import { IRootState } from "@store/index";
@@ -8,39 +13,58 @@ import TheBaseHeader from "@components/layout/TheBaseHeader";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import Routes, { RootStackParams } from "@utils/Routes";
-import { LightTheme } from "@styles/theme";
+import { colors, LightTheme } from "@styles/theme";
 import { AntDesign } from "@expo/vector-icons";
 import AccountChip from "@components/base/AccountChip";
 import MyAchievements from "../home/components/MyAchievements";
 import Icon from "react-native-vector-icons/Ionicons";
+import { examService } from "@src/services";
+import Visibility from "@components/base/visibility";
 
 function InformationSection({
   label,
   value,
   iconNext,
+  onPress,
 }: {
   label: string;
   value?: string;
   iconNext: React.ReactNode;
+  onPress?: () => void;
 }) {
   const navigation = useNavigation<StackNavigationProp<RootStackParams>>();
   return (
-    <TouchableOpacity onPress={() => {
-      navigation.navigate(Routes.EditProfile);
-    }}>
+    <TouchableOpacity
+      onPress={() => {
+        onPress ? onPress() : navigation.navigate(Routes.EditProfile);
+      }}
+    >
       <View style={styles.rowInfo}>
-      <Text style={styles.label}>{label}</Text>
-      <View style={styles.row}>
-        <Text style={styles.info}>{value}</Text>
-        {iconNext}
+        <Text style={styles.label}>{label}</Text>
+        <View style={styles.row}>
+          <Text style={styles.info}>{value}</Text>
+          {iconNext}
+        </View>
       </View>
-    </View>
     </TouchableOpacity>
   );
 }
 
 function Profile() {
   const user = useSelector((state: IRootState) => state.AppReducer.user);
+  const [numberAttempt, setNumberAttempt] = useState<number | "UNLIMITED">();
+  console.log("🚀 ~ Profile ~ numberAttempt:", numberAttempt);
+
+  const handleGetExamAttempt = async () => {
+    const rs = await examService.checkNumberExamAttempt();
+    if (rs.data) {
+      setNumberAttempt(rs.data);
+    }
+  };
+
+  useEffect(() => {
+    handleGetExamAttempt();
+  }, []);
 
   const iconNext = (
     <Icon
@@ -75,32 +99,42 @@ function Profile() {
               <AccountChip accountType={user?.accountType ?? "FREE"} />
             </View>
             <View style={styles.infoContainer}>
-              <InformationSection label="Email" value={user?.email} iconNext={iconNext} />
-              <InformationSection label="Phone number" value={user?.phone_number} iconNext={iconNext} />
-              <InformationSection label="Address" value={user?.address} iconNext={iconNext} />
+              <InformationSection
+                label="Email"
+                value={user?.email}
+                iconNext={iconNext}
+              />
+              <InformationSection
+                label="Phone number"
+                value={user?.phone_number}
+                iconNext={iconNext}
+              />
+              <InformationSection
+                label="Address"
+                value={user?.address}
+                iconNext={iconNext}
+              />
+              <InformationSection
+                label="History exams completed"
+                value={""}
+                iconNext={iconNext}
+              />
               <View style={styles.rowInfo}>
-                <Text style={styles.label}>Role</Text>
-                <Chip
-                  style={{
-                    backgroundColor: "#e0c684",
-                    borderRadius: 50,
-                    paddingHorizontal: 10,
-                    paddingVertical: 5,
-                  }}
-                >
-                  <Text style={{ color: "#fff", fontWeight: "bold" }}>
-                    {user?.role}
-                  </Text>
-                </Chip>
+                <Text style={styles.label}>Number of exams can attempt</Text>
+                <Text style={{ color: "#00000", fontWeight: "bold" }}>
+                  {numberAttempt}
+                </Text>
               </View>
-              <Button
-                mode="contained"
-                buttonColor={LightTheme.primary}
-                // onPress={() => setIsShowDialog(true)}
-                style={styles.editInfoButton}
-              >
-                Update plan
-              </Button>
+              <Visibility visibility={user?.accountType === "FREE"}>
+                <Button
+                  mode="contained"
+                  buttonColor={colors.primary}
+                  // onPress={() => setIsShowDialog(true)}
+                  style={styles.editInfoButton}
+                >
+                  Update plan
+                </Button>
+              </Visibility>
             </View>
             <MyAchievements />
           </View>
@@ -215,7 +249,7 @@ const styles = StyleSheet.create({
   },
   editInfoButton: {
     width: "100%",
-    backgroundColor: LightTheme.primary,
+    backgroundColor: colors.primary,
   },
 });
 
