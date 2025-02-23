@@ -4,7 +4,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { rankService } from "@src/services";
 import { IRank } from "@src/types/rank.types";
 import { spacing } from "@styles/spacing";
-import { colors, LightTheme } from "@styles/theme";
+import { colors } from "@styles/theme";
 import typography from "@styles/typography";
 import React, { useState } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";

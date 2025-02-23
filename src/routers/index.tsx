@@ -19,7 +19,6 @@ import { authService } from "@src/services";
 import { useDispatch } from "react-redux";
 import { setUser } from "@store/redux/appSlice";
 import LoadingScreen from "@components/base/LoadingScreen";
-import Profile from "@modules/app/profile/Profile";
 import ProfileStack from "./stacks/ProfileStack";
 import MissionDaily from "@modules/app/mission-daily/MissionDaily";
 
@@ -31,7 +30,7 @@ const StackNavigation = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const [isSignedIn, setIsSignedIn] = React.useState(false);
-  const [loading, setLoading] = React.useState(true);
+  const [loading, setLoading] = React.useState(false);
 
   const handleGetInfo = async () => {
     try {
@@ -69,7 +68,7 @@ const StackNavigation = () => {
 
   return (
     <Stack.Navigator
-      initialRouteName={isSignedIn ? Routes.Home : Routes.OneStepScreen}
+      initialRouteName={Routes.Home}
       screenOptions={{ ...ScreenOptions, headerTintColor: theme.primary }}
     >
       <>

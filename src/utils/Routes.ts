@@ -2,62 +2,91 @@
  * Enum representing the available routes in the application.
  */
 export enum Routes {
+  // Auth routes
   OneStepScreen = "getting-screen-one",
-  Home = "Home",
   Login = "Login",
-  Courses = "Courses",
-  CourseDetail = "CourseDetail",
-  Ranks = "Ranks",
   Register = "Register",
+
+  // Main app routes
+  Home = "Home",
   Profile = "Profile",
   EditProfile = "EditProfile",
   Settings = "Settings",
-  Post = "Post",
   MissionDaily = "MissionDaily",
-  UserProfile = "UserProfile",
+
+  // Nested stacks
+  BlogStack = "BlogStack",
+  CourseStack = "CourseStack",
+  RankStack = "RankStack",
+
+  // Blog sub-routes
+  BlogList = "BlogList",
+  BlogDetail = "BlogDetail",
+  CreateBlog = "CreateBlog",
+
+  // Course sub-routes
+  CourseList = "CourseList",
+  CourseDetail = "CourseDetail",
   Exam = "Exam",
   HistoryExam = "HistoryExam",
+
+  // Rank sub-routes
+  RankList = "RankList",
+  UserProfile = "UserProfile"
 }
 
 /**
- * Represents the parameter types for the root stack navigation.
+ * Root stack parameters
  */
 export type RootStackParams = {
-  [Routes.Home]: undefined;
-  [Routes.Login]: { email: string | undefined };
-  [Routes.Register]: undefined;
   [Routes.OneStepScreen]: undefined;
+  [Routes.Login]: { email?: string };
+  [Routes.Register]: undefined;
+  [Routes.Home]: undefined;
   [Routes.Profile]: undefined;
   [Routes.EditProfile]: undefined;
   [Routes.MissionDaily]: undefined;
-  [Routes.Ranks]: undefined;
-  [Routes.UserProfile]: { userId: string | undefined };
-  [Routes.Courses]: undefined;
-  [Routes.CourseDetail]: { courseId: string | undefined };
-  [Routes.Exam]: { examId: string | undefined };
-  [Routes.HistoryExam]: undefined ;
+  [Routes.Settings]: undefined;
+  
+  // Nested stacks
+  [Routes.BlogStack]: undefined;
+  [Routes.CourseStack]: undefined;
+  [Routes.RankStack]: undefined;
 };
 
 /**
- * Represents the parameter types for the profile stack routes.
+ * Blog stack parameters
+ */
+export type BlogStackParams = {
+  [Routes.BlogList]: undefined;
+  [Routes.BlogDetail]: { blogId: string };
+  [Routes.CreateBlog]: undefined;
+};
+
+/**
+ * Course stack parameters
  */
 export type CourseStackParams = {
-  [Routes.Courses]: undefined;
-  [Routes.CourseDetail]: { courseId: string | undefined };
-  [Routes.Exam]: { examId: string | undefined };
+  [Routes.CourseList]: undefined;
+  [Routes.CourseDetail]: { courseId: string };
+  [Routes.Exam]: { examId: string };
+  [Routes.HistoryExam]: undefined;
 };
 
 /**
- * Represents the parameter types for the profile stack routes.
+ * Rank stack parameters
  */
-export type RanksStackParams = {
-  [Routes.Ranks]: undefined;
-  [Routes.UserProfile]: { userId: string | undefined };
+export type RankStackParams = {
+  [Routes.RankList]: undefined;
+  [Routes.UserProfile]: { userId: string };
 };
 
 /**
- * Represents the navigation parameters for the root stack.
+ * Combined navigation parameters
  */
-export type NavigationParams = RootStackParams;
+export type NavigationParams = RootStackParams &
+  BlogStackParams &
+  CourseStackParams &
+  RankStackParams;
 
 export default Routes;

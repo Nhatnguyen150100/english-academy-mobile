@@ -7,6 +7,7 @@ import Home from "@modules/app/home/Home";
 import Setting from "@modules/app/settings/Setting";
 import RankStack from "./stacks/RankStack";
 import CourseStack from "./stacks/CourseStack";
+import BlogStack from "./stacks/BlogStack";
 
 const Tab = createBottomTabNavigator();
 
@@ -42,7 +43,7 @@ export default function TabNavigator() {
 
       <Tab.Screen
         name="Blogs"
-        component={Ranks}
+        component={BlogStack}
         options={{
           tabBarIcon: ({ color }) => (
             <AntDesign name="form" size={24} color={color} />
