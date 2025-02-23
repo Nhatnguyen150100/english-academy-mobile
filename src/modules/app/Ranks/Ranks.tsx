@@ -17,6 +17,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { colors } from "@styles/theme";
 import { spacing } from "@styles/spacing";
 import typography from "@styles/typography";
+import EmptyComponent from "@components/base/EmptyComponent";
 
 const rankImages = [
   require("@assets/images/rank/rank_1.png"),
@@ -131,6 +132,7 @@ function Ranks() {
           onEndReached={loadMoreRanks}
           onEndReachedThreshold={0.5}
           ListFooterComponent={renderFooter}
+          ListEmptyComponent={EmptyComponent}
         />
       </View>
     </TheLayout>

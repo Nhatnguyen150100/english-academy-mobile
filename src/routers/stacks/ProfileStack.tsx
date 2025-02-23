@@ -1,5 +1,6 @@
 import useTheme from "@hooks/useTheme";
 import EditInformation from "@modules/app/profile/edit-info/EditInformation";
+import HistoryExam from "@modules/app/profile/HistoryExam";
 import Profile from "@modules/app/profile/Profile";
 import { createStackNavigator } from "@react-navigation/stack";
 import Routes, { RootStackParams } from "@utils/Routes";
@@ -26,6 +27,11 @@ export default function ProfileStack() {
         <Stack.Screen
           name={Routes.EditProfile}
           component={EditInformation}
+        />
+        <Stack.Screen
+          name={Routes.HistoryExam}
+          component={HistoryExam}
+          options={{ headerShown: false }}
         />
 
       </>

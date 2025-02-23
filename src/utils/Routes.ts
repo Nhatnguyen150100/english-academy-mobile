@@ -16,6 +16,7 @@ export enum Routes {
   MissionDaily = "MissionDaily",
   UserProfile = "UserProfile",
   Exam = "Exam",
+  HistoryExam = "HistoryExam",
 }
 
 /**
@@ -34,6 +35,7 @@ export type RootStackParams = {
   [Routes.Courses]: undefined;
   [Routes.CourseDetail]: { courseId: string | undefined };
   [Routes.Exam]: { examId: string | undefined };
+  [Routes.HistoryExam]: undefined ;
 };
 
 /**

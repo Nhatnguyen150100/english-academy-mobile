@@ -1,3 +1,5 @@
+import EmptyComponent from "@components/base/EmptyComponent";
+import Visibility from "@components/base/visibility";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { rankService } from "@src/services";
 import { IRank } from "@src/types/rank.types";
@@ -52,40 +54,47 @@ export default function TopRank() {
     <View style={styles.root}>
       <Text style={styles.fontBlack}>Top rank</Text>
       <View style={styles.container}>
-        {listRanks.map((rank, index) => (
-          <View key={index} style={styles.rankContainer}>
-            <View style={styles.rankInfo}>
-              <Image source={rankImages[index]} style={styles.rankImage} />
-              <View
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                }}
-              >
-                <Text style={styles.rankName}>{rank.name}</Text>
-                <View style={styles.accountTypeWrapper}>
-                  <MaterialCommunityIcons
-                    name={getAccountTypeIcon(rank.accountType)}
-                    size={14}
-                    color={colors.primary}
-                  />
-                  <Text style={styles.accountTypeText}>{rank.accountType}</Text>
+        <Visibility
+          visibility={listRanks.length}
+          suspenseComponent={<EmptyComponent />}
+        >
+          {listRanks.map((rank, index) => (
+            <View key={index} style={styles.rankContainer}>
+              <View style={styles.rankInfo}>
+                <Image source={rankImages[index]} style={styles.rankImage} />
+                <View
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Text style={styles.rankName}>{rank.name}</Text>
+                  <View style={styles.accountTypeWrapper}>
+                    <MaterialCommunityIcons
+                      name={getAccountTypeIcon(rank.accountType)}
+                      size={14}
+                      color={colors.primary}
+                    />
+                    <Text style={styles.accountTypeText}>
+                      {rank.accountType}
+                    </Text>
+                  </View>
                 </View>
               </View>
+              <View style={styles.scoreWrapper}>
+                <MaterialCommunityIcons
+                  name="trophy"
+                  size={20}
+                  color={colors.primary}
+                />
+                <Text style={styles.rankScore}>
+                  {rank.score.toLocaleString()}
+                </Text>
+              </View>
             </View>
-            <View style={styles.scoreWrapper}>
-              <MaterialCommunityIcons
-                name="trophy"
-                size={20}
-                color={colors.primary}
-              />
-              <Text style={styles.rankScore}>
-                {rank.score.toLocaleString()}
-              </Text>
-            </View>
-          </View>
-        ))}
+          ))}
+        </Visibility>
       </View>
     </View>
   );

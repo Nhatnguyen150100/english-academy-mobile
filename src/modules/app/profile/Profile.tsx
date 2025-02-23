@@ -5,7 +5,7 @@ import {
   KeyboardAvoidingView,
   TouchableOpacity,
 } from "react-native";
-import { Text, Button, Chip } from "react-native-paper";
+import { Text, Button } from "react-native-paper";
 import { useSelector } from "react-redux";
 import { IRootState } from "@store/index";
 import TheLayout from "@components/layout/TheLayOut";
@@ -51,9 +51,9 @@ function InformationSection({
 }
 
 function Profile() {
+  const navigation = useNavigation<StackNavigationProp<RootStackParams>>();
   const user = useSelector((state: IRootState) => state.AppReducer.user);
   const [numberAttempt, setNumberAttempt] = useState<number | "UNLIMITED">();
-  console.log("🚀 ~ Profile ~ numberAttempt:", numberAttempt);
 
   const handleGetExamAttempt = async () => {
     const rs = await examService.checkNumberExamAttempt();
@@ -117,6 +117,9 @@ function Profile() {
               <InformationSection
                 label="History exams completed"
                 value={""}
+                onPress={() =>  {
+                  navigation.navigate(Routes.HistoryExam)
+                }}
                 iconNext={iconNext}
               />
               <View style={styles.rowInfo}>

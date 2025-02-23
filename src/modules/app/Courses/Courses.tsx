@@ -23,6 +23,7 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import Routes, { RootStackParams } from "@utils/Routes";
 import { RefreshControl } from "react-native-gesture-handler";
+import EmptyComponent from "@components/base/EmptyComponent";
 
 function Courses() {
   const navigation = useNavigation<StackNavigationProp<RootStackParams>>();
@@ -146,6 +147,7 @@ function Courses() {
             onEndReached={loadMoreCourses}
             onEndReachedThreshold={0.5}
             ListFooterComponent={renderFooter}
+            ListEmptyComponent={EmptyComponent}
             refreshControl={
               <RefreshControl
                 refreshing={refreshing}

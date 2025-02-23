@@ -48,3 +48,21 @@ export interface IResult {
   correctAnswer: string;
   userAnser: string;
 }
+
+export interface IHistory {
+  _id: string;
+  userId: string;
+  examId: IExamId;
+  score: number;
+  completedDate: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+
+export interface IExamId {
+  _id: string;
+  name: string;
+  description: string;
+  level: string;
+}
