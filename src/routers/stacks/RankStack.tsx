@@ -3,7 +3,7 @@ import EditInformation from "@modules/app/profile/edit-info/EditInformation";
 import Ranks from "@modules/app/ranks/Ranks";
 import UserProfile from "@modules/app/ranks/UserProfile";
 import { createStackNavigator } from "@react-navigation/stack";
-import Routes, { RankStackParams, RootStackParams } from "@utils/Routes";
+import Routes, { RankStackParams } from "@utils/Routes";
 import { ScreenOptions } from "@utils/ScreenOptions";
 import React from "react";
 

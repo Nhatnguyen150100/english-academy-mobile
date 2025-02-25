@@ -21,16 +21,19 @@ export default function BlogStack() {
         <Stack.Screen
           name={Routes.BlogList}
           component={BlogListScreen}
+          options={{ headerShown: false }}
         />
 
         <Stack.Screen
           name={Routes.BlogDetail}
           component={BlogDetailScreen}
+          options={{ headerShown: false }}
         />
 
         <Stack.Screen
           name={Routes.CreateBlog}
           component={CreateBlogScreen}
+          options={{ headerShown: false }}
         />
 
       </>

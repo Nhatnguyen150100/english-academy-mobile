@@ -2,12 +2,12 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { AntDesign } from "@expo/vector-icons";
 import { useTheme } from "@src/hooks";
-import Ranks from "@modules/app/ranks/Ranks";
 import Home from "@modules/app/home/Home";
 import Setting from "@modules/app/settings/Setting";
 import RankStack from "./stacks/RankStack";
 import CourseStack from "./stacks/CourseStack";
 import BlogStack from "./stacks/BlogStack";
+import Routes from "@utils/Routes";
 
 const Tab = createBottomTabNavigator();
 
@@ -22,7 +22,7 @@ export default function TabNavigator() {
       }}
     >
       <Tab.Screen
-        name="Home"
+        name={Routes.Home}
         component={Home}
         options={{
           tabBarIcon: ({ color }) => (
@@ -32,7 +32,7 @@ export default function TabNavigator() {
       />
 
       <Tab.Screen
-        name="Courses"
+        name={Routes.CourseStack}
         component={CourseStack}
         options={{
           tabBarIcon: ({ color }) => (
@@ -42,7 +42,7 @@ export default function TabNavigator() {
       />
 
       <Tab.Screen
-        name="Blogs"
+        name={Routes.BlogStack}
         component={BlogStack}
         options={{
           tabBarIcon: ({ color }) => (
@@ -52,7 +52,7 @@ export default function TabNavigator() {
       />
 
       <Tab.Screen
-        name="Ranks"
+        name={Routes.RankStack}
         component={RankStack}
         options={{
           tabBarIcon: ({ color }) => (
@@ -62,7 +62,7 @@ export default function TabNavigator() {
       />
 
       <Tab.Screen
-        name="Settings"
+        name={Routes.Settings}
         component={Setting}
         options={{
           tabBarIcon: ({ color }) => (

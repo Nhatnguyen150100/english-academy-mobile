@@ -21,12 +21,12 @@ import { spacing } from "@styles/spacing";
 import typography from "@styles/typography";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import Routes, { RootStackParams } from "@utils/Routes";
+import Routes, { CourseStackParams } from "@utils/Routes";
 import { RefreshControl } from "react-native-gesture-handler";
 import EmptyComponent from "@components/base/EmptyComponent";
 
 function Courses() {
-  const navigation = useNavigation<StackNavigationProp<RootStackParams>>();
+  const navigation = useNavigation<StackNavigationProp<CourseStackParams>>();
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState<boolean>(false);
   const [listCourses, setListCourses] = useState<Array<ICourse>>([]);

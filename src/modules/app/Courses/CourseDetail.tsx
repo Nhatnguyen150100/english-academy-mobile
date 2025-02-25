@@ -12,7 +12,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { colors } from "@styles/theme";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import Routes, { CourseStackParams, RootStackParams } from "@utils/Routes";
+import Routes, { CourseStackParams } from "@utils/Routes";
 import { spacing } from "@styles/spacing";
 import typography from "@styles/typography";
 import { formatDate } from "@utils/functions/date";
@@ -23,7 +23,7 @@ import Visibility from "@components/base/visibility";
 import LoadingScreen from "@components/base/LoadingScreen";
 
 function CourseDetail() {
-  const navigation = useNavigation<StackNavigationProp<RootStackParams>>();
+  const navigation = useNavigation<StackNavigationProp<CourseStackParams>>();
   const route = useRoute<RouteProp<CourseStackParams, Routes.CourseDetail>>();
   const courseId = route?.params.courseId;
   const [courseDetail, setCourseDetail] = useState<ICourse>();

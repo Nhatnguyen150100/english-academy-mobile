@@ -39,7 +39,7 @@ export default function TheHeader() {
         <TouchableOpacity
           style={styles.row}
           onPress={() => {
-            navigation.navigate(Routes.Profile);
+            navigation.navigate(Routes.ProfileStack);
           }}
         >
           <View style={styles.avatar}>

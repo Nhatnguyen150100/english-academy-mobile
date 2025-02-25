@@ -9,8 +9,6 @@ export enum Routes {
 
   // Main app routes
   Home = "Home",
-  Profile = "Profile",
-  EditProfile = "EditProfile",
   Settings = "Settings",
   MissionDaily = "MissionDaily",
 
@@ -18,6 +16,7 @@ export enum Routes {
   BlogStack = "BlogStack",
   CourseStack = "CourseStack",
   RankStack = "RankStack",
+  ProfileStack = "ProfileStack",
 
   // Blog sub-routes
   BlogList = "BlogList",
@@ -32,7 +31,11 @@ export enum Routes {
 
   // Rank sub-routes
   RankList = "RankList",
-  UserProfile = "UserProfile"
+  UserProfile = "UserProfile",
+
+  // Profile sub-routes
+  Profile = "Profile",
+  EditProfile = "EditProfile",
 }
 
 /**
@@ -43,8 +46,6 @@ export type RootStackParams = {
   [Routes.Login]: { email?: string };
   [Routes.Register]: undefined;
   [Routes.Home]: undefined;
-  [Routes.Profile]: undefined;
-  [Routes.EditProfile]: undefined;
   [Routes.MissionDaily]: undefined;
   [Routes.Settings]: undefined;
   
@@ -52,12 +53,14 @@ export type RootStackParams = {
   [Routes.BlogStack]: undefined;
   [Routes.CourseStack]: undefined;
   [Routes.RankStack]: undefined;
+  [Routes.ProfileStack]: undefined;
 };
 
 /**
  * Blog stack parameters
  */
 export type BlogStackParams = {
+  [Routes.BlogStack]: undefined;
   [Routes.BlogList]: undefined;
   [Routes.BlogDetail]: { blogId: string };
   [Routes.CreateBlog]: undefined;
@@ -67,18 +70,29 @@ export type BlogStackParams = {
  * Course stack parameters
  */
 export type CourseStackParams = {
+  [Routes.CourseStack]: undefined;
   [Routes.CourseList]: undefined;
   [Routes.CourseDetail]: { courseId: string };
   [Routes.Exam]: { examId: string };
-  [Routes.HistoryExam]: undefined;
 };
 
 /**
  * Rank stack parameters
  */
 export type RankStackParams = {
+  [Routes.RankStack]: undefined;
   [Routes.RankList]: undefined;
   [Routes.UserProfile]: { userId: string };
+};
+
+/**
+ * Profile stack parameters
+ */
+export type ProfileStackParams = {
+  [Routes.ProfileStack]: undefined;
+  [Routes.Profile]: undefined;
+  [Routes.EditProfile]: undefined;
+  [Routes.HistoryExam]: undefined;
 };
 
 /**

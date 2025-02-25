@@ -3,11 +3,11 @@ import EditInformation from "@modules/app/profile/edit-info/EditInformation";
 import HistoryExam from "@modules/app/profile/HistoryExam";
 import Profile from "@modules/app/profile/Profile";
 import { createStackNavigator } from "@react-navigation/stack";
-import Routes, { RootStackParams } from "@utils/Routes";
+import Routes, { ProfileStackParams } from "@utils/Routes";
 import { ScreenOptions } from "@utils/ScreenOptions";
 import React from "react";
 
-const Stack = createStackNavigator<RootStackParams>();
+const Stack = createStackNavigator<ProfileStackParams>();
 
 export default function ProfileStack() {
   const theme = useTheme();

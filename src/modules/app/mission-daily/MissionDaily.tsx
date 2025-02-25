@@ -5,8 +5,6 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Animated,
-  StyleProp,
-  ViewStyle,
 } from "react-native";
 import { Text, useTheme } from "react-native-paper";
 import TheLayout from "@components/layout/TheLayOut";
@@ -20,7 +18,7 @@ import { useDispatch } from "react-redux";
 import { setNumberMissionDaily } from "@store/redux/appSlice";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import Routes, { RootStackParams } from "@utils/Routes";
+import Routes, { CourseStackParams } from "@utils/Routes";
 import Toast from "react-native-toast-message";
 import Fireworks from "@components/base/Fireworks";
 import { useSelector } from "react-redux";
@@ -42,7 +40,7 @@ type RewardItemProps = {
 };
 
 const MissionDaily: React.FC = () => {
-  const navigation = useNavigation<StackNavigationProp<RootStackParams>>();
+  const navigation = useNavigation<StackNavigationProp<CourseStackParams>>();
   const theme = useTheme();
   const [mission, setMission] = useState<IMissionDaily | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -165,7 +163,7 @@ const MissionDaily: React.FC = () => {
             color={mission?.completedExam ? "#4CAF50" : theme.colors.primary}
             completed={mission?.completedExam || false}
             onPress={() => {
-              navigation.navigate(Routes.Courses);
+              navigation.navigate(Routes.CourseStack);
             }}
           />
 

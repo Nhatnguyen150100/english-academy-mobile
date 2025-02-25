@@ -11,7 +11,7 @@ import { ActivityIndicator, Searchbar } from "react-native-paper";
 import useDebounce from "@hooks/useDebounce";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import Routes, { RootStackParams } from "@utils/Routes";
+import Routes, { RankStackParams } from "@utils/Routes";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { colors } from "@styles/theme";
@@ -26,7 +26,7 @@ const rankImages = [
 ];
 
 function Ranks() {
-  const navigation = useNavigation<StackNavigationProp<RootStackParams>>();
+  const navigation = useNavigation<StackNavigationProp<RankStackParams>>();
   const [listRanks, setListRanks] = useState<IRank[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
@@ -145,7 +145,7 @@ const RankItem = React.memo(
     onPress,
   }: {
     item: IRank;
-    onPress: StackNavigationProp<RootStackParams>["navigate"];
+    onPress: StackNavigationProp<RankStackParams>["navigate"];
   }) => (
     <TouchableOpacity
       activeOpacity={0.9}

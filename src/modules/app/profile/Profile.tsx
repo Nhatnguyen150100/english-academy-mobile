@@ -12,7 +12,7 @@ import TheLayout from "@components/layout/TheLayOut";
 import TheBaseHeader from "@components/layout/TheBaseHeader";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import Routes, { RootStackParams } from "@utils/Routes";
+import Routes, { ProfileStackParams } from "@utils/Routes";
 import { colors, LightTheme } from "@styles/theme";
 import { AntDesign } from "@expo/vector-icons";
 import AccountChip from "@components/base/AccountChip";
@@ -32,7 +32,7 @@ function InformationSection({
   iconNext: React.ReactNode;
   onPress?: () => void;
 }) {
-  const navigation = useNavigation<StackNavigationProp<RootStackParams>>();
+  const navigation = useNavigation<StackNavigationProp<ProfileStackParams>>();
   return (
     <TouchableOpacity
       onPress={() => {
@@ -51,7 +51,7 @@ function InformationSection({
 }
 
 function Profile() {
-  const navigation = useNavigation<StackNavigationProp<RootStackParams>>();
+  const navigation = useNavigation<StackNavigationProp<ProfileStackParams>>();
   const user = useSelector((state: IRootState) => state.AppReducer.user);
   const [numberAttempt, setNumberAttempt] = useState<number | "UNLIMITED">();
 

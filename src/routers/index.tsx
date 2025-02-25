@@ -97,7 +97,7 @@ const StackNavigation = () => {
         />
 
         <Stack.Screen
-          name={Routes.Profile}
+          name={Routes.ProfileStack}
           component={ProfileStack}
           options={{ headerShown: false }}
         />
