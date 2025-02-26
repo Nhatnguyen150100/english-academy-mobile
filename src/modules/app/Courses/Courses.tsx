@@ -24,6 +24,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import Routes, { CourseStackParams } from "@utils/Routes";
 import { RefreshControl } from "react-native-gesture-handler";
 import EmptyComponent from "@components/base/EmptyComponent";
+import useDebounce from "@hooks/useDebounce";
 
 function Courses() {
   const navigation = useNavigation<StackNavigationProp<CourseStackParams>>();
@@ -34,6 +35,7 @@ function Courses() {
   const [totalPages, setTotalPages] = useState(1);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const debouncedSearchQuery = useDebounce(searchQuery);
 
   const handleGetListCourse = useCallback(async (isLoadMore = false) => {
     try {
@@ -44,7 +46,7 @@ function Courses() {
         setLoading(true);
       }
 
-      const rs = await courseService.getAllCourse({ page, name: searchQuery });
+      const rs = await courseService.getAllCourse({ page, name: debouncedSearchQuery });
       
       setListCourses(prev => 
         isLoadMore ? [...prev, ...rs.data.data] : rs.data.data
@@ -61,13 +63,13 @@ function Courses() {
         setLoading(false);
       }
     }
-  }, [searchQuery, page, totalPages]);
+  }, [debouncedSearchQuery, page, totalPages]);
 
   const handleRefresh = useCallback(async () => {
     try {
       setRefreshing(true);
       setPage(1);
-      const rs = await courseService.getAllCourse({ page: 1, name: searchQuery });
+      const rs = await courseService.getAllCourse({ page: 1, name: debouncedSearchQuery });
       setListCourses(rs.data.data);
       setTotalPages(rs.data.totalPages);
     } catch (error) {
@@ -75,7 +77,7 @@ function Courses() {
     } finally {
       setRefreshing(false);
     }
-  }, [searchQuery]);
+  }, [debouncedSearchQuery]);
 
   const loadMoreCourses = () => {
     if (!isLoadingMore && page < totalPages) {
@@ -86,7 +88,7 @@ function Courses() {
 
   React.useEffect(() => {
     handleGetListCourse();
-  }, [searchQuery, handleGetListCourse]);
+  }, [debouncedSearchQuery, handleGetListCourse]);
 
   const renderFooter = () => {
     if (!isLoadingMore) return null;

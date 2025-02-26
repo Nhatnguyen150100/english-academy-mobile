@@ -1,62 +1,218 @@
-import React from "react";
-import { ScrollView, StyleSheet } from "react-native";
-import { Title, Paragraph, useTheme } from "react-native-paper";
+import React, { useEffect, useState } from "react";
+import {
+  ScrollView,
+  StyleSheet,
+  Image,
+  RefreshControl,
+  View,
+  Text,
+} from "react-native";
+import {
+  Title,
+  useTheme,
+  Badge,
+  ActivityIndicator,
+  Paragraph,
+  Chip,
+} from "react-native-paper";
 import RenderHtml from "react-native-render-html";
-import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { RouteProp, useRoute } from "@react-navigation/native";
+import TheLayout from "@components/layout/TheLayOut";
+import TheBaseHeader from "@components/layout/TheBaseHeader";
 import Routes, { BlogStackParams } from "@utils/Routes";
 import { colors } from "@styles/theme";
+import { formatDate } from "@src/utils/functions/date";
+import { spacing } from "@styles/spacing";
+import typography from "@styles/typography";
+import { blogService } from "@src/services";
+import LoadingScreen from "@components/base/LoadingScreen";
+import EmptyComponent from "@components/base/EmptyComponent";
+import { IBlogDetail, TStatusBlog } from "@styles/blogs";
+import Visibility from "@components/base/visibility";
 
-const blog = {
-  id: "1",
-  title: "Hướng dẫn React Native cơ bản",
-  excerpt: "Bài viết hướng dẫn những kiến thức cơ bản về React Native...",
-  createdAt: "2023-08-01",
-  author: "Admin",
-  content: `
-    <p>React Native là một framework JavaScript phổ biến cho ứng dụng mobile. Đây là bài viết hướng dẫn những kiến thức cơ bản về React Native.</p>
-    <p>Trước tiên, bạn cần cài đặt Node.js và npm (Node Package Manager) trên máy tính của bạn. N </p> `,
+const getStatusColor = (status: TStatusBlog) => {
+  switch (status) {
+    case "APPROVED":
+      return colors.success;
+    case "PENDING_APPROVED":
+      return colors.warning;
+    case "REJECTED":
+      return colors.error;
+    default:
+      return colors.gray500;
+  }
 };
 
 const BlogDetailScreen = () => {
   const route = useRoute<RouteProp<BlogStackParams, Routes.BlogDetail>>();
   const { blogId } = route.params;
+  const [blog, setBlog] = useState<IBlogDetail>();
+  const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const fetchBlogDetail = async () => {
+    if (!blogId) return;
+    setLoading(true);
+    try {
+      const response = await blogService.getBlogDetail(blogId);
+      setBlog(response.data);
+    } catch (error) {
+      console.error("Error fetching blog detail:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await fetchBlogDetail();
+    setRefreshing(false);
+  };
+
+  useEffect(() => {
+    if (blogId) fetchBlogDetail();
+  }, [blogId]);
 
   return (
-    <ScrollView style={styles.container}>
-      <Title style={styles.title}>{blog.title}</Title>
+    <TheLayout header={<TheBaseHeader title="Blog Detail" isShowBackBtn />}>
+      {blog ? (
+        <ScrollView
+          style={{
+            width: "100%",
+          }}
+          contentContainerStyle={styles.container}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              colors={[colors.primary]}
+              progressBackgroundColor={colors.white}
+            />
+          }
+        >
+          <Image
+            source={{ uri: blog!.thumbnail || "https://picsum.photos/200/300" }}
+            style={styles.thumbnail}
+            resizeMode="cover"
+          />
 
-      <Paragraph style={styles.meta}>
-        <MaterialIcons name="person" size={14} color={colors.primary} />
-        {` ${blog.author}  `}
-        <MaterialIcons name="date-range" size={14} color={colors.primary} />
-        {` ${blog.createdAt}`}
-      </Paragraph>
+          <Title style={styles.title}>{blog!.title}</Title>
 
-      <RenderHtml
-        contentWidth={300}
-        source={{ html: blog.content || "<p>Nội dung bài viết</p>" }}
-        baseStyle={{ color: colors.black, fontSize: 16 }}
-      />
-    </ScrollView>
+          <View style={styles.metaContainer}>
+            <View style={styles.metaGroup}>
+              <MaterialCommunityIcons
+                name="calendar-month-outline"
+                size={14}
+                color={colors.gray500}
+              />
+              <Text style={styles.metaText}>{formatDate(blog!.createdAt)}</Text>
+
+              <MaterialCommunityIcons
+                name="account-outline"
+                size={14}
+                color={colors.gray500}
+                style={styles.metaIcon}
+              />
+              <Text style={styles.metaText}>
+                {blog!.userId.name ?? blog!.userId.email}
+              </Text>
+            </View>
+
+            <Chip
+              style={[
+                styles.statusChip,
+                { backgroundColor: getStatusColor(blog!.statusBlog) },
+              ]}
+              textStyle={styles.statusText}
+            >
+              <Text style={{ ...typography.caption }}>{blog!.statusBlog}</Text>
+            </Chip>
+          </View>
+
+          <View style={styles.contentContainer}>
+            <RenderHtml
+              contentWidth={300}
+              source={{ html: blog!.content || "<p>No content available</p>" }}
+              baseStyle={styles.htmlContent}
+            />
+          </View>
+        </ScrollView>
+      ) : loading ? (
+        <LoadingScreen />
+      ) : (
+        <EmptyComponent />
+      )}
+    </TheLayout>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    padding: 16,
+    flexGrow: 1,
+    paddingHorizontal: spacing[0],
+    paddingBottom: spacing[6],
+    width: "100%",
+  },
+  thumbnail: {
+    width: "100%",
+    height: 230,
+    borderRadius: 16,
+    marginBottom: spacing[4],
   },
   title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 16,
+    ...typography.subtitle2,
+    color: colors.gray900,
+    marginBottom: spacing[2],
   },
   meta: {
+    display: "flex",
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 24,
-    color: "#666",
+    justifyContent: "space-between",
+    marginBottom: spacing[4],
+    color: colors.gray600,
+  },
+  metaText: {
+    ...typography.body2,
+    color: colors.gray600,
+    marginRight: spacing[3],
+  },
+  metaIcon: {
+    marginLeft: spacing[3],
+  },
+  contentContainer: {
+    flex: 1,
+    backgroundColor: colors.white,
+    borderRadius: 8,
+    shadowColor: colors.gray800,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 1,
+  },
+  htmlContent: {
+    ...typography.body1,
+    color: colors.gray800,
+    lineHeight: 24,
+  },
+  metaContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: spacing[4],
+  },
+  metaGroup: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  statusChip: {
+    borderRadius: 12,
+  },
+  statusText: {
+    ...typography.caption,
+    color: colors.white,
+    lineHeight: 18,
   },
 });
 

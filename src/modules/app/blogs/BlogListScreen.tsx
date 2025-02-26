@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import TheLayout from "@components/layout/TheLayOut";
 import TheBaseHeader from "@components/layout/TheBaseHeader";
-import { FAB, Badge } from "react-native-paper";
+import { FAB, Badge, ActivityIndicator, Searchbar } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { colors } from "@styles/theme";
 import { formatDate } from "@src/utils/functions/date";
@@ -22,95 +22,18 @@ import Routes, { BlogStackParams } from "@utils/Routes";
 import Visibility from "@components/base/visibility";
 import LoadingScreen from "@components/base/LoadingScreen";
 import EmptyComponent from "@components/base/EmptyComponent";
+import { EStatusBlog } from "@src/constants/status";
+import { IBlogInfo, TStatusBlog } from "@styles/blogs";
+import { blogService } from "@src/services";
+import useDebounce from "@hooks/useDebounce";
 
-type Blog = {
-  _id: string;
-  __v: number;
-  userId: string;
-  title: string;
-  thumbnail?: string;
-  description: string;
-  statusBlog: "APPROVED" | "PENDING_APPROVED";
-  createdAt: string;
-  updatedAt: string;
-};
-
-const mockBlogs: Blog[] = [
-  {
-    _id: "67bdee1b13ee2eef1d5798d2",
-    userId: "67bdee1b13ee2eef1d579861",
-    title: "Hướng dẫn học ReactJS từ cơ bản",
-    thumbnail: "https://picsum.photos/200/300",
-    description: "Nhập môn ReactJS cho người mới bắt đầu",
-    statusBlog: "APPROVED",
-    __v: 0,
-    createdAt: "2025-02-25T16:21:47.819Z",
-    updatedAt: "2025-02-25T16:21:47.819Z",
-  },
-  {
-    _id: "67bdee1b13ee2eef1d5798d3",
-    userId: "67bdee1b13ee2eef1d579861",
-    title: "Toàn tập về Node.js",
-    thumbnail: "https://picsum.photos/200/300",
-    description: "Xây dựng ứng dụng web với Node.js",
-    statusBlog: "PENDING_APPROVED",
-    __v: 0,
-    createdAt: "2025-02-25T16:21:47.819Z",
-    updatedAt: "2025-02-25T16:21:47.819Z",
-  },
-  {
-    _id: "67bdee1b13ee2eef1d5798d4",
-    userId: "67bdee1b13ee2eef1d579861",
-    title: "Hướng dẫn đến với Web Development",
-    thumbnail: "https://picsum.photos/200/300",
-    description: "Bài viết tổng quan về con đường trở thành Web Developer",
-    statusBlog: "APPROVED",
-    __v: 0,
-    createdAt: "2025-02-25T16:21:47.819Z",
-    updatedAt: "2025-02-25T16:21:47.819Z",
-  },
-  {
-    _id: "67bdee1b13ee2eefcxvv1d5798d5",
-    userId: "67bdee1b13ee2eef1d579861",
-    title: "Machine Learning cơ bản",
-    thumbnail: "https://picsum.photos/200/300",
-    description: "Giới thiệu các khái niệm cơ bản trong Machine Learning",
-    statusBlog: "PENDING_APPROVED",
-    __v: 0,
-    createdAt: "2025-02-25T16:21:47.819Z",
-    updatedAt: "2025-02-25T16:21:47.819Z",
-  },
-  {
-    _id: "67bdee1b13ee2edsfsdef1d5798d5",
-    userId: "67bdee1b13ee2eef1d579861",
-    title: "Machine Learning cơ bản",
-    thumbnail: "https://picsum.photos/200/300",
-    description: "Giới thiệu các khái niệm cơ bản trong Machine Learning",
-    statusBlog: "PENDING_APPROVED",
-    __v: 0,
-    createdAt: "2025-02-25T16:21:47.819Z",
-    updatedAt: "2025-02-25T16:21:47.819Z",
-  },
-  {
-    _id: "67bdee1b13ee2eef1d5vxcv798d5",
-    userId: "67bdee1b13ee2eef1d579861",
-    title: "Machine Learning cơ bản",
-    thumbnail: "https://picsum.photos/200/300",
-    description: "Giới thiệu các khái niệm cơ bản trong Machine Learning",
-    statusBlog: "PENDING_APPROVED",
-    __v: 0,
-    createdAt: "2025-02-25T16:21:47.819Z",
-    updatedAt: "2025-02-25T16:21:47.819Z",
-  },
-];
-
-const getStatusColor = (status: string) => {
+const getStatusColor = (status: TStatusBlog) => {
   switch (status) {
-    case "APPROVED":
+    case EStatusBlog.APPROVED:
       return colors.success;
-    case "PENDING_APPROVED":
+    case EStatusBlog.PENDING_APPROVED:
       return colors.warning;
-    case "REJECTED":
+    case EStatusBlog.REJECTED:
       return colors.error;
     default:
       return colors.gray500;
@@ -119,23 +42,89 @@ const getStatusColor = (status: string) => {
 
 const BlogListScreen = () => {
   const navigation = useNavigation<StackNavigationProp<BlogStackParams>>();
+  const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
-  const [blogs, setBlogs] = useState<Blog[]>(mockBlogs);
+  const [blogs, setBlogs] = useState<IBlogInfo[]>([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const debouncedSearchQuery = useDebounce(searchQuery);
+
+  const handleGetListBlog = useCallback(
+    async (isLoadMore = false) => {
+      try {
+        if (isLoadMore) {
+          if (page >= totalPages) return;
+          setIsLoadingMore(true);
+        } else {
+          setLoading(true);
+        }
+
+        const rs = await blogService.getAllBlogsApproved({
+          page,
+          name: debouncedSearchQuery,
+        });
+
+        setBlogs((prev) =>
+          isLoadMore ? [...prev, ...rs.data.data] : rs.data.data
+        );
+        setTotalPages(rs.data.totalPages);
+
+        if (!isLoadMore) setPage(1);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        if (isLoadMore) {
+          setIsLoadingMore(false);
+        } else {
+          setLoading(false);
+        }
+      }
+    },
+    [debouncedSearchQuery, page, totalPages]
+  );
 
   const handleRefresh = useCallback(async () => {
     try {
       setRefreshing(true);
-      // Add actual refresh logic here
+      setPage(1);
+      const rs = await blogService.getAllBlogsApproved({
+        page: 1,
+        name: debouncedSearchQuery,
+      });
+      setBlogs(rs.data.data);
+      setTotalPages(rs.data.totalPages);
     } catch (error) {
       console.error(error);
     } finally {
       setRefreshing(false);
     }
-  }, []);
+  }, [debouncedSearchQuery]);
+
+  const loadMoreCourses = () => {
+    if (!isLoadingMore && page < totalPages) {
+      setPage((prev) => prev + 1);
+      handleGetListBlog(true);
+    }
+  };
+
+  React.useEffect(() => {
+    handleGetListBlog();
+  }, [debouncedSearchQuery, handleGetListBlog]);
+
+  const renderFooter = () => {
+    if (!isLoadingMore) return null;
+
+    return (
+      <View style={styles.loadingFooter}>
+        <ActivityIndicator size="small" color={colors.primary} />
+      </View>
+    );
+  };
 
   const renderItem = useCallback(
-    ({ item }: { item: Blog }) => (
+    ({ item }: { item: IBlogInfo }) => (
       <BlogItem
         item={item}
         onPress={() =>
@@ -149,6 +138,22 @@ const BlogListScreen = () => {
   return (
     <TheLayout header={<TheBaseHeader title="Blogs" />}>
       <View style={styles.container}>
+        <Searchbar
+          placeholder="Search blog..."
+          placeholderTextColor={colors.gray500}
+          onChangeText={setSearchQuery}
+          value={searchQuery}
+          style={styles.searchBar}
+          inputStyle={styles.searchInput}
+          icon={() => (
+            <MaterialCommunityIcons
+              name="magnify"
+              size={24}
+              color={colors.primary}
+            />
+          )}
+        />
+
         <Visibility
           visibility={blogs}
           suspenseComponent={loading ? <LoadingScreen /> : null}
@@ -160,6 +165,12 @@ const BlogListScreen = () => {
             contentContainerStyle={styles.listContent}
             showsVerticalScrollIndicator={false}
             ListEmptyComponent={EmptyComponent}
+            initialNumToRender={10}
+            maxToRenderPerBatch={5}
+            windowSize={10}
+            onEndReached={loadMoreCourses}
+            onEndReachedThreshold={0.5}
+            ListFooterComponent={renderFooter}
             refreshControl={
               <RefreshControl
                 refreshing={refreshing}
@@ -183,7 +194,7 @@ const BlogListScreen = () => {
 };
 
 const BlogItem = React.memo(
-  ({ item, onPress }: { item: Blog; onPress: () => void }) => (
+  ({ item, onPress }: { item: IBlogInfo; onPress: () => void }) => (
     <TouchableOpacity activeOpacity={0.8} onPress={onPress}>
       <View style={styles.blogContainer}>
         <Image
@@ -197,14 +208,14 @@ const BlogItem = React.memo(
             <Text style={styles.title} numberOfLines={2}>
               {item.title}
             </Text>
-            {/* <Badge
+            <Badge
               style={[
                 styles.statusBadge,
                 { backgroundColor: getStatusColor(item.statusBlog) },
               ]}
             >
               {item.statusBlog}
-            </Badge> */}
+            </Badge>
           </View>
 
           <Text style={styles.description} numberOfLines={3}>
@@ -227,9 +238,7 @@ const BlogItem = React.memo(
                 size={14}
                 color={colors.gray500}
               />
-              <Text style={styles.metaText}>
-                {item.userId.slice(-6)} {/* Hiển thị 6 ký tự cuối của userId */}
-              </Text>
+              <Text style={styles.metaText}>{item.userId.slice(-6)}</Text>
             </View>
           </View>
         </View>
@@ -243,6 +252,20 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: spacing[0],
     width: "100%",
+  },
+  searchBar: {
+    borderRadius: 12,
+    backgroundColor: colors.white,
+    marginVertical: spacing[3],
+    shadowColor: colors.gray800,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  searchInput: {
+    ...typography.body2,
+    color: colors.gray800,
   },
   listContent: {
     paddingBottom: spacing[6],
@@ -312,6 +335,14 @@ const styles = StyleSheet.create({
     right: spacing[3],
     bottom: spacing[3],
     borderRadius: 50,
+  },
+  loadingFooter: {
+    paddingVertical: spacing[4],
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  refreshControl: {
+    backgroundColor: colors.white,
   },
 });
 

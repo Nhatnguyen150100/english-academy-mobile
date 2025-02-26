@@ -62,7 +62,7 @@ export type RootStackParams = {
 export type BlogStackParams = {
   [Routes.BlogStack]: undefined;
   [Routes.BlogList]: undefined;
-  [Routes.BlogDetail]: { blogId: string };
+  [Routes.BlogDetail]: { blogId: string | undefined };
   [Routes.CreateBlog]: undefined;
 };
 
