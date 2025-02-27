@@ -1,6 +1,8 @@
 import * as React from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
+import {
+  createStackNavigator,
+} from "@react-navigation/stack";
 import { useAppSelector } from "@src/store";
 import { enableScreens } from "react-native-screens";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -13,12 +15,6 @@ import Login from "@modules/auth/Login";
 import OneStepScreen from "@modules/getting-started/OneStepScreen";
 import Toast from "react-native-toast-message";
 import Register from "@modules/auth/Register";
-import { getStoreStringAsync, removeStoreDataAsync } from "@helpers/storage";
-import { StoreEnum } from "@helpers/storage/storeEnum";
-import { authService } from "@src/services";
-import { useDispatch } from "react-redux";
-import { setUser } from "@store/redux/appSlice";
-import LoadingScreen from "@components/base/LoadingScreen";
 import ProfileStack from "./stacks/ProfileStack";
 import MissionDaily from "@modules/app/mission-daily/MissionDaily";
 
@@ -28,44 +24,7 @@ const Stack = createStackNavigator<RootStackParams>();
 
 const StackNavigation = () => {
   const theme = useTheme();
-  const dispatch = useDispatch();
-  const [isSignedIn, setIsSignedIn] = React.useState(false);
-  const [loading, setLoading] = React.useState(false);
-
-  const handleGetInfo = async () => {
-    try {
-      const rs = await authService.getInfo();
-      if (!rs.data) {
-        await removeStoreDataAsync(StoreEnum.AccessToken);
-        setIsSignedIn(false);
-      } else {
-        dispatch(setUser(rs.data));
-        setIsSignedIn(true);
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  React.useEffect(() => {
-    const checkSignInStatus = async () => {
-      const token = await getStoreStringAsync(StoreEnum.AccessToken);
-      if (token) {
-        setIsSignedIn(true);
-        await handleGetInfo();
-      } else {
-        setIsSignedIn(false);
-        setLoading(false);
-      }
-    };
-
-    checkSignInStatus();
-  }, [dispatch]);
-
-  if (loading) {
-    return <LoadingScreen />;
-  }
-
+  
   return (
     <Stack.Navigator
       initialRouteName={Routes.Home}

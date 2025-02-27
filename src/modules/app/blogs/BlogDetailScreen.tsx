@@ -7,14 +7,7 @@ import {
   View,
   Text,
 } from "react-native";
-import {
-  Title,
-  useTheme,
-  Badge,
-  ActivityIndicator,
-  Paragraph,
-  Chip,
-} from "react-native-paper";
+import { Title, Chip } from "react-native-paper";
 import RenderHtml from "react-native-render-html";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { RouteProp, useRoute } from "@react-navigation/native";
@@ -29,20 +22,19 @@ import { blogService } from "@src/services";
 import LoadingScreen from "@components/base/LoadingScreen";
 import EmptyComponent from "@components/base/EmptyComponent";
 import { IBlogDetail, TStatusBlog } from "@styles/blogs";
-import Visibility from "@components/base/visibility";
 
-const getStatusColor = (status: TStatusBlog) => {
-  switch (status) {
-    case "APPROVED":
-      return colors.success;
-    case "PENDING_APPROVED":
-      return colors.warning;
-    case "REJECTED":
-      return colors.error;
-    default:
-      return colors.gray500;
-  }
-};
+// const getStatusColor = (status: TStatusBlog) => {
+//   switch (status) {
+//     case "APPROVED":
+//       return colors.success;
+//     case "PENDING_APPROVED":
+//       return colors.warning;
+//     case "REJECTED":
+//       return colors.error;
+//     default:
+//       return colors.gray500;
+//   }
+// };
 
 const BlogDetailScreen = () => {
   const route = useRoute<RouteProp<BlogStackParams, Routes.BlogDetail>>();
@@ -119,7 +111,7 @@ const BlogDetailScreen = () => {
               </Text>
             </View>
 
-            <Chip
+            {/* <Chip
               style={[
                 styles.statusChip,
                 { backgroundColor: getStatusColor(blog!.statusBlog) },
@@ -127,16 +119,21 @@ const BlogDetailScreen = () => {
               textStyle={styles.statusText}
             >
               <Text style={{ ...typography.caption }}>{blog!.statusBlog}</Text>
-            </Chip>
+            </Chip> */}
           </View>
 
-          <View style={styles.contentContainer}>
+          {/* <View style={styles.contentContainer}>
             <RenderHtml
               contentWidth={300}
               source={{ html: blog!.content || "<p>No content available</p>" }}
               baseStyle={styles.htmlContent}
             />
-          </View>
+          </View> */}
+          <RenderHtml
+            contentWidth={300}
+            source={{ html: blog!.content || "<p>No content available</p>" }}
+            baseStyle={styles.htmlContent}
+          />
         </ScrollView>
       ) : loading ? (
         <LoadingScreen />

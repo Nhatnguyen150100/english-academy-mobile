@@ -15,6 +15,7 @@ export default function TabNavigator() {
   const theme = useTheme();
   return (
     <Tab.Navigator
+      initialRouteName={Routes.Home}
       screenOptions={{
         tabBarActiveTintColor: theme.primary,
         tabBarStyle: { backgroundColor: "#FFF" },
