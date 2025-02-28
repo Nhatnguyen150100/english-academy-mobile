@@ -19,6 +19,7 @@ export enum Routes {
   ProfileStack = "ProfileStack",
 
   // Blog sub-routes
+  MyBlogs = "MyBlogs",
   BlogList = "BlogList",
   BlogDetail = "BlogDetail",
   CreateBlog = "CreateBlog",
@@ -61,8 +62,9 @@ export type RootStackParams = {
  */
 export type BlogStackParams = {
   [Routes.BlogStack]: undefined;
-  [Routes.BlogList]: undefined;
+  [Routes.MyBlogs]: undefined;
   [Routes.BlogDetail]: { blogId: string | undefined };
+  [Routes.BlogList]: undefined;
   [Routes.CreateBlog]: undefined;
 };
 

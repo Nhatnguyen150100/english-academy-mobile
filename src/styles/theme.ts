@@ -35,6 +35,11 @@ const colors = {
   primaryLight: "#E0E7FF",
   primaryDark: "#4338CA",
 
+  onSurface: "#000000",
+
+  // outline
+  outline: "rgb(255, 255, 255)",
+
   // Gray scale
   white: "#FFFFFF",
   gray50: "#F8FAFC",

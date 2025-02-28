@@ -47,5 +47,15 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       projectId: "49e4e24d-c928-4ff1-815d-f1a58ca580bd",
     },
   },
-  plugins: ["expo-font", "expo-localization"],
+  plugins: [
+    "expo-font",
+    "expo-localization",
+    [
+      "expo-image-picker",
+      {
+        photosPermission:
+          "The app accesses your photos to let you create blog and share them with your friends.",
+      },
+    ],
+  ],
 });

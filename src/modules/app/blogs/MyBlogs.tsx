@@ -11,7 +11,7 @@ import {
 import TheLayout from "@components/layout/TheLayOut";
 import TheBaseHeader from "@components/layout/TheBaseHeader";
 import { FAB, Badge, ActivityIndicator, Searchbar } from "react-native-paper";
-import { FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { colors } from "@styles/theme";
 import { formatDate } from "@src/utils/functions/date";
 import { spacing } from "@styles/spacing";
@@ -40,7 +40,7 @@ const getStatusColor = (status: TStatusBlog) => {
   }
 };
 
-const BlogListScreen = () => {
+const MyBlogs = () => {
   const navigation = useNavigation<StackNavigationProp<BlogStackParams>>();
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
@@ -61,7 +61,7 @@ const BlogListScreen = () => {
           setLoading(true);
         }
 
-        const rs = await blogService.getAllBlogsApproved({
+        const rs = await blogService.getAllBlogByUser({
           page,
           name: debouncedSearchQuery,
         });
@@ -89,7 +89,7 @@ const BlogListScreen = () => {
     try {
       setRefreshing(true);
       setPage(1);
-      const rs = await blogService.getAllBlogsApproved({
+      const rs = await blogService.getAllBlogByUser({
         page: 1,
         name: debouncedSearchQuery,
       });
@@ -112,6 +112,12 @@ const BlogListScreen = () => {
   React.useEffect(() => {
     handleGetListBlog();
   }, [debouncedSearchQuery, handleGetListBlog]);
+
+  React.useEffect(() => {
+    navigation.setOptions({
+      gestureEnabled: false,
+    });
+  }, [navigation]);
 
   const renderFooter = () => {
     if (!isLoadingMore) return null;
@@ -136,23 +142,7 @@ const BlogListScreen = () => {
   );
 
   return (
-    <TheLayout
-      header={
-        <TheBaseHeader
-          title="Blogs"
-          rightSection={
-            <FontAwesome5
-              name="user-edit"
-              size={24}
-              color="white"
-              onPress={() => {
-                navigation.navigate(Routes.MyBlogs);
-              }}
-            />
-          }
-        />
-      }
-    >
+    <TheLayout header={<TheBaseHeader title="My Blogs" isShowBackBtn />}>
       <View style={styles.container}>
         <Searchbar
           placeholder="Search blog..."
@@ -169,16 +159,19 @@ const BlogListScreen = () => {
             />
           )}
         />
-
         <Visibility
           visibility={blogs}
           suspenseComponent={loading ? <LoadingScreen /> : null}
         >
           <FlatList
+            removeClippedSubviews={false}
+            keyboardShouldPersistTaps="handled"
+            updateCellsBatchingPeriod={100}
             data={blogs}
             keyExtractor={(item) => item._id}
             renderItem={renderItem}
             contentContainerStyle={styles.listContent}
+            style={styles.list}
             showsVerticalScrollIndicator={false}
             ListEmptyComponent={EmptyComponent}
             initialNumToRender={10}
@@ -197,6 +190,13 @@ const BlogListScreen = () => {
             }
           />
         </Visibility>
+
+        <FAB
+          style={[styles.fab, { backgroundColor: colors.primary }]}
+          icon="plus"
+          color="white"
+          onPress={() => navigation.navigate(Routes.CreateBlog)}
+        />
       </View>
     </TheLayout>
   );
@@ -260,6 +260,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: spacing[0],
+    width: "100%",
+  },
+  list: {
+    flex: 1,
     width: "100%",
   },
   searchBar: {
@@ -338,6 +342,14 @@ const styles = StyleSheet.create({
     ...typography.caption,
     color: colors.gray500,
   },
+  fab: {
+    position: "absolute",
+    margin: 16,
+    right: -spacing[3],
+    bottom: -spacing[3],
+    borderRadius: 50,
+    color: colors.primary,
+  },
   loadingFooter: {
     paddingVertical: spacing[4],
     alignItems: "center",
@@ -348,4 +360,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default BlogListScreen;
+export default MyBlogs;

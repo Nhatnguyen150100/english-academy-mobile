@@ -38,8 +38,9 @@ export default function TheBaseHeader({
       </View>
 
       <Text style={styles.appbarTitle}>{title}</Text>
-
-      {rightSection ? rightSection : <View></View>}
+      <View style={styles.appbarRight}>
+        {rightSection ? rightSection : <View></View>}
+      </View>
     </View>
   );
 }
@@ -70,6 +71,14 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     opacity: 0.2,
+  },
+  appbarRight: {
+    position: "absolute",
+    right: 20,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
   },
   appbar: {
     position: "relative",

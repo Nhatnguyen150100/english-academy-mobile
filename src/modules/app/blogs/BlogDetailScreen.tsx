@@ -84,12 +84,12 @@ const BlogDetailScreen = () => {
           }
         >
           <Image
-            source={{ uri: blog!.thumbnail || "https://picsum.photos/200/300" }}
+            source={{ uri: blog.thumbnail || "https://picsum.photos/200/300" }}
             style={styles.thumbnail}
             resizeMode="cover"
           />
 
-          <Title style={styles.title}>{blog!.title}</Title>
+          <Title style={styles.title}>{blog.title}</Title>
 
           <View style={styles.metaContainer}>
             <View style={styles.metaGroup}>
@@ -122,18 +122,13 @@ const BlogDetailScreen = () => {
             </Chip> */}
           </View>
 
-          {/* <View style={styles.contentContainer}>
+          <View style={styles.contentContainer}>
             <RenderHtml
               contentWidth={300}
-              source={{ html: blog!.content || "<p>No content available</p>" }}
+              source={{ html: blog.content || "<p>No content available</p>" }}
               baseStyle={styles.htmlContent}
             />
-          </View> */}
-          <RenderHtml
-            contentWidth={300}
-            source={{ html: blog!.content || "<p>No content available</p>" }}
-            baseStyle={styles.htmlContent}
-          />
+          </View>
         </ScrollView>
       ) : loading ? (
         <LoadingScreen />
