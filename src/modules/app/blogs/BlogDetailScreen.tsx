@@ -21,7 +21,7 @@ import typography from "@styles/typography";
 import { blogService } from "@src/services";
 import LoadingScreen from "@components/base/LoadingScreen";
 import EmptyComponent from "@components/base/EmptyComponent";
-import { IBlogDetail, TStatusBlog } from "@styles/blogs";
+import { IBlogDetail } from "@src/types/blogs.types";
 
 // const getStatusColor = (status: TStatusBlog) => {
 //   switch (status) {

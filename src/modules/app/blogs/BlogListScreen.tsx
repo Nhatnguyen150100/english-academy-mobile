@@ -23,22 +23,10 @@ import Visibility from "@components/base/visibility";
 import LoadingScreen from "@components/base/LoadingScreen";
 import EmptyComponent from "@components/base/EmptyComponent";
 import { EStatusBlog } from "@src/constants/status";
-import { IBlogInfo, TStatusBlog } from "@styles/blogs";
 import { blogService } from "@src/services";
 import useDebounce from "@hooks/useDebounce";
+import { IBlogInfo, TStatusBlog } from "@src/types/blogs.types";
 
-const getStatusColor = (status: TStatusBlog) => {
-  switch (status) {
-    case EStatusBlog.APPROVED:
-      return colors.success;
-    case EStatusBlog.PENDING_APPROVED:
-      return colors.warning;
-    case EStatusBlog.REJECTED:
-      return colors.error;
-    default:
-      return colors.gray500;
-  }
-};
 
 const BlogListScreen = () => {
   const navigation = useNavigation<StackNavigationProp<BlogStackParams>>();
@@ -63,7 +51,7 @@ const BlogListScreen = () => {
 
         const rs = await blogService.getAllBlogsApproved({
           page,
-          name: debouncedSearchQuery,
+          search: debouncedSearchQuery,
         });
 
         setBlogs((prev) =>
@@ -217,14 +205,6 @@ const BlogItem = React.memo(
             <Text style={styles.title} numberOfLines={2}>
               {item.title}
             </Text>
-            <Badge
-              style={[
-                styles.statusBadge,
-                { backgroundColor: getStatusColor(item.statusBlog) },
-              ]}
-            >
-              {item.statusBlog}
-            </Badge>
           </View>
 
           <Text style={styles.description} numberOfLines={3}>

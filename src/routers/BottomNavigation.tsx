@@ -33,7 +33,7 @@ export default function TabNavigator() {
       />
 
       <Tab.Screen
-        name={Routes.CourseStack}
+        name={"Courses"}
         component={CourseStack}
         options={{
           tabBarIcon: ({ color }) => (
@@ -43,7 +43,7 @@ export default function TabNavigator() {
       />
 
       <Tab.Screen
-        name={Routes.BlogStack}
+        name={"Blogs"}
         component={BlogStack}
         options={{
           tabBarIcon: ({ color }) => (
@@ -53,7 +53,7 @@ export default function TabNavigator() {
       />
 
       <Tab.Screen
-        name={Routes.RankStack}
+        name={"Ranks"}
         component={RankStack}
         options={{
           tabBarIcon: ({ color }) => (

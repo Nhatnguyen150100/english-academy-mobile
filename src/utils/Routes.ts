@@ -23,6 +23,7 @@ export enum Routes {
   BlogList = "BlogList",
   BlogDetail = "BlogDetail",
   CreateBlog = "CreateBlog",
+  EditBlog = "EditBlog",
 
   // Course sub-routes
   CourseList = "CourseList",
@@ -66,6 +67,7 @@ export type BlogStackParams = {
   [Routes.BlogDetail]: { blogId: string | undefined };
   [Routes.BlogList]: undefined;
   [Routes.CreateBlog]: undefined;
+  [Routes.EditBlog]: { blogId: string | undefined };
 };
 
 /**

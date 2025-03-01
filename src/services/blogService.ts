@@ -1,7 +1,7 @@
 import axiosRequest from "@src/network/axiosRequest";
+import { IBlogDetail, IBlogInfo, TStatusBlog } from "@src/types/blogs.types";
 import { IPagination } from "@src/types/pagination.types";
 import { IBaseResponse } from "@src/types/response.types";
-import { IBlogDetail, IBlogInfo, TStatusBlog } from "@styles/blogs";
 import onRemoveParams from "@utils/functions/on-remove-params";
 
 class BlogService {

@@ -23,9 +23,9 @@ import Visibility from "@components/base/visibility";
 import LoadingScreen from "@components/base/LoadingScreen";
 import EmptyComponent from "@components/base/EmptyComponent";
 import { EStatusBlog } from "@src/constants/status";
-import { IBlogInfo, TStatusBlog } from "@styles/blogs";
 import { blogService } from "@src/services";
 import useDebounce from "@hooks/useDebounce";
+import { IBlogInfo, TStatusBlog } from "@src/types/blogs.types";
 
 const getStatusColor = (status: TStatusBlog) => {
   switch (status) {
@@ -63,7 +63,7 @@ const MyBlogs = () => {
 
         const rs = await blogService.getAllBlogByUser({
           page,
-          name: debouncedSearchQuery,
+          search: debouncedSearchQuery,
         });
 
         setBlogs((prev) =>
@@ -134,7 +134,7 @@ const MyBlogs = () => {
       <BlogItem
         item={item}
         onPress={() =>
-          navigation.navigate(Routes.BlogDetail, { blogId: item._id })
+          navigation.navigate(Routes.EditBlog, { blogId: item._id })
         }
       />
     ),

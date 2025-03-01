@@ -2,6 +2,7 @@ import useTheme from "@hooks/useTheme";
 import BlogDetailScreen from "@modules/app/blogs/BlogDetailScreen";
 import BlogListScreen from "@modules/app/blogs/BlogListScreen";
 import CreateBlogScreen from "@modules/app/blogs/CreateBlogScreen";
+import EditBlogScreen from "@modules/app/blogs/EditBlogScreen";
 import MyBlogs from "@modules/app/blogs/MyBlogs";
 import { createStackNavigator } from "@react-navigation/stack";
 import Routes, { BlogStackParams } from "@utils/Routes";
@@ -41,6 +42,12 @@ export default function BlogStack() {
           name={Routes.CreateBlog}
           component={CreateBlogScreen}
           options={{ headerTitle: "Create new blog" }}
+        />
+
+        <Stack.Screen
+          name={Routes.EditBlog}
+          component={EditBlogScreen}
+          options={{ headerTitle: "Edit blog" }}
         />
 
       </>
