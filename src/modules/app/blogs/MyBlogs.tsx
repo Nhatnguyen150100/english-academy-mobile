@@ -16,7 +16,7 @@ import { colors } from "@styles/theme";
 import { formatDate } from "@src/utils/functions/date";
 import { spacing } from "@styles/spacing";
 import typography from "@styles/typography";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import Routes, { BlogStackParams } from "@utils/Routes";
 import Visibility from "@components/base/visibility";
@@ -109,9 +109,11 @@ const MyBlogs = () => {
     }
   };
 
-  React.useEffect(() => {
-    handleGetListBlog();
-  }, [debouncedSearchQuery, handleGetListBlog]);
+  useFocusEffect(
+    React.useCallback(() => {
+      handleGetListBlog();
+    }, [debouncedSearchQuery, handleGetListBlog])
+  );
 
   React.useEffect(() => {
     navigation.setOptions({

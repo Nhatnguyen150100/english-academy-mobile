@@ -20,6 +20,7 @@ import MyAchievements from "../home/components/MyAchievements";
 import Icon from "react-native-vector-icons/Ionicons";
 import { examService } from "@src/services";
 import Visibility from "@components/base/visibility";
+import Toast from "react-native-toast-message";
 
 function InformationSection({
   label,
@@ -132,7 +133,13 @@ function Profile() {
                 <Button
                   mode="contained"
                   buttonColor={colors.primary}
-                  // onPress={() => setIsShowDialog(true)}
+                  onPress={() => {
+                    Toast.show({
+                      type: "info",
+                      text1: "Upgrade to premium",
+                      text2: "Please contact ADMIN for update your account",
+                    })
+                  }}
                   style={styles.editInfoButton}
                 >
                   Update plan
