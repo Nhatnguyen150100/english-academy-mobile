@@ -1,11 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  Text,
-  FlatList,
-} from "react-native";
+import { View, StyleSheet, TouchableOpacity, Text } from "react-native";
 import TheLayout from "@components/layout/TheLayOut";
 import TheBaseHeader from "@components/layout/TheBaseHeader";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -23,6 +17,7 @@ import Visibility from "@components/base/visibility";
 import LoadingScreen from "@components/base/LoadingScreen";
 import { IChapterInfo } from "@src/types/chapter.types";
 import EmptyComponent from "@components/base/EmptyComponent";
+import { FlatList } from "react-native-gesture-handler";
 
 function CourseDetail() {
   const navigation = useNavigation<StackNavigationProp<CourseStackParams>>();
@@ -148,7 +143,7 @@ function CourseDetail() {
           </View>
         </View>
 
-        <View style={{ flex: 1, flexGrow: 1 }}>
+        <View style={styles.listWrapper}>
           <Visibility
             visibility={courseDetail}
             suspenseComponent={loading ? <LoadingScreen /> : null}
@@ -184,6 +179,15 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.gray200,
     marginBottom: spacing[3],
   },
+  listWrapper: {
+    flex: 1,
+    paddingHorizontal: spacing[0],
+  },
+  listContent: {
+    flexGrow: 1,
+    padding: spacing[0],
+    paddingBottom: spacing[6],
+  },
   courseTitle: {
     ...typography.subtitle2,
     color: colors.gray900,
@@ -213,9 +217,6 @@ const styles = StyleSheet.create({
     ...typography.subtitle1,
     color: colors.gray900,
     marginBottom: spacing[3],
-  },
-  listContent: {
-    paddingBottom: spacing[6],
   },
   chapterContainer: {
     backgroundColor: colors.white,

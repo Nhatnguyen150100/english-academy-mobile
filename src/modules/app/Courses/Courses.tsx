@@ -1,12 +1,5 @@
 import React, { useState, useCallback } from "react";
-import {
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  Text,
-  Image,
-  FlatList,
-} from "react-native";
+import { View, StyleSheet, TouchableOpacity, Text, Image } from "react-native";
 import TheLayout from "@components/layout/TheLayOut";
 import TheBaseHeader from "@components/layout/TheBaseHeader";
 import { ActivityIndicator, Searchbar } from "react-native-paper";
@@ -22,7 +15,7 @@ import typography from "@styles/typography";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import Routes, { CourseStackParams } from "@utils/Routes";
-import { RefreshControl } from "react-native-gesture-handler";
+import { FlatList, RefreshControl } from "react-native-gesture-handler";
 import EmptyComponent from "@components/base/EmptyComponent";
 import useDebounce from "@hooks/useDebounce";
 
