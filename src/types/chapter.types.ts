@@ -1,11 +1,11 @@
-import { IExamDetail, IExamInfo } from "./exam.types";
+import { IExamInfo } from "./exam.types";
 
 export interface IChapter {
   _id: string;
   courseId: string;
   title: string;
   description: string;
-  exams: IExamDetail[];
+  exams: IExamInfo[];
   order: number;
   __v: number;
   createdAt: string;

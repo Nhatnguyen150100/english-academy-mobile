@@ -6,10 +6,10 @@ class ChapterService {
   private _prefixURL = "/v1/chapter";
 
   public async getChapterDetail(
-    courseId: string
+    chapterId: string
   ): Promise<IBaseResponse<IChapter>> {
     try {
-      const rs = await axiosRequest.get(`${this._prefixURL}/${courseId}`);
+      const rs = await axiosRequest.get(`${this._prefixURL}/detail/${chapterId}`);
       return Promise.resolve(rs.data);
     } catch (error) {
       return Promise.reject(error);

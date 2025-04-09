@@ -18,7 +18,7 @@ import Routes, { CourseStackParams, RootStackParams } from "@utils/Routes";
 import { spacing } from "@styles/spacing";
 import typography from "@styles/typography";
 import { colors } from "@styles/theme";
-import { IExamDetail } from "@src/types/exam.types";
+import { IExamDetail, IQuestion, TExamType } from "@src/types/exam.types";
 import { examService } from "@src/services";
 import Toast from "react-native-toast-message";
 import getScoreFromExam from "@utils/functions/get-score";
@@ -29,8 +29,8 @@ import Fireworks from "@components/base/Fireworks";
 
 interface IAnswer {
   questionId: string;
-  answer: string;
-  correctAnswer?: string;
+  answer: any;
+  correctAnswer?: any;
 }
 
 function Exam() {
@@ -99,14 +99,30 @@ function Exam() {
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
-  const handleAnswerSelect = (questionId: string, answer: string) => {
-    setSelectedAnswers((prev) => ({
-      ...prev,
-      [questionId]: {
-        questionId,
-        answer,
-      },
-    }));
+  const handleAnswerSelect = (
+    questionId: string,
+    answer: any,
+    questionType: TExamType
+  ) => {
+    setSelectedAnswers((prev: any) => {
+      const current = prev[questionId]?.answer || [];
+
+      if (questionType === "ARRANGE") {
+        const newAnswer = current.some((_item: any) => _item?.id === answer.id)
+          ? current.filter((_item: any) => _item?.id !== answer.id)
+          : [...current, answer];
+
+        return {
+          ...prev,
+          [questionId]: { questionId, answer: newAnswer },
+        };
+      }
+
+      return {
+        ...prev,
+        [questionId]: { questionId, answer },
+      };
+    });
   };
 
   const handleSubmit = async () => {
@@ -117,16 +133,20 @@ function Exam() {
         examId,
         listAnswer,
       });
+
       setIsSubmitted(true);
       const results = rs.data.results;
-      const convertedAnswer = selectedAnswers;
+      const convertedAnswer = { ...selectedAnswers };
+
       for (let index = 0; index < results?.length; index++) {
         const element = results[index];
+
         convertedAnswer[element.questionId] = {
           ...convertedAnswer[element.questionId],
           correctAnswer: element.correctAnswer,
         };
       }
+
       setScore(rs.data.score);
       setSelectedAnswers(convertedAnswer);
     } catch (error) {
@@ -268,6 +288,7 @@ function Exam() {
 
   const renderQuestion = () => {
     const question = exam?.questions[currentQuestion];
+    if (!question) return null;
 
     return (
       <View style={styles.questionContainer}>
@@ -306,52 +327,9 @@ function Exam() {
         <Text style={styles.questionText}>{question?.content}</Text>
 
         <ScrollView contentContainerStyle={styles.optionsContainer}>
-          {question?.options.map((option) => (
-            <TouchableOpacity
-              key={option._id}
-              style={[
-                styles.optionButton,
-                selectedAnswers[question._id]?.answer === option.content &&
-                  styles.selectedOption,
-                isSubmitted &&
-                  option.content === selectedAnswers[question._id]?.answer &&
-                  styles.wrongAnswer,
-                isSubmitted &&
-                  option.content ===
-                    selectedAnswers[question._id]?.correctAnswer &&
-                  styles.correctAnswer,
-              ]}
-              disabled={isSubmitted}
-              onPress={() => handleAnswerSelect(question._id, option.content)}
-            >
-              <MaterialCommunityIcons
-                name={
-                  isSubmitted
-                    ? selectedAnswers[question._id]?.correctAnswer ===
-                      option.content
-                      ? "checkbox-marked-circle"
-                      : "cancel"
-                    : selectedAnswers[question._id]?.answer === option.content
-                    ? "checkbox-marked-circle"
-                    : "checkbox-blank-circle-outline"
-                }
-                size={20}
-                color={
-                  isSubmitted
-                    ? option.content ===
-                      selectedAnswers[question._id]?.correctAnswer
-                      ? colors.success
-                      : option.content === selectedAnswers[question._id]?.answer
-                      ? colors.error
-                      : colors.gray400
-                    : selectedAnswers[question._id]?.answer === option.content
-                    ? colors.primary
-                    : colors.gray400
-                }
-              />
-              <Text style={styles.optionText}>{option.content}</Text>
-            </TouchableOpacity>
-          ))}
+          {question.type === "MCQ"
+            ? renderMCQQuestion(question)
+            : renderArrangeQuestion(question)}
           <View style={styles.navigationButtons}>
             <Visibility visibility={currentQuestion !== 0} boundaryComponent>
               <TouchableOpacity
@@ -386,6 +364,7 @@ function Exam() {
             )}
           </View>
         </ScrollView>
+
         <Visibility
           visibility={!isSubmitted}
           suspenseComponent={
@@ -440,6 +419,149 @@ function Exam() {
           </View>
         </Visibility>
       </View>
+    );
+  };
+
+  const renderArrangeQuestion = (question: IQuestion) => {
+    const currentAnswer = selectedAnswers[question._id]?.answer || [];
+    const correctAnswer = selectedAnswers[question._id]?.correctAnswer;
+
+    const availableOptions = question.options
+      .filter(
+        (opt) =>
+          !currentAnswer.some(
+            (item: { id: string; content: string }) => item.id === opt._id
+          )
+      )
+      .map((opt) => ({ id: opt._id, content: opt.content }));
+
+    return (
+      <>
+        <View style={styles.selectedWordsContainer}>
+          {currentAnswer?.map(
+            (word: { id: string; content: string }, index: number) => (
+              <TouchableOpacity
+                key={word.id}
+                style={[
+                  styles.wordButton,
+                  styles.selectedWord,
+                  isSubmitted && {
+                    backgroundColor:
+                      correctAnswer?.indexOf(word.content) === index
+                        ? colors.successLight
+                        : colors.errorLight,
+                    borderColor:
+                      correctAnswer?.indexOf(word.content) === index
+                        ? colors.success
+                        : colors.error,
+                  },
+                ]}
+                disabled={isSubmitted}
+                onPress={() =>
+                  handleAnswerSelect(question._id, word, "ARRANGE")
+                }
+              >
+                <Text style={styles.wordText}>{word.content}</Text>
+                {!isSubmitted && (
+                  <MaterialCommunityIcons
+                    name="close"
+                    size={16}
+                    color={colors.error}
+                  />
+                )}
+              </TouchableOpacity>
+            )
+          )}
+        </View>
+
+        <Visibility visibility={isSubmitted}>
+          <View style={styles.selectedWordsContainer}>
+            {correctAnswer?.map((word: string, index: number) => (
+              <Text
+                key={index}
+                style={[
+                  styles.wordButton,
+                  styles.selectedWord,
+                  {
+                    backgroundColor: colors.successLight,
+                    borderColor: colors.success,
+                  },
+                ]}
+              >
+                <Text style={styles.wordText}>{word}</Text>
+              </Text>
+            ))}
+          </View>
+        </Visibility>
+
+        <View style={styles.availableWordsContainer}>
+          {availableOptions?.map((word) => (
+            <TouchableOpacity
+              key={word.id}
+              style={styles.wordButton}
+              disabled={isSubmitted}
+              onPress={() => handleAnswerSelect(question._id, word, "ARRANGE")}
+            >
+              <Text style={styles.wordText}>{word.content}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </>
+    );
+  };
+
+  const renderMCQQuestion = (question: IQuestion) => {
+    return (
+      <>
+        {question?.options.map((option) => (
+          <TouchableOpacity
+            key={option._id}
+            style={[
+              styles.optionButton,
+              selectedAnswers[question._id]?.answer === option.content &&
+                styles.selectedOption,
+              isSubmitted &&
+                option.content === selectedAnswers[question._id]?.answer &&
+                styles.wrongAnswer,
+              isSubmitted &&
+                option.content ===
+                  selectedAnswers[question._id]?.correctAnswer &&
+                styles.correctAnswer,
+            ]}
+            disabled={isSubmitted}
+            onPress={() =>
+              handleAnswerSelect(question._id, option.content, "MCQ")
+            }
+          >
+            <MaterialCommunityIcons
+              name={
+                isSubmitted
+                  ? selectedAnswers[question._id]?.correctAnswer ===
+                    option.content
+                    ? "checkbox-marked-circle"
+                    : "cancel"
+                  : selectedAnswers[question._id]?.answer === option.content
+                  ? "checkbox-marked-circle"
+                  : "checkbox-blank-circle-outline"
+              }
+              size={20}
+              color={
+                isSubmitted
+                  ? option.content ===
+                    selectedAnswers[question._id]?.correctAnswer
+                    ? colors.success
+                    : option.content === selectedAnswers[question._id]?.answer
+                    ? colors.error
+                    : colors.gray400
+                  : selectedAnswers[question._id]?.answer === option.content
+                  ? colors.primary
+                  : colors.gray400
+              }
+            />
+            <Text style={styles.optionText}>{option.content}</Text>
+          </TouchableOpacity>
+        ))}
+      </>
     );
   };
 
@@ -697,6 +819,42 @@ const styles = StyleSheet.create({
     ...typography.subtitle2,
     color: colors.white,
     textTransform: "capitalize",
+  },
+
+  selectedWordsContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+    padding: 12,
+    minHeight: 80,
+    borderWidth: 1,
+    borderColor: colors.gray200,
+    borderRadius: 8,
+    marginBottom: 16,
+  },
+  availableWordsContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+  },
+  wordButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: colors.gray200,
+    backgroundColor: colors.white,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  selectedWord: {
+    backgroundColor: colors.primaryLight,
+    borderColor: colors.primary,
+  },
+  wordText: {
+    fontSize: 14,
+    color: colors.gray800,
   },
 });
 
