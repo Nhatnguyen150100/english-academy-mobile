@@ -21,6 +21,8 @@ import { courseService } from "@src/services";
 import Toast from "react-native-toast-message";
 import Visibility from "@components/base/visibility";
 import LoadingScreen from "@components/base/LoadingScreen";
+import { IChapterInfo } from "@src/types/chapter.types";
+import EmptyComponent from "@components/base/EmptyComponent";
 
 function CourseDetail() {
   const navigation = useNavigation<StackNavigationProp<CourseStackParams>>();
@@ -28,6 +30,12 @@ function CourseDetail() {
   const courseId = route?.params.courseId;
   const [courseDetail, setCourseDetail] = useState<ICourse>();
   const [loading, setLoading] = useState<boolean>(false);
+
+  const totalExams =
+    courseDetail?.chapters?.reduce(
+      (acc, chapter) => acc + chapter.exams.length,
+      0
+    ) || 0;
 
   const handleGetCourseDetail = async () => {
     if (!courseId) {
@@ -55,62 +63,41 @@ function CourseDetail() {
     if (courseId) handleGetCourseDetail();
   }, [courseId]);
 
-  const renderExamItem = ({ item }: { item: any }) => (
-    <View style={styles.examCard}>
-      <View style={styles.examHeader}>
-        <MaterialCommunityIcons
-          name="clipboard-text"
-          size={24}
-          color={colors.primary}
-        />
-        <Text style={styles.examName}>{item.name}</Text>
-      </View>
-
-      <Text style={styles.examDescription} numberOfLines={2}>
-        {item.description || "No description available"}
-      </Text>
-
-      <View style={styles.examMeta}>
-        <View style={styles.metaItem}>
+  const renderChapterItem = ({ item }: { item: IChapterInfo }) => (
+    <TouchableOpacity
+      onPress={() =>
+        navigation.navigate(Routes.ChapterDetail, { chapterId: item._id })
+      }
+    >
+      <View style={styles.chapterContainer}>
+        <View style={styles.chapterHeader}>
           <MaterialCommunityIcons
-            name="clock-time-three"
-            size={16}
-            color={colors.gray500}
+            name="bookmark-outline"
+            size={24}
+            color={colors.primary}
           />
-          <Text style={styles.metaText}>{item.timeExam} mins</Text>
-        </View>
-
-        <View
-          style={[
-            styles.metaItem,
-            styles.levelBadge,
-            {
-              backgroundColor:
-                item.level === "HARD"
-                  ? colors.error
-                  : item.level === "MEDIUM"
-                  ? colors.warning
-                  : colors.success,
-            },
-          ]}
-        >
-          {getLevelIcon(item.level)}
-          <Text style={styles.levelText}>{item.level}</Text>
+          <View style={styles.chapterInfo}>
+            <Text style={styles.chapterTitle}>{item.title}</Text>
+            <Text style={styles.chapterDescription} numberOfLines={2}>
+              {item.description || "No description available"}
+            </Text>
+            <View style={{ ...styles.metaItem, marginTop: 10 }}>
+              <MaterialCommunityIcons
+                name="file-document"
+                size={16}
+                color={colors.gray500}
+              />
+              <Text style={styles.metaText}>{item.exams.length} exams</Text>
+            </View>
+          </View>
+          <MaterialCommunityIcons
+            name="chevron-right"
+            size={24}
+            color={colors.gray400}
+          />
         </View>
       </View>
-
-      <TouchableOpacity
-        style={styles.startButton}
-        onPress={() => navigation.navigate(Routes.Exam, { examId: item._id })}
-      >
-        <Text style={styles.startButtonText}>View Exam</Text>
-        <MaterialCommunityIcons
-          name="arrow-right"
-          size={20}
-          color={colors.white}
-        />
-      </TouchableOpacity>
-    </View>
+    </TouchableOpacity>
   );
 
   return (
@@ -130,63 +117,59 @@ function CourseDetail() {
           <View style={styles.courseMeta}>
             <View style={styles.metaItem}>
               <MaterialCommunityIcons
-                name="calendar"
+                name="book"
                 size={16}
                 color={colors.gray500}
               />
               <Text style={styles.metaText}>
-                Created {formatDate(courseDetail?.createdAt ?? "")}
+                {courseDetail?.chapters?.length} chapters
               </Text>
             </View>
 
             <View style={styles.metaItem}>
               <MaterialCommunityIcons
-                name="clipboard-list"
+                name="file-document"
+                size={16}
+                color={colors.gray500}
+              />
+              <Text style={styles.metaText}>{totalExams} exams</Text>
+            </View>
+
+            <View style={styles.metaItem}>
+              <MaterialCommunityIcons
+                name="calendar"
                 size={16}
                 color={colors.gray500}
               />
               <Text style={styles.metaText}>
-                {courseDetail?.exams.length} exams
+                {formatDate(courseDetail?.createdAt ?? "")}
               </Text>
             </View>
           </View>
         </View>
 
-        <Visibility
-          visibility={courseDetail}
-          suspenseComponent={loading ? <LoadingScreen /> : null}
-        >
-          <FlatList
-            data={courseDetail?.exams}
-            keyExtractor={(item) => item._id}
-            renderItem={renderExamItem}
-            contentContainerStyle={styles.listContent}
-            ListHeaderComponent={
-              <Text style={styles.examsTitle}>Available Exams</Text>
-            }
-            showsVerticalScrollIndicator={false}
-          />
-        </Visibility>
+        <View style={{ flex: 1, flexGrow: 1 }}>
+          <Visibility
+            visibility={courseDetail}
+            suspenseComponent={loading ? <LoadingScreen /> : null}
+          >
+            <FlatList
+              data={courseDetail?.chapters}
+              keyExtractor={(item) => item._id}
+              renderItem={renderChapterItem}
+              contentContainerStyle={styles.listContent}
+              ListEmptyComponent={EmptyComponent}
+              ListHeaderComponent={
+                <Text style={styles.examsTitle}>Course Chapters</Text>
+              }
+              showsVerticalScrollIndicator={false}
+            />
+          </Visibility>
+        </View>
       </View>
     </TheLayout>
   );
 }
-
-const getLevelIcon = (level: string) => {
-  const iconProps = {
-    size: 16,
-    color: colors.white,
-  };
-
-  switch (level.toUpperCase()) {
-    case "HARD":
-      return <MaterialCommunityIcons name="alert" {...iconProps} />;
-    case "MEDIUM":
-      return <MaterialCommunityIcons name="alert-circle" {...iconProps} />;
-    default:
-      return <MaterialCommunityIcons name="flag" {...iconProps} />;
-  }
-};
 
 const styles = StyleSheet.create({
   container: {
@@ -234,10 +217,10 @@ const styles = StyleSheet.create({
   listContent: {
     paddingBottom: spacing[6],
   },
-  examCard: {
+  chapterContainer: {
     backgroundColor: colors.white,
     borderRadius: 16,
-    padding: spacing[4],
+    padding: spacing[3],
     marginBottom: spacing[3],
     shadowColor: colors.gray800,
     shadowOffset: { width: 0, height: 2 },
@@ -245,51 +228,28 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 2,
   },
-  examHeader: {
+  chapterHeader: {
     flexDirection: "row",
     alignItems: "center",
-    gap: spacing[2],
     marginBottom: spacing[2],
   },
-  examName: {
+  chapterInfo: {
+    flex: 1,
+    marginLeft: spacing[2],
+  },
+  chapterTitle: {
     ...typography.subtitle2,
     color: colors.gray900,
-    flex: 1,
   },
-  examDescription: {
+  chapterDescription: {
     ...typography.body2,
     color: colors.gray600,
-    marginBottom: spacing[3],
   },
-  examMeta: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: spacing[3],
-  },
-  levelBadge: {
-    paddingHorizontal: spacing[2],
-    paddingVertical: spacing[1],
-    borderRadius: 20,
-    gap: spacing[1],
-  },
-  levelText: {
-    ...typography.caption,
-    color: colors.white,
-    textTransform: "capitalize",
-  },
-  startButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: spacing[2],
-    backgroundColor: colors.primary,
-    paddingVertical: spacing[2],
+  examCard: {
+    backgroundColor: colors.gray50,
     borderRadius: 12,
-  },
-  startButtonText: {
-    ...typography.button,
-    color: colors.white,
+    padding: spacing[3],
+    marginTop: spacing[2],
   },
 });
 

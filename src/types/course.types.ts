@@ -1,10 +1,10 @@
-import { IExamInfo } from "./exam.types";
+import { IChapterInfo } from "./chapter.types";
 
 export interface ICourse {
   _id: string;
   name: string;
   description: string;
-  exams: IExamInfo[];
+  chapters: IChapterInfo[];
   __v: number;
   createdAt: string;
   updatedAt: string;

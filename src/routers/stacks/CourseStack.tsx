@@ -1,4 +1,5 @@
 import useTheme from "@hooks/useTheme";
+import ChapterDetail from "@modules/app/courses/ChapterDetail";
 import CourseDetail from "@modules/app/courses/CourseDetail";
 import Courses from "@modules/app/courses/Courses";
 import Exam from "@modules/app/courses/Exam";
@@ -32,11 +33,16 @@ export default function CourseStack() {
         />
 
         <Stack.Screen
+          name={Routes.ChapterDetail}
+          component={ChapterDetail}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
           name={Routes.Exam}
           component={Exam}
           options={{ headerShown: false }}
         />
-
       </>
     </Stack.Navigator>
   );

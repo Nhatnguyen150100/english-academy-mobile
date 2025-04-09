@@ -27,6 +27,7 @@ export enum Routes {
 
   // Course sub-routes
   CourseList = "CourseList",
+  ChapterDetail = "ChapterDetail",
   CourseDetail = "CourseDetail",
   Exam = "Exam",
   HistoryExam = "HistoryExam",
@@ -50,7 +51,7 @@ export type RootStackParams = {
   [Routes.Home]: undefined;
   [Routes.MissionDaily]: undefined;
   [Routes.Settings]: undefined;
-  
+
   // Nested stacks
   [Routes.BlogStack]: undefined;
   [Routes.CourseStack]: undefined;
@@ -77,6 +78,7 @@ export type CourseStackParams = {
   [Routes.CourseStack]: undefined;
   [Routes.CourseList]: undefined;
   [Routes.CourseDetail]: { courseId: string };
+  [Routes.ChapterDetail]: { chapterId: string };
   [Routes.Exam]: { examId: string };
 };
 

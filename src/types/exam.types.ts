@@ -1,8 +1,8 @@
-export type TLevel = "EASY" | "MEDIUM" | "HARD"
+export type TLevel = "EASY" | "MEDIUM" | "HARD";
 
 export interface IExamInfo {
   _id: string;
-  courseId: string;
+  chapterId: string;
   name: string;
   description: string;
   timeExam: number;
@@ -14,7 +14,7 @@ export interface IExamInfo {
 
 export interface IExamDetail {
   _id: string;
-  courseId: string;
+  chapterId: string;
   name: string;
   description: string;
   timeExam: number;

@@ -37,39 +37,48 @@ function Courses() {
   const [refreshing, setRefreshing] = useState(false);
   const debouncedSearchQuery = useDebounce(searchQuery);
 
-  const handleGetListCourse = useCallback(async (isLoadMore = false) => {
-    try {
-      if (isLoadMore) {
-        if (page >= totalPages) return;
-        setIsLoadingMore(true);
-      } else {
-        setLoading(true);
-      }
+  const handleGetListCourse = useCallback(
+    async (isLoadMore = false) => {
+      try {
+        if (isLoadMore) {
+          if (page >= totalPages) return;
+          setIsLoadingMore(true);
+        } else {
+          setLoading(true);
+        }
 
-      const rs = await courseService.getAllCourse({ page, name: debouncedSearchQuery });
-      
-      setListCourses(prev => 
-        isLoadMore ? [...prev, ...rs.data.data] : rs.data.data
-      );
-      setTotalPages(rs.data.totalPages);
-      
-      if (!isLoadMore) setPage(1);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      if (isLoadMore) {
-        setIsLoadingMore(false);
-      } else {
-        setLoading(false);
+        const rs = await courseService.getAllCourse({
+          page,
+          name: debouncedSearchQuery,
+        });
+
+        setListCourses((prev) =>
+          isLoadMore ? [...prev, ...rs.data.data] : rs.data.data
+        );
+        setTotalPages(rs.data.totalPages);
+
+        if (!isLoadMore) setPage(1);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        if (isLoadMore) {
+          setIsLoadingMore(false);
+        } else {
+          setLoading(false);
+        }
       }
-    }
-  }, [debouncedSearchQuery, page, totalPages]);
+    },
+    [debouncedSearchQuery, page, totalPages]
+  );
 
   const handleRefresh = useCallback(async () => {
     try {
       setRefreshing(true);
       setPage(1);
-      const rs = await courseService.getAllCourse({ page: 1, name: debouncedSearchQuery });
+      const rs = await courseService.getAllCourse({
+        page: 1,
+        name: debouncedSearchQuery,
+      });
       setListCourses(rs.data.data);
       setTotalPages(rs.data.totalPages);
     } catch (error) {
@@ -81,7 +90,7 @@ function Courses() {
 
   const loadMoreCourses = () => {
     if (!isLoadingMore && page < totalPages) {
-      setPage(prev => prev + 1);
+      setPage((prev) => prev + 1);
       handleGetListCourse(true);
     }
   };
@@ -92,7 +101,7 @@ function Courses() {
 
   const renderFooter = () => {
     if (!isLoadingMore) return null;
-    
+
     return (
       <View style={styles.loadingFooter}>
         <ActivityIndicator size="small" color={colors.primary} />
@@ -100,19 +109,24 @@ function Courses() {
     );
   };
 
-  const renderItem = useCallback(
-    ({ item }: { item: ICourse }) => (
-      <CourseItem 
-        item={item} 
+  const renderItem = useCallback(({ item }: { item: ICourse }) => {
+    const totalExams = item.chapters.reduce(
+      (acc, chapter) => acc + chapter.exams.length,
+      0
+    );
+
+    return (
+      <CourseItem
+        item={item}
+        totalExams={totalExams}
         onPress={(item) => {
           navigation.navigate(Routes.CourseDetail, {
-            courseId: item._id
-          })
+            courseId: item._id,
+          });
         }}
       />
-    ),
-    []
-  );
+    );
+  }, []);
 
   return (
     <TheLayout header={<TheBaseHeader title="Course" />}>
@@ -166,7 +180,15 @@ function Courses() {
 }
 
 const CourseItem = React.memo(
-  ({ item, onPress }: { item: ICourse; onPress: (item: ICourse) => void }) => (
+  ({
+    item,
+    totalExams,
+    onPress,
+  }: {
+    item: ICourse;
+    totalExams: number;
+    onPress: (item: ICourse) => void;
+  }) => (
     <TouchableOpacity activeOpacity={0.8} onPress={() => onPress(item)}>
       <View style={styles.courseContainer}>
         <View style={styles.iconContainer}>
@@ -188,11 +210,22 @@ const CourseItem = React.memo(
           <View style={styles.metaContainer}>
             <View style={styles.metaItem}>
               <MaterialCommunityIcons
+                name="book"
+                size={14}
+                color={colors.gray500}
+              />
+              <Text style={styles.metaText}>
+                {item.chapters.length} chapters
+              </Text>
+            </View>
+
+            <View style={styles.metaItem}>
+              <MaterialCommunityIcons
                 name="file-document"
                 size={14}
                 color={colors.gray500}
               />
-              <Text style={styles.metaText}>{item.exams.length} exams</Text>
+              <Text style={styles.metaText}>{totalExams} exams</Text>
             </View>
 
             <View style={styles.metaItem}>
@@ -281,12 +314,14 @@ const styles = StyleSheet.create({
   metaContainer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: spacing[4],
+    gap: spacing[3],
+    flexWrap: "wrap",
   },
   metaItem: {
     flexDirection: "row",
     alignItems: "center",
     gap: spacing[1],
+    marginRight: spacing[2],
   },
   metaText: {
     ...typography.caption,
@@ -294,8 +329,8 @@ const styles = StyleSheet.create({
   },
   loadingFooter: {
     paddingVertical: spacing[4],
-    alignItems: 'center',
-    justifyContent: 'center'
+    alignItems: "center",
+    justifyContent: "center",
   },
   refreshControl: {
     backgroundColor: colors.white,
