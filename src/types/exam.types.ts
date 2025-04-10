@@ -1,6 +1,6 @@
 export type TLevel = "EASY" | "MEDIUM" | "HARD";
 
-export type TExamType = 'MCQ' | 'ARRANGE';
+export type TExamType = "MCQ" | "ARRANGE";
 
 export interface IExamInfo {
   _id: string;
@@ -49,7 +49,7 @@ export interface IResponseAnswerExam {
 export interface IResult {
   questionId: string;
   correctAnswer: any;
-  userAnser: string;
+  userAnswer: any;
 }
 
 export interface IHistory {

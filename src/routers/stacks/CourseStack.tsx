@@ -41,7 +41,7 @@ export default function CourseStack() {
         <Stack.Screen
           name={Routes.Exam}
           component={Exam}
-          options={{ headerShown: false }}
+          options={{ headerShown: false, gestureEnabled: false }}
         />
       </>
     </Stack.Navigator>

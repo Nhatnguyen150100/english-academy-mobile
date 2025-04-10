@@ -163,14 +163,18 @@ const MissionDaily: React.FC = () => {
             color={mission?.completedExam ? "#4CAF50" : theme.colors.primary}
             completed={mission?.completedExam || false}
             onPress={() => {
-              navigation.navigate(Routes.CourseStack);
+              navigation.navigate(Routes.CourseList);
             }}
           />
 
           <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
             <LinearGradient
               colors={
-                numberMissionDaily === 0 ? ["#82f394", "#28A745", "#218838"] : bothCompleted ? ["#FF9800", "#F44336"] : ["#E0E0E0", "#BDBDBD"]
+                numberMissionDaily === 0
+                  ? ["#82f394", "#28A745", "#218838"]
+                  : bothCompleted
+                  ? ["#FF9800", "#F44336"]
+                  : ["#E0E0E0", "#BDBDBD"]
               }
               style={styles.combinedButton}
               start={{ x: 0, y: 0 }}

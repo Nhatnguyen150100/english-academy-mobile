@@ -64,6 +64,7 @@ function Exam() {
       setTimeLeft(rs.data.timeExam * 60);
     } catch (error) {
       console.error(error);
+      navigation.goBack();
     }
   };
 
@@ -86,12 +87,6 @@ function Exam() {
 
     return () => clearInterval(timer);
   }, [timeLeft, isSubmitted, isStarted]);
-
-  const averageScore = useMemo(() => {
-    if (!exam?.questions) return 0;
-    const totalQuestions = exam.questions.length;
-    return Math.round((score / totalQuestions) * 100);
-  }, [score, exam?.questions]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -143,7 +138,9 @@ function Exam() {
 
         convertedAnswer[element.questionId] = {
           ...convertedAnswer[element.questionId],
+          answer: element.userAnswer,
           correctAnswer: element.correctAnswer,
+          questionId: element.questionId,
         };
       }
 
@@ -265,26 +262,25 @@ function Exam() {
   );
 
   const imageSource = useMemo(() => {
-    if (!averageScore) return;
-    if (averageScore === 100) {
+    if (score === 100) {
       return require("@assets/images/exam-score/star.png");
-    } else if (averageScore >= 70) {
+    } else if (score >= 70) {
       return require("@assets/images/exam-score/smile.png");
     } else {
       return require("@assets/images/exam-score/sad.png");
     }
-  }, [averageScore]);
+  }, [score]);
 
   const colorFinishExam = useMemo(() => {
-    if (!averageScore) return;
-    if (averageScore === 100) {
+    if (!score) return;
+    if (score === 100) {
       return colors.success;
-    } else if (averageScore >= 70) {
+    } else if (score >= 70) {
       return colors.warning;
     } else {
       return colors.error;
     }
-  }, [averageScore]);
+  }, [score]);
 
   const renderQuestion = () => {
     const question = exam?.questions[currentQuestion];
@@ -313,7 +309,7 @@ function Exam() {
               }}
             >
               <Text style={[styles.scoreText, { color: colorFinishExam }]}>
-                Score: {averageScore}
+                Score: {score}
               </Text>
               <Image source={imageSource} style={styles.iconScoreExam} />
             </View>
@@ -494,18 +490,22 @@ function Exam() {
           </View>
         </Visibility>
 
-        <View style={styles.availableWordsContainer}>
-          {availableOptions?.map((word) => (
-            <TouchableOpacity
-              key={word.id}
-              style={styles.wordButton}
-              disabled={isSubmitted}
-              onPress={() => handleAnswerSelect(question._id, word, "ARRANGE")}
-            >
-              <Text style={styles.wordText}>{word.content}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+        <Visibility visibility={!isSubmitted}>
+          <View style={styles.availableWordsContainer}>
+            {availableOptions?.map((word) => (
+              <TouchableOpacity
+                key={word.id}
+                style={styles.wordButton}
+                disabled={isSubmitted}
+                onPress={() =>
+                  handleAnswerSelect(question._id, word, "ARRANGE")
+                }
+              >
+                <Text style={styles.wordText}>{word.content}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </Visibility>
       </>
     );
   };
@@ -595,7 +595,7 @@ function Exam() {
           setIsShowDialogSubmit(false);
         }}
       />
-      <Fireworks play={averageScore === 100} />
+      <Fireworks play={score === 100} />
     </TheLayout>
   );
 }
