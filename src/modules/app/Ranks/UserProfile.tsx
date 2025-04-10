@@ -4,7 +4,7 @@ import { Text, Chip } from "react-native-paper";
 import TheLayout from "@components/layout/TheLayOut";
 import TheBaseHeader from "@components/layout/TheBaseHeader";
 import { RouteProp, useRoute } from "@react-navigation/native";
-import Routes, { RanksStackParams } from "@utils/Routes";
+import Routes, { RankStackParams } from "@utils/Routes";
 import { LightTheme } from "@styles/theme";
 import { AntDesign } from "@expo/vector-icons";
 import AccountChip from "@components/base/AccountChip";
@@ -38,7 +38,7 @@ function InformationSection({
 }
 
 function UserProfile() {
-  const route = useRoute<RouteProp<RanksStackParams, Routes.UserProfile>>();
+  const route = useRoute<RouteProp<RankStackParams, Routes.UserProfile>>();
   const userId = route?.params?.userId;
   const [user, setUser] = useState<IUser>();
   const [userRank, setUserRank] = useState<IMyRank>();
@@ -50,7 +50,7 @@ function UserProfile() {
       if (rs.data) {
         setUser(rs.data);
       }
-      if(rsRank) {
+      if (rsRank) {
         setUserRank(rsRank.data);
       }
     } catch (error) {
@@ -133,7 +133,10 @@ function UserProfile() {
               visibility={userRank}
               suspenseComponent={<LoadingScreen />}
             >
-              <Achievements title={`${user?.name}'s Achievements`} data={userRank!} />
+              <Achievements
+                title={`${user?.name}'s Achievements`}
+                data={userRank!}
+              />
             </Visibility>
           </View>
         </View>

@@ -1,15 +1,27 @@
-
-import axiosRequest from '@src/network/axiosRequest';
-import { ILogin, IResponseLogin, IResponseRegister } from '@src/types/auth.types';
-import { IBaseResponse } from '@src/types/response.types';
-import { IUser } from '@src/types/user.types';
+import axiosRequest from "@src/network/axiosRequest";
+import {
+  ILogin,
+  IResponseLogin,
+  IResponseRegister,
+} from "@src/types/auth.types";
+import { IBaseResponse } from "@src/types/response.types";
+import { IUser } from "@src/types/user.types";
 
 class AuthService {
-  private _prefixURL = '/v1/auth';
+  private _prefixURL = "/v1/auth";
 
   public async login(data: ILogin): Promise<IBaseResponse<IResponseLogin>> {
     try {
       const rs = await axiosRequest.post(`${this._prefixURL}/login`, data);
+      return Promise.resolve(rs.data);
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
+
+  public async requestToPremiumAccount(): Promise<IBaseResponse<any>> {
+    try {
+      const rs = await axiosRequest.post(`${this._prefixURL}/request-premium`);
       return Promise.resolve(rs.data);
     } catch (error) {
       return Promise.reject(error);
@@ -24,7 +36,9 @@ class AuthService {
     }
   }
 
-  public async updateUserInfo(data: Record<string, any>): Promise<IBaseResponse<IUser>> {
+  public async updateUserInfo(
+    data: Record<string, any>
+  ): Promise<IBaseResponse<IUser>> {
     try {
       const rs = await axiosRequest.put(`${this._prefixURL}/update`, data);
       return Promise.resolve(rs.data);
@@ -33,7 +47,9 @@ class AuthService {
     }
   }
 
-  public async register(data: ILogin): Promise<IBaseResponse<IResponseRegister>> {
+  public async register(
+    data: ILogin
+  ): Promise<IBaseResponse<IResponseRegister>> {
     try {
       const rs = await axiosRequest.post(`${this._prefixURL}/register`, data);
       return Promise.resolve(rs.data);
@@ -44,7 +60,9 @@ class AuthService {
 
   public async getUserInfo(userId: string): Promise<IBaseResponse<IUser>> {
     try {
-      const rs = await axiosRequest.get(`${this._prefixURL}/user-info/${userId}`);
+      const rs = await axiosRequest.get(
+        `${this._prefixURL}/user-info/${userId}`
+      );
       return Promise.resolve(rs.data);
     } catch (error) {
       return Promise.reject(error);

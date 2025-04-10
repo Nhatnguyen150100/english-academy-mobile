@@ -13,6 +13,8 @@ import { authService } from "@src/services";
 import { getStoreStringAsync, removeStoreDataAsync } from "@helpers/storage";
 import { StoreEnum } from "@helpers/storage/storeEnum";
 import { setUser } from "@store/redux/appSlice";
+import { FAB } from "react-native-paper";
+import { colors } from "@styles/theme";
 
 function Home() {
   const navigation = useNavigation<StackNavigationProp<RootStackParams>>();
@@ -69,6 +71,20 @@ function Home() {
       >
         <TopRank />
         <MyAchievements />
+        <FAB
+          icon="chat"
+          color={colors.white}
+          size="medium"
+          style={{
+            position: "absolute",
+            right: 0,
+            bottom: 0,
+            backgroundColor: colors.primary,
+          }}
+          onPress={() => {
+            navigation.navigate(Routes.ChatBot);
+          }}
+        />
       </View>
     </TheLayout>
   );

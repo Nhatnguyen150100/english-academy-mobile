@@ -39,6 +39,9 @@ export enum Routes {
   // Profile sub-routes
   Profile = "Profile",
   EditProfile = "EditProfile",
+
+  // Chat
+  ChatBot = "Chatbot",
 }
 
 /**
@@ -57,6 +60,7 @@ export type RootStackParams = {
   [Routes.CourseStack]: undefined;
   [Routes.RankStack]: undefined;
   [Routes.ProfileStack]: undefined;
+  [Routes.ChatBot]: undefined;
 };
 
 /**

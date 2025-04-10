@@ -1,8 +1,6 @@
 import * as React from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import {
-  createStackNavigator,
-} from "@react-navigation/stack";
+import { createStackNavigator } from "@react-navigation/stack";
 import { useAppSelector } from "@src/store";
 import { enableScreens } from "react-native-screens";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -17,6 +15,7 @@ import Toast from "react-native-toast-message";
 import Register from "@modules/auth/Register";
 import ProfileStack from "./stacks/ProfileStack";
 import MissionDaily from "@modules/app/mission-daily/MissionDaily";
+import ChatScreen from "@modules/app/chat/ChatScreen";
 
 enableScreens();
 
@@ -24,7 +23,7 @@ const Stack = createStackNavigator<RootStackParams>();
 
 const StackNavigation = () => {
   const theme = useTheme();
-  
+
   return (
     <Stack.Navigator
       initialRouteName={Routes.Home}
@@ -64,6 +63,12 @@ const StackNavigation = () => {
         <Stack.Screen
           name={Routes.MissionDaily}
           component={MissionDaily}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name={Routes.ChatBot}
+          component={ChatScreen}
           options={{ headerShown: false }}
         />
       </>

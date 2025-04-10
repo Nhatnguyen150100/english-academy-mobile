@@ -18,7 +18,7 @@ import { AntDesign } from "@expo/vector-icons";
 import AccountChip from "@components/base/AccountChip";
 import MyAchievements from "../home/components/MyAchievements";
 import Icon from "react-native-vector-icons/Ionicons";
-import { examService } from "@src/services";
+import { authService, examService } from "@src/services";
 import Visibility from "@components/base/visibility";
 import Toast from "react-native-toast-message";
 
@@ -55,6 +55,7 @@ function Profile() {
   const navigation = useNavigation<StackNavigationProp<ProfileStackParams>>();
   const user = useSelector((state: IRootState) => state.AppReducer.user);
   const [numberAttempt, setNumberAttempt] = useState<number | "UNLIMITED">();
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleGetExamAttempt = async () => {
     const rs = await examService.checkNumberExamAttempt();
@@ -77,6 +78,20 @@ function Profile() {
       color="#8c8c8c"
     />
   );
+
+  const handleUpdatePlan = async () => {
+    setLoading(true);
+    try {
+      await authService.requestToPremiumAccount();
+      Toast.show({
+        type: "info",
+        text1: "Upgrade to premium",
+        text2: "Send request to ADMIN success.",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <TheLayout header={<TheBaseHeader title="Profile" isShowBackBtn />}>
@@ -118,8 +133,8 @@ function Profile() {
               <InformationSection
                 label="History exams completed"
                 value={""}
-                onPress={() =>  {
-                  navigation.navigate(Routes.HistoryExam)
+                onPress={() => {
+                  navigation.navigate(Routes.HistoryExam);
                 }}
                 iconNext={iconNext}
               />
@@ -132,14 +147,9 @@ function Profile() {
               <Visibility visibility={user?.accountType === "FREE"}>
                 <Button
                   mode="contained"
+                  loading={loading}
                   buttonColor={colors.primary}
-                  onPress={() => {
-                    Toast.show({
-                      type: "info",
-                      text1: "Upgrade to premium",
-                      text2: "Please contact ADMIN for update your account",
-                    })
-                  }}
+                  onPress={handleUpdatePlan}
                   style={styles.editInfoButton}
                 >
                   Update plan
