@@ -16,6 +16,8 @@ import Register from "@modules/auth/Register";
 import ProfileStack from "./stacks/ProfileStack";
 import MissionDaily from "@modules/app/mission-daily/MissionDaily";
 import ChatScreen from "@modules/app/chat/ChatScreen";
+import ForgotPassword from "@modules/auth/ForgotPassword";
+import VerifyOTP from "@modules/auth/VerifyOTP";
 
 enableScreens();
 
@@ -46,6 +48,16 @@ const StackNavigation = () => {
         <Stack.Screen
           name={Routes.Register}
           component={Register}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name={Routes.ForgotPassword}
+          component={ForgotPassword}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name={Routes.verifyOTP}
+          component={VerifyOTP}
           options={{ headerShown: false }}
         />
         <Stack.Screen

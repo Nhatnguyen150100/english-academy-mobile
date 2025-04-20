@@ -5,6 +5,8 @@ export enum Routes {
   // Auth routes
   OneStepScreen = "getting-screen-one",
   Login = "Login",
+  ForgotPassword = "ForgotPassword",
+  verifyOTP = "verifyOTP",
   Register = "Register",
 
   // Main app routes
@@ -51,6 +53,8 @@ export type RootStackParams = {
   [Routes.OneStepScreen]: undefined;
   [Routes.Login]: { email?: string };
   [Routes.Register]: undefined;
+  [Routes.ForgotPassword]: { email?: string };
+  [Routes.verifyOTP]: { email: string };
   [Routes.Home]: undefined;
   [Routes.MissionDaily]: undefined;
   [Routes.Settings]: undefined;

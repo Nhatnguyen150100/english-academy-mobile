@@ -88,6 +88,16 @@ export default function Login() {
           setForm({ ...form, password: value });
         }}
       />
+      <TouchableOpacity
+        style={styles.forgotPassword}
+        onPress={() => {
+          navigation.navigate(Routes.ForgotPassword, {
+            email: form.email,
+          });
+        }}
+      >
+        <Text style={styles.forgotPasswordText}>Forgot your password</Text>
+      </TouchableOpacity>
       <BaseAuthButton
         isLoading={isLoading}
         label="Login"
@@ -144,5 +154,16 @@ const styles = StyleSheet.create({
   registerText: {
     color: "#0756b1",
     textAlign: "center",
+  },
+  forgotPassword: {
+    marginTop: 10,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    width: "100%",
+  },
+  forgotPasswordText: {
+    color: "#0756b1",
+    textAlign: "right",
   },
 });
