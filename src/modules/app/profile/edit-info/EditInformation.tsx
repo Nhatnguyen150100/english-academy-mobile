@@ -50,7 +50,7 @@ function EditInformation() {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      header: () => <EditInfoAppBar onSave={() => {handleSave(form)}} />,
+      header: () => <EditInfoAppBar onSave={() => {handleSave(form)}} title="Edit information" />,
     });
   }, [navigation, form]);
 

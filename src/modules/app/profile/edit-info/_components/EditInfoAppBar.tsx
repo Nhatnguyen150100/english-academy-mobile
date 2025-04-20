@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text } from "react-native";
+import { StyleSheet, Text, Pressable } from "react-native";
 import { Appbar } from "react-native-paper";
 import { LightTheme } from "@styles/theme";
 import { useNavigation } from "@react-navigation/native";
@@ -7,10 +7,11 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParams } from "@utils/Routes";
 
 interface IProps {
+  title: string;
   onSave: () => void;
 }
 
-const EditInfoAppBar = ({ onSave }: IProps) => {
+const EditInfoAppBar = ({ onSave, title }: IProps) => {
   const navigation = useNavigation<StackNavigationProp<RootStackParams>>();
 
   const _goBack = () => {
@@ -20,12 +21,15 @@ const EditInfoAppBar = ({ onSave }: IProps) => {
   return (
     <Appbar.Header mode="center-aligned">
       <Appbar.BackAction onPress={_goBack} />
-      <Appbar.Content title="Edit information" titleStyle={styles.title} />
-      <Appbar.Action
+      <Appbar.Content title={title} titleStyle={styles.title} />
+      
+      <Pressable
         onPress={onSave}
-        style={{ width: 60 }}
-        icon={() => <Text style={styles.actionText}>Save</Text>}
-      />
+        style={styles.saveButton}
+        android_ripple={{ color: 'transparent' }}
+      >
+        <Text style={styles.actionText}>Save</Text>
+      </Pressable>
     </Appbar.Header>
   );
 };
@@ -38,7 +42,11 @@ const styles = StyleSheet.create({
   actionText: {
     fontSize: 16,
     color: LightTheme.primary,
-    width: 80,
+  },
+  saveButton: {
+    paddingRight: 10,
+    justifyContent: 'center',
+    height: '100%',
   },
 });
 

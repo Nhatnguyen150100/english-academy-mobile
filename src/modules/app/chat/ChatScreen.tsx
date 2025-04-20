@@ -82,6 +82,7 @@ const ChatScreen = () => {
 
   const renderMessage = ({ item }: { item: IMessage }) => (
     <Animated.View
+      key={item.id}
       style={[
         styles.messageContainer,
         { opacity: fadeAnim },

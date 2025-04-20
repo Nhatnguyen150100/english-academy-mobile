@@ -12,6 +12,7 @@ export enum Routes {
   // Main app routes
   Home = "Home",
   Settings = "Settings",
+  ChangePasswordScreen = "ChangePasswordScreen",
   MissionDaily = "MissionDaily",
 
   // Nested stacks
@@ -58,6 +59,7 @@ export type RootStackParams = {
   [Routes.Home]: undefined;
   [Routes.MissionDaily]: undefined;
   [Routes.Settings]: undefined;
+  [Routes.ChangePasswordScreen]: undefined;
 
   // Nested stacks
   [Routes.BlogStack]: undefined;
@@ -98,6 +100,7 @@ export type RankStackParams = {
   [Routes.RankList]: undefined;
   [Routes.UserProfile]: { userId: string };
 };
+
 
 /**
  * Profile stack parameters

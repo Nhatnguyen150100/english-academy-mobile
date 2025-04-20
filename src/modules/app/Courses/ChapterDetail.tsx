@@ -55,8 +55,8 @@ function ChapterDetail() {
     if (chapterId) handleChapterDetail();
   }, [chapterId]);
 
-  const renderExamItem = ({ item }: { item: any }) => (
-    <View style={styles.examCard}>
+  const renderExamItem = ({ item, index }: { item: any, index: number }) => (
+    <View key={item._id ?? index} style={styles.examCard}>
       <View style={styles.examHeader}>
         <MaterialCommunityIcons
           name="clipboard-text"

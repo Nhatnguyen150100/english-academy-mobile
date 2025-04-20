@@ -54,6 +54,7 @@ function InformationSection({
 function Profile() {
   const navigation = useNavigation<StackNavigationProp<ProfileStackParams>>();
   const user = useSelector((state: IRootState) => state.AppReducer.user);
+  console.log("🚀 ~ Profile ~ user:", user)
   const [numberAttempt, setNumberAttempt] = useState<number | "UNLIMITED">();
   const [loading, setLoading] = useState<boolean>(false);
 

@@ -69,7 +69,7 @@ class AuthService {
     }
   }
 
-  public async forgotPassword(email: string): Promise<IBaseResponse<any>> {
+  public async forgotPassword(email: string): Promise<IBaseResponse<string>> {
     try {
       const rs = await axiosRequest.post(`${this._prefixURL}/forgot-password`, {
         email,
@@ -83,7 +83,7 @@ class AuthService {
   public async changePassword(data: {
     oldPassword: string;
     newPassword: string;
-  }): Promise<IBaseResponse<any>> {
+  }): Promise<IBaseResponse<string>> {
     try {
       const rs = await axiosRequest.post(
         `${this._prefixURL}/change-password`,
@@ -98,7 +98,7 @@ class AuthService {
   public async verifyOtpAndResetPassword(data: {
     otp: string;
     email: string;
-  }): Promise<IBaseResponse<any>> {
+  }): Promise<IBaseResponse<string>> {
     try {
       const rs = await axiosRequest.post(`${this._prefixURL}/verify-otp`, data);
       return Promise.resolve(rs.data);

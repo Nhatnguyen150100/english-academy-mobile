@@ -1,6 +1,7 @@
 export interface IRank {
   _id: string;
-  name: string;
+  name?: string;
+  email: string;
   score: number;
   accountType: string;
   rankNumber: number

@@ -71,7 +71,7 @@ const HistoryExam = () => {
   };
 
   const renderItem = useCallback(
-    ({ item }: { item: IHistory }) => <HistoryItem item={item} />,
+    ({ item }: { item: IHistory }) => <HistoryItem item={item} key={item._id}/>,
     []
   );
 

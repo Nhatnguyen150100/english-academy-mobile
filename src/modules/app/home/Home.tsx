@@ -30,6 +30,7 @@ function Home() {
         dispatch(setUser(rs.data));
       }
     } catch {
+      await removeStoreDataAsync(StoreEnum.AccessToken);
       navigation.reset({
         index: 0,
         routes: [{ name: Routes.Login }],
@@ -41,12 +42,7 @@ function Home() {
 
   React.useEffect(() => {
     const checkSignInStatus = async () => {
-      const token = await getStoreStringAsync(StoreEnum.AccessToken);
-      if (token) {
-        await handleGetInfo();
-      } else {
-        setLoading(false);
-      }
+      await handleGetInfo();
     };
 
     checkSignInStatus();

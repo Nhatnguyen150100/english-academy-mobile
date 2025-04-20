@@ -18,6 +18,7 @@ import MissionDaily from "@modules/app/mission-daily/MissionDaily";
 import ChatScreen from "@modules/app/chat/ChatScreen";
 import ForgotPassword from "@modules/auth/ForgotPassword";
 import VerifyOTP from "@modules/auth/VerifyOTP";
+import ChangePasswordScreen from "@modules/app/settings/ChangePasswordScreen";
 
 enableScreens();
 
@@ -59,6 +60,10 @@ const StackNavigation = () => {
           name={Routes.verifyOTP}
           component={VerifyOTP}
           options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name={Routes.ChangePasswordScreen}
+          component={ChangePasswordScreen}
         />
         <Stack.Screen
           name={Routes.OneStepScreen}

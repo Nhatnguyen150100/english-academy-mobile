@@ -38,7 +38,7 @@ export default function VerifyOTP() {
       });
       Toast.show({
         type: "success",
-        text1: response?.data?.message || "Reset password success",
+        text1: response?.message || "Reset password success",
       });
 
       navigation.reset({
@@ -48,7 +48,7 @@ export default function VerifyOTP() {
     } catch (error: any) {
       Toast.show({
         type: "error",
-        text1: error?.response?.data?.message || "Reset password fail",
+        text1: error?.response?.message || "Reset password fail",
       });
     } finally {
       setIsLoading(false);

@@ -31,14 +31,14 @@ export default function ForgotPassword() {
       const response = await authService.forgotPassword(email);
       Toast.show({
         type: "success",
-        text1: response?.data?.message || "Sent OTP success",
+        text1: response?.message || "Sent OTP success",
       });
 
       navigation.navigate(Routes.verifyOTP, { email });
     } catch (error: any) {
       Toast.show({
         type: "error",
-        text1: error?.response?.data?.message || "Sent OTP fail",
+        text1: error?.response?.message || "Sent OTP fail",
       });
     } finally {
       setIsLoading(false);
