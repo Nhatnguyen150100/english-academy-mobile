@@ -134,6 +134,7 @@ const MyBlogs = () => {
   const renderItem = useCallback(
     ({ item }: { item: IBlogInfo }) => (
       <BlogItem
+        key={item._id}
         item={item}
         onPress={() =>
           navigation.navigate(Routes.EditBlog, { blogId: item._id })

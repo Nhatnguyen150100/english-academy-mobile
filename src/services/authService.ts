@@ -68,6 +68,44 @@ class AuthService {
       return Promise.reject(error);
     }
   }
+
+  public async forgotPassword(email: string): Promise<IBaseResponse<string>> {
+    try {
+      const rs = await axiosRequest.post(`${this._prefixURL}/forgot-password`, {
+        email,
+      });
+      return Promise.resolve(rs.data);
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
+
+  public async changePassword(data: {
+    oldPassword: string;
+    newPassword: string;
+  }): Promise<IBaseResponse<string>> {
+    try {
+      const rs = await axiosRequest.post(
+        `${this._prefixURL}/change-password`,
+        data
+      );
+      return Promise.resolve(rs.data);
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
+
+  public async verifyOtpAndResetPassword(data: {
+    otp: string;
+    email: string;
+  }): Promise<IBaseResponse<string>> {
+    try {
+      const rs = await axiosRequest.post(`${this._prefixURL}/verify-otp`, data);
+      return Promise.resolve(rs.data);
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
 }
 
 export default AuthService;

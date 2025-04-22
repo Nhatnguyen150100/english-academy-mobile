@@ -115,6 +115,7 @@ const BlogListScreen = () => {
   const renderItem = useCallback(
     ({ item }: { item: IBlogInfo }) => (
       <BlogItem
+        key={item._id}
         item={item}
         onPress={() =>
           navigation.navigate(Routes.BlogDetail, { blogId: item._id })

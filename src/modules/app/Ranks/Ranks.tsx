@@ -88,7 +88,7 @@ function Ranks() {
 
   const renderItem = useCallback(
     ({ item }: { item: IRank }) => (
-      <RankItem item={item} onPress={navigation.navigate} />
+      <RankItem key={item._id} item={item} onPress={navigation.navigate} />
     ),
     [navigation.navigate]
   );
@@ -139,6 +139,16 @@ function Ranks() {
   );
 }
 
+function getUsernameFromEmail(email?: string) {
+  if (!email) return null;
+  if (typeof email !== 'string') return null;
+
+  const atIndex = email.indexOf('@');
+  if (atIndex === -1) return null;
+
+  return email.slice(0, atIndex);
+}
+
 const RankItem = React.memo(
   ({
     item,
@@ -177,7 +187,7 @@ const RankItem = React.memo(
 
           <View style={styles.userInfo}>
             <Text style={styles.rankName} numberOfLines={1}>
-              {item.name}
+              {item.name ?? getUsernameFromEmail(item.email)}
             </Text>
             <View style={styles.accountTypeWrapper}>
               <MaterialCommunityIcons

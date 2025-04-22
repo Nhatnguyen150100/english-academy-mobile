@@ -5,11 +5,14 @@ export enum Routes {
   // Auth routes
   OneStepScreen = "getting-screen-one",
   Login = "Login",
+  ForgotPassword = "ForgotPassword",
+  verifyOTP = "verifyOTP",
   Register = "Register",
 
   // Main app routes
   Home = "Home",
   Settings = "Settings",
+  ChangePasswordScreen = "ChangePasswordScreen",
   MissionDaily = "MissionDaily",
 
   // Nested stacks
@@ -51,9 +54,12 @@ export type RootStackParams = {
   [Routes.OneStepScreen]: undefined;
   [Routes.Login]: { email?: string };
   [Routes.Register]: undefined;
+  [Routes.ForgotPassword]: { email?: string };
+  [Routes.verifyOTP]: { email: string };
   [Routes.Home]: undefined;
   [Routes.MissionDaily]: undefined;
   [Routes.Settings]: undefined;
+  [Routes.ChangePasswordScreen]: undefined;
 
   // Nested stacks
   [Routes.BlogStack]: undefined;
@@ -94,6 +100,7 @@ export type RankStackParams = {
   [Routes.RankList]: undefined;
   [Routes.UserProfile]: { userId: string };
 };
+
 
 /**
  * Profile stack parameters

@@ -60,6 +60,7 @@ function CourseDetail() {
 
   const renderChapterItem = ({ item }: { item: IChapterInfo }) => (
     <TouchableOpacity
+      key={item._id}
       onPress={() =>
         navigation.navigate(Routes.ChapterDetail, { chapterId: item._id })
       }

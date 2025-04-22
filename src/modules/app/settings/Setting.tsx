@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, StyleSheet, Image } from "react-native";
-import { Text, Button, Chip } from "react-native-paper";
+import { Text, Button, Snackbar } from "react-native-paper";
 import { signOut } from "@src/services/appService";
 import TheLayout from "@components/layout/TheLayOut";
 import TheBaseHeader from "@components/layout/TheBaseHeader";
@@ -9,16 +9,21 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import Routes, { RootStackParams } from "@utils/Routes";
 import ConfirmDialog from "@components/base/ConfirmDialog";
 import { LightTheme } from "@styles/theme";
+import { authService } from "@src/services";
+import { IRootState } from "@store/index";
+import { useSelector } from "react-redux";
+
 function Setting() {
+  const user = useSelector((state: IRootState) => state.AppReducer.user);
   const navigation = useNavigation<StackNavigationProp<RootStackParams>>();
+  const [message, setMessage] = useState("");
   const [isShowDialog, setIsShowDialog] = useState(false);
 
   const handleLogOut = () => {
-    setIsShowDialog(false);
     signOut();
     navigation.reset({
       index: 0,
-      routes: [{ name: Routes.Login }],
+      routes: [{ name: Routes.Login, params: { email: user?.email } }],
     });
   };
 
@@ -36,6 +41,14 @@ function Setting() {
         <Button
           mode="contained"
           buttonColor={LightTheme.primary}
+          onPress={() => navigation.navigate(Routes.ChangePasswordScreen)}
+          style={styles.changePasswordButton}
+        >
+          Change Password
+        </Button>
+        <Button
+          mode="contained"
+          buttonColor={LightTheme.primary}
           onPress={() => setIsShowDialog(true)}
           style={styles.logoutButton}
         >
@@ -46,10 +59,17 @@ function Setting() {
           showDialog={isShowDialog}
           content={"Do you want to log out?"}
           handleAccept={handleLogOut}
-          handleReject={() => {
-            setIsShowDialog(false);
-          }}
+          handleReject={() => setIsShowDialog(false)}
         />
+
+        <Snackbar
+          visible={!!message}
+          onDismiss={() => setMessage("")}
+          duration={3000}
+          style={styles.snackbar}
+        >
+          {message}
+        </Snackbar>
       </View>
     </TheLayout>
   );
@@ -69,6 +89,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     width: "100%",
     alignItems: "center",
+    padding: 20,
   },
   logo: {
     width: 100,
@@ -78,11 +99,23 @@ const styles = StyleSheet.create({
   fontBlack: {
     fontFamily: "Black",
     fontSize: 20,
-    marginBottom: 10,
+    marginBottom: 30,
   },
   logoutButton: {
     marginTop: 20,
     width: "100%",
+  },
+  changePasswordButton: {
+    marginTop: 10,
+    width: "100%",
+  },
+  input: {
+    marginVertical: 5,
+    backgroundColor: "white",
+  },
+  snackbar: {
+    position: "absolute",
+    bottom: 0,
   },
 });
 
