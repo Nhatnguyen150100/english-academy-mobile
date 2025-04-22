@@ -1,6 +1,7 @@
 import React from "react";
 import {
   GestureResponderEvent,
+  Image,
   StyleSheet,
   TouchableOpacity,
 } from "react-native";
@@ -11,20 +12,38 @@ interface IProps {
   onPress: (event?: GestureResponderEvent) => void;
   isLoading?: boolean;
   label: string;
+  icon?: any;
 }
 
 export default function BaseAuthButton({
   label,
   onPress,
   isLoading = false,
+  icon,
 }: IProps) {
   return (
     <TouchableOpacity
-      style={[styles.buttonStyle, isLoading && styles.buttonLoading]}
+      style={[
+        styles.buttonStyle,
+        isLoading && styles.buttonLoading,
+        {
+          backgroundColor: icon ? "#FFFFFF" : "#0756b1",
+        },
+      ]}
       onPress={onPress}
-      disabled={isLoading} 
-    > 
-      <Text style={styles.buttonText}>{label}</Text>
+      disabled={isLoading}
+    >
+      {icon && <Image source={icon} style={styles.icon} />}
+      <Text
+        style={[
+          styles.buttonText,
+          {
+            color: icon ? "#000000" : "#FFFFFF",
+          },
+        ]}
+      >
+        {label}
+      </Text>
       <Visibility visibility={isLoading}>
         <ActivityIndicator color="white" />
       </Visibility>
@@ -34,19 +53,22 @@ export default function BaseAuthButton({
 
 const styles = StyleSheet.create({
   buttonStyle: {
-    marginTop: 32,
+    marginTop: 20,
     width: "100%",
     height: 46,
     display: "flex",
     flexDirection: "row",
-    backgroundColor: "#0756b1",
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 24,
-    marginBottom: 20,
   },
   buttonLoading: {
     opacity: 0.8,
+  },
+  icon: {
+    width: 24,
+    height: 24,
+    marginRight: 10,
   },
   buttonText: {
     color: "#fff",

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -6,6 +6,8 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
+  Linking,
+  Modal,
 } from "react-native";
 import { useDispatch } from "react-redux";
 import { setUser } from "@store/redux/appSlice";
@@ -20,6 +22,12 @@ import InputPassword from "@components/base/InputPassword";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import Routes, { RootStackParams } from "@utils/Routes";
+import WebView from "react-native-webview";
+import { ActivityIndicator } from "react-native-paper";
+import { googleSignIn } from "@src/services/googleAuth";
+
+const GOOGLE_LOGIN_URL = `${process.env.EXPO_PUBLIC_BASE_URL}/v1/auth/google`;
+const REDIRECT_URI = "myapp://login-success";
 
 export default function Login() {
   const navigation = useNavigation<StackNavigationProp<RootStackParams>>();
@@ -30,10 +38,16 @@ export default function Login() {
     email: "",
     password: "",
   });
+  const [showWebView, setShowWebView] = useState(false);
+  const webViewRef = useRef(null);
 
   useEffect(() => {
     if (route.params?.email) setForm({ ...form, email: route.params?.email });
   }, [route.params?.email]);
+
+  const handleGoogleLogin = () => {
+    googleSignIn();
+  };
 
   const handleLogin = async () => {
     if (!(form.email && form.password)) {
@@ -66,6 +80,27 @@ export default function Login() {
     }
   };
 
+  const handleNavigationChange = (navState: any) => {
+    const { url } = navState;
+    if (url.startsWith(REDIRECT_URI)) {
+      const parsedUrl = new URL(url);
+      const accessToken = parsedUrl.searchParams.get("accessToken");
+      const email = parsedUrl.searchParams.get("email");
+      const name = parsedUrl.searchParams.get("name");
+      const avatar = parsedUrl.searchParams.get("avatar");
+
+      if (accessToken && email) {
+        addStoreDataAsync(StoreEnum.AccessToken, accessToken);
+        dispatch(setUser({ email, name, avatar }));
+        Toast.show({ type: "success", text1: "Google login successful" });
+        navigation.reset({ index: 0, routes: [{ name: Routes.Home }] });
+      } else {
+        Toast.show({ type: "error", text1: "Google login failed" });
+      }
+      setShowWebView(false);
+    }
+  };
+
   return (
     <View style={styles.root}>
       <Image
@@ -93,6 +128,12 @@ export default function Login() {
         label="Login"
         onPress={handleLogin}
       />
+      <BaseAuthButton
+        isLoading={false}
+        label="Continue with Google"
+        onPress={handleGoogleLogin}
+        icon={require("@assets/images/google_icon.png")}
+      />
       <SeparatorLine />
       <TouchableOpacity
         style={styles.registerButton}
@@ -102,6 +143,30 @@ export default function Login() {
       >
         <Text style={styles.registerText}>Don't have an account? Register</Text>
       </TouchableOpacity>
+      <Modal visible={showWebView} animationType="slide">
+        <View style={{ flex: 1 }}>
+          <TouchableOpacity
+            style={styles.closeButton}
+            onPress={() => setShowWebView(false)}
+          >
+            <Text style={styles.closeText}>✕</Text>
+          </TouchableOpacity>
+
+          <WebView
+            ref={webViewRef}
+            source={{ uri: GOOGLE_LOGIN_URL }}
+            onNavigationStateChange={handleNavigationChange}
+            startInLoadingState
+            renderLoading={() => (
+              <ActivityIndicator
+                size="large"
+                color="#0000ff"
+                style={{ marginTop: 20 }}
+              />
+            )}
+          />
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -144,5 +209,19 @@ const styles = StyleSheet.create({
   registerText: {
     color: "#0756b1",
     textAlign: "center",
+  },
+  closeButton: {
+    position: "absolute",
+    top: 40,
+    right: 20,
+    zIndex: 1,
+    backgroundColor: "rgba(0,0,0,0.6)",
+    padding: 10,
+    borderRadius: 20,
+  },
+  closeText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
   },
 });

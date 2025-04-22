@@ -2,18 +2,17 @@ import { ExpoConfig, ConfigContext } from "@expo/config";
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
+  // owner: "english-academy",
   name: "English Academy",
   description: "This app is English Academy for everyone",
   slug: "english-academic",
-  scheme: "com.react-native.expoboilerplate",
+  scheme: "com.english.expo",
   version: "1.0.0",
   sdkVersion: "52.0.0",
   orientation: "portrait",
   icon: "./src/assets/images/english_icon.png",
   userInterfaceStyle: "automatic",
-  runtimeVersion: {
-    policy: "sdkVersion",
-  },
+  runtimeVersion: "1.0.0",
   assetBundlePatterns: ["./src/assets/images/*"],
   splash: {
     image: "./src/assets/images/splash.png",
@@ -21,7 +20,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     backgroundColor: "#ffffff",
   },
   ios: {
-    bundleIdentifier: "com.milvasoft.expoboilerplate",
+    bundleIdentifier: "com.english.expo",
     buildNumber: "1.0.0",
     infoPlist: {
       CFBundleAllowMixedLocalizations: true,
@@ -30,12 +29,13 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   web: {
     bundler: "metro",
   },
+  platforms: ["ios", "android"],
   android: {
     adaptiveIcon: {
       foregroundImage: "./src/assets/images/adaptive-icon.png",
       backgroundColor: "#ffffff",
     },
-    package: "com.milvasoft.expoboilerplate",
+    package: "com.english.expo",
     versionCode: 1,
   },
   updates: {
