@@ -57,5 +57,12 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
           "The app accesses your photos to let you create blog and share them with your friends.",
       },
     ],
+    [
+      "@react-native-google-signin/google-signin",
+      {
+        iosUrlScheme:
+          "com.googleusercontent.apps.236267499846-ovjp737358c68tcbimjni4gqcd02da5j",
+      },
+    ],
   ],
 });

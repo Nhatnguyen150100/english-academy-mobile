@@ -16,6 +16,7 @@
     "axios": "^1.7.7",
     "expo": "~52.0.23",
     "expo-constants": "~17.0.3",
+    "expo-dev-client": "~5.0.20",
     "expo-device": "~7.0.1",
     "expo-font": "~13.0.2",
     "expo-image-picker": "^16.0.6",
@@ -81,8 +82,8 @@
   },
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web",
     "eject": "expo eject",
     "test": "jest --coverage=false",
@@ -90,5 +91,7 @@
     "testFinal": "jest",
     "updateSnapshots": "jest -u --coverage=false"
   },
-  "private": true
+  "private": true,
+  "name": "english-academy-mobile",
+  "version": "1.0.0"
 }

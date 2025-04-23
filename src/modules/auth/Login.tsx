@@ -25,6 +25,7 @@ import Routes, { RootStackParams } from "@utils/Routes";
 import WebView from "react-native-webview";
 import { ActivityIndicator } from "react-native-paper";
 import { googleSignIn } from "@src/services/googleAuth";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
 const GOOGLE_LOGIN_URL = `${process.env.EXPO_PUBLIC_BASE_URL}/v1/auth/google`;
 const REDIRECT_URI = "myapp://login-success";
