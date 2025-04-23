@@ -9,7 +9,6 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import Routes, { RootStackParams } from "@utils/Routes";
 import ConfirmDialog from "@components/base/ConfirmDialog";
 import { LightTheme } from "@styles/theme";
-import { authService } from "@src/services";
 import { IRootState } from "@store/index";
 import { useSelector } from "react-redux";
 

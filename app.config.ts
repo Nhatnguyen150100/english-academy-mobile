@@ -24,6 +24,11 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     buildNumber: "1.0.0",
     infoPlist: {
       CFBundleAllowMixedLocalizations: true,
+      CFBundleURLTypes: {
+        CFBundleURLSchemes: [
+          "com.googleusercontent.apps.236267499846-ovjp737358c68tcbimjni4gqcd02da5j",
+        ],
+      },
     },
   },
   web: {
@@ -37,6 +42,18 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     },
     package: "com.english.expo",
     versionCode: 1,
+    permissions: ["INTERNET"],
+    intentFilters: [
+      {
+        action: "VIEW",
+        data: [
+          {
+            scheme: "com.english.expo",
+          },
+        ],
+        category: ["BROWSABLE", "DEFAULT"],
+      },
+    ],
   },
   updates: {
     enabled: true,

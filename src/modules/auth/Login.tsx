@@ -6,7 +6,6 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
-  Linking,
   Modal,
 } from "react-native";
 import { useDispatch } from "react-redux";
@@ -22,13 +21,7 @@ import InputPassword from "@components/base/InputPassword";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import Routes, { RootStackParams } from "@utils/Routes";
-import WebView from "react-native-webview";
-import { ActivityIndicator } from "react-native-paper";
-import { googleSignIn } from "@src/services/googleAuth";
-import { GoogleSignin } from "@react-native-google-signin/google-signin";
-
-const GOOGLE_LOGIN_URL = `${process.env.EXPO_PUBLIC_BASE_URL}/v1/auth/google`;
-const REDIRECT_URI = "myapp://login-success";
+import { useGoogleAuth } from "@src/services/googleAuth";
 
 export default function Login() {
   const navigation = useNavigation<StackNavigationProp<RootStackParams>>();
@@ -39,16 +32,11 @@ export default function Login() {
     email: "",
     password: "",
   });
-  const [showWebView, setShowWebView] = useState(false);
-  const webViewRef = useRef(null);
+  const { googleSignIn } = useGoogleAuth();
 
   useEffect(() => {
     if (route.params?.email) setForm({ ...form, email: route.params?.email });
   }, [route.params?.email]);
-
-  const handleGoogleLogin = () => {
-    googleSignIn();
-  };
 
   const handleLogin = async () => {
     if (!(form.email && form.password)) {
@@ -58,47 +46,25 @@ export default function Login() {
       });
       return;
     }
+
     try {
       setIsLoading(true);
       const rs = await authService.login({
         email: form.email,
         password: form.password,
       });
+
       await addStoreDataAsync(StoreEnum.AccessToken, rs.data.accessToken);
       dispatch(setUser(rs.data.user));
-      navigation.reset({
-        index: 0,
-        routes: [{ name: Routes.Home }],
-      });
+      navigation.reset({ index: 0, routes: [{ name: Routes.Home }] });
     } catch (error) {
-      console.log("��� ~ handleLogin ~ error:", error);
+      console.log("🚫 Login error:", error);
       Toast.show({
         type: "error",
         text1: "Login failed. Please check your email and password",
       });
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const handleNavigationChange = (navState: any) => {
-    const { url } = navState;
-    if (url.startsWith(REDIRECT_URI)) {
-      const parsedUrl = new URL(url);
-      const accessToken = parsedUrl.searchParams.get("accessToken");
-      const email = parsedUrl.searchParams.get("email");
-      const name = parsedUrl.searchParams.get("name");
-      const avatar = parsedUrl.searchParams.get("avatar");
-
-      if (accessToken && email) {
-        addStoreDataAsync(StoreEnum.AccessToken, accessToken);
-        dispatch(setUser({ email, name, avatar }));
-        Toast.show({ type: "success", text1: "Google login successful" });
-        navigation.reset({ index: 0, routes: [{ name: Routes.Home }] });
-      } else {
-        Toast.show({ type: "error", text1: "Google login failed" });
-      }
-      setShowWebView(false);
     }
   };
 
@@ -142,7 +108,7 @@ export default function Login() {
       <BaseAuthButton
         isLoading={false}
         label="Continue with Google"
-        onPress={handleGoogleLogin}
+        onPress={googleSignIn}
         icon={require("@assets/images/google_icon.png")}
       />
       <SeparatorLine />
@@ -154,30 +120,6 @@ export default function Login() {
       >
         <Text style={styles.registerText}>Don't have an account? Register</Text>
       </TouchableOpacity>
-      <Modal visible={showWebView} animationType="slide">
-        <View style={{ flex: 1 }}>
-          <TouchableOpacity
-            style={styles.closeButton}
-            onPress={() => setShowWebView(false)}
-          >
-            <Text style={styles.closeText}>✕</Text>
-          </TouchableOpacity>
-
-          <WebView
-            ref={webViewRef}
-            source={{ uri: GOOGLE_LOGIN_URL }}
-            onNavigationStateChange={handleNavigationChange}
-            startInLoadingState
-            renderLoading={() => (
-              <ActivityIndicator
-                size="large"
-                color="#0000ff"
-                style={{ marginTop: 20 }}
-              />
-            )}
-          />
-        </View>
-      </Modal>
     </View>
   );
 }
