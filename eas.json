@@ -10,12 +10,23 @@
     "preview": {
       "distribution": "internal"
     },
-    "production": {},
-    "android": {
-      "buildType": "apk"
+    "production": {
+      "android": {
+        "gradleCommand": ":app:assembleRelease"
+      },
+      "ios": {
+        "enterpriseProvisioning": "universal"
+      }
     },
-    "ios": {
-      "simulator": true
+    "android-apk": {
+      "android": {
+        "gradleCommand": ":app:assembleRelease"
+      }
+    },
+    "ios-simulator": {
+      "ios": {
+        "simulator": true
+      }
     }
   },
   "submit": {

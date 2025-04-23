@@ -2,10 +2,10 @@ import { ExpoConfig, ConfigContext } from "@expo/config";
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
-  // owner: "english-academy",
+  owner: "nhatnguyen150100",
   name: "English Academy",
   description: "This app is English Academy for everyone",
-  slug: "english-academic",
+  slug: "english-academy",
   scheme: "com.english.expo",
   version: "1.0.0",
   sdkVersion: "52.0.0",
@@ -40,11 +40,11 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   updates: {
     enabled: true,
-    url: "https://u.expo.dev/49e4e24d-c928-4ff1-815d-f1a58ca580bd",
+    url: "https://u.expo.dev/db8a8a4a-91f2-49bd-86b0-6ab4cc4d35c9",
   },
   extra: {
     eas: {
-      projectId: "49e4e24d-c928-4ff1-815d-f1a58ca580bd",
+      projectId: "db8a8a4a-91f2-49bd-86b0-6ab4cc4d35c9",
     },
   },
   plugins: [
