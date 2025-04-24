@@ -10,13 +10,21 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import Routes, { RootStackParams } from "@utils/Routes";
 import { authService } from "@src/services";
-import { getStoreStringAsync, removeStoreDataAsync } from "@helpers/storage";
+import { removeStoreDataAsync } from "@helpers/storage";
 import { StoreEnum } from "@helpers/storage/storeEnum";
 import { setUser } from "@store/redux/appSlice";
 import { FAB } from "react-native-paper";
 import { colors } from "@styles/theme";
+import { requestTrackingPermissionsAsync } from "expo-tracking-transparency";
+
+import mobileAds, {
+  BannerAd,
+  BannerAdSize,
+  TestIds,
+} from "react-native-google-mobile-ads";
 
 function Home() {
+  const [isAdLoaded, setIsAdLoaded] = React.useState<boolean>(false);
   const navigation = useNavigation<StackNavigationProp<RootStackParams>>();
   const dispatch = useDispatch();
   const [loading, setLoading] = React.useState(false);
@@ -40,13 +48,26 @@ function Home() {
     }
   };
 
+  const handleRequestAllowAd = async () => {
+    // // Google AdMob will show any messages here that you just set up on the AdMob Privacy & Messaging page
+    // const { status: trackingStatus } = await requestTrackingPermissionsAsync();
+    // if (trackingStatus !== "granted") {
+    //   // Do something here such as turn off Sentry tracking, store in context/redux to allow for personalized ads, etc.
+    // }
+    // // Initialize the ads
+    // await mobileAds().initialize();
+  };
+
   React.useEffect(() => {
-    const checkSignInStatus = async () => {
+    const init = async () => {
       await handleGetInfo();
+      // await handleRequestAllowAd();
     };
 
-    checkSignInStatus();
+    init();
   }, [dispatch]);
+
+  React.useEffect(() => {}, []);
 
   if (loading) {
     return <LoadingScreen />;
@@ -82,6 +103,23 @@ function Home() {
           }}
         />
       </View>
+
+      {/* <View style={{ height: isAdLoaded ? "auto" : 0 }}>
+        <BannerAd
+          // It is extremely important to use test IDs as you can be banned/restricted by Google AdMob for inappropriately using real ad banners during testing
+          unitId={
+            __DEV__ ? TestIds.BANNER : "ca-app-pub-5232717859877283/3269206298"
+          }
+          size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+          requestOptions={{
+            requestNonPersonalizedAdsOnly: true,
+            // You can change this setting depending on whether you want to use the permissions tracking we set up in the initializing
+          }}
+          onAdLoaded={() => {
+            setIsAdLoaded(true);
+          }}
+        />
+      </View> */}
     </TheLayout>
   );
 }

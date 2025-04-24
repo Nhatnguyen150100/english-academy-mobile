@@ -16,7 +16,9 @@
     "axios": "^1.7.7",
     "expo": "~52.0.46",
     "expo-auth-session": "~6.0.3",
+    "expo-build-properties": "~0.13.2",
     "expo-constants": "~17.0.3",
+    "expo-crypto": "~14.0.2",
     "expo-device": "~7.0.3",
     "expo-font": "~13.0.2",
     "expo-image-picker": "^16.0.6",
@@ -26,6 +28,8 @@
     "expo-notifications": "~0.29.14",
     "expo-screen-orientation": "~8.0.4",
     "expo-splash-screen": "~0.29.24",
+    "expo-system-ui": "^4.0.9",
+    "expo-tracking-transparency": "^5.1.1",
     "expo-updates": "~0.27.4",
     "i18n-js": "^4.4.3",
     "jest-expo": "~52.0.6",
@@ -37,6 +41,7 @@
     "react-dom": "18.3.1",
     "react-native": "0.76.9",
     "react-native-gesture-handler": "~2.20.2",
+    "react-native-google-mobile-ads": "^15.1.0",
     "react-native-linear-gradient": "^2.8.3",
     "react-native-modal": "^13.0.1",
     "react-native-paper": "^5.12.5",
@@ -54,8 +59,7 @@
     "react-native-webview": "13.12.5",
     "react-redux": "^9.1.0",
     "redux": "^5.0.1",
-    "yarn": "^1.22.22",
-    "expo-crypto": "~14.0.2"
+    "yarn": "^1.22.22"
   },
   "devDependencies": {
     "@babel/core": "^7.24.0",
@@ -96,3 +100,4 @@
   "name": "english-academy-mobile",
   "version": "1.0.0"
 }
+

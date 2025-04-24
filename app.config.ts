@@ -81,5 +81,27 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
           "com.googleusercontent.apps.236267499846-ovjp737358c68tcbimjni4gqcd02da5j",
       },
     ],
+    [
+      "expo-build-properties",
+      {
+        ios: {
+          useFrameworks: "static",
+        },
+        android: {
+          extraProguardRules:
+            "-keep class com.google.android.gms.internal.consent_sdk.** { *; }",
+        },
+      },
+    ],
+    [
+      "react-native-google-mobile-ads",
+      {
+        androidAppId: "ca-app-pub-5232717859877283~4872565021",
+        iosAppId: "ca-app-pub-5232717859877283~4872565021",
+        delayAppMeasurementInit: true,
+        userTrackingUsageDescription:
+          "This identifier will be used to deliver personalized ads to you.",
+      },
+    ],
   ],
 });

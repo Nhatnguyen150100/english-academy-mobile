@@ -19,7 +19,7 @@ console.log("🔁 Redirect URI:", AuthSession.makeRedirectUri());
 
 export const useGoogleAuth = () => {
   const [request, response, promptAsync] = Google.useIdTokenAuthRequest(config);
-  console.log("🚀 ~ useGoogleAuth ~ response:", response);
+  // console.log("🚀 ~ useGoogleAuth ~ response:", response);
 
   const googleSignIn = async () => {
     try {
