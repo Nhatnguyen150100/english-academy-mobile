@@ -1,5 +1,10 @@
 import axiosRequest from "@src/network/axiosRequest";
-import { IBlogDetail, IBlogInfo, TStatusBlog } from "@src/types/blogs.types";
+import {
+  IBlogDetail,
+  IBlogInfo,
+  IComment,
+  TStatusBlog,
+} from "@src/types/blogs.types";
 import { IPagination } from "@src/types/pagination.types";
 import { IBaseResponse } from "@src/types/response.types";
 import onRemoveParams from "@utils/functions/on-remove-params";
@@ -76,6 +81,32 @@ class BlogService {
   ): Promise<IBaseResponse<IBlogDetail>> {
     try {
       const rs = await axiosRequest.put(`${this._prefixURL}/${blogId}`, data);
+      return Promise.resolve(rs.data);
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
+
+  public async likeBlog(blogId: string): Promise<IBaseResponse<any>> {
+    try {
+      const rs = await axiosRequest.post(`${this._prefixURL}/${blogId}/like`);
+      return Promise.resolve(rs.data);
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
+
+  public async commentBlog(
+    blogId: string,
+    comment: string
+  ): Promise<IBaseResponse<IComment>> {
+    try {
+      const rs = await axiosRequest.post(
+        `${this._prefixURL}/${blogId}/comment`,
+        {
+          commentText: comment,
+        }
+      );
       return Promise.resolve(rs.data);
     } catch (error) {
       return Promise.reject(error);

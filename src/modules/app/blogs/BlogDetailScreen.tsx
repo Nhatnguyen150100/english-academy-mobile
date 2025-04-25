@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import {
-  ScrollView,
   StyleSheet,
   Image,
   RefreshControl,
   View,
   Text,
+  Animated,
+  TouchableOpacity,
 } from "react-native";
-import { Title, Chip } from "react-native-paper";
+import { Title, TextInput, Button } from "react-native-paper";
 import RenderHtml from "react-native-render-html";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { RouteProp, useRoute } from "@react-navigation/native";
@@ -22,6 +23,10 @@ import { blogService } from "@src/services";
 import LoadingScreen from "@components/base/LoadingScreen";
 import EmptyComponent from "@components/base/EmptyComponent";
 import { IBlogDetail } from "@src/types/blogs.types";
+import Toast from "react-native-toast-message";
+import { ScrollView } from "react-native-gesture-handler";
+import { IRootState } from "@store/index";
+import { useSelector } from "react-redux";
 
 // const getStatusColor = (status: TStatusBlog) => {
 //   switch (status) {
@@ -37,11 +42,61 @@ import { IBlogDetail } from "@src/types/blogs.types";
 // };
 
 const BlogDetailScreen = () => {
+  const user = useSelector((state: IRootState) => state.AppReducer.user);
   const route = useRoute<RouteProp<BlogStackParams, Routes.BlogDetail>>();
   const { blogId } = route.params;
   const [blog, setBlog] = useState<IBlogDetail>();
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [newComment, setNewComment] = useState("");
+  const scaleAnim = useState(new Animated.Value(1))[0];
+
+  const handleLike = async () => {
+    if (!blogId) {
+      Toast.show({
+        text1: "BlogId not found",
+        type: "error",
+      });
+      return;
+    }
+    try {
+      Animated.sequence([
+        Animated.timing(scaleAnim, {
+          toValue: 0.8,
+          duration: 100,
+          useNativeDriver: true,
+        }),
+        Animated.timing(scaleAnim, {
+          toValue: 1,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+      ]).start();
+
+      await blogService.likeBlog(blogId);
+      await fetchBlogDetail();
+    } catch (error) {
+      console.error("Error liking blog:", error);
+    }
+  };
+
+  const handleCommentSubmit = async () => {
+    if (!blogId) {
+      Toast.show({
+        text1: "BlogId not found",
+        type: "error",
+      });
+      return;
+    }
+    if (!newComment.trim()) return;
+    try {
+      await blogService.commentBlog(blogId, newComment.trim());
+      setNewComment("");
+      await fetchBlogDetail();
+    } catch (error) {
+      console.error("Error posting comment:", error);
+    }
+  };
 
   const fetchBlogDetail = async () => {
     if (!blogId) return;
@@ -65,6 +120,56 @@ const BlogDetailScreen = () => {
   useEffect(() => {
     if (blogId) fetchBlogDetail();
   }, [blogId]);
+
+  const renderComments = () => (
+    <View style={styles.commentsContainer}>
+      <Text style={styles.sectionTitle}>
+        Comments ({blog?.comments?.length})
+      </Text>
+      {blog?.comments?.map((comment, index) => (
+        <View key={index} style={styles.commentItem}>
+          <MaterialCommunityIcons
+            name="account-circle"
+            size={24}
+            color={colors.gray500}
+          />
+          <View style={styles.commentContent}>
+            <Text style={styles.commentAuthor}>
+              {comment.userId?.name || "Anonymous"}
+            </Text>
+            <Text style={styles.commentText}>{comment.commentText}</Text>
+            <Text style={styles.commentDate}>
+              {formatDate(comment.createdAt)}
+            </Text>
+          </View>
+        </View>
+      ))}
+    </View>
+  );
+
+  const renderCommentInput = () => (
+    <View style={styles.commentInputContainer}>
+      <TextInput
+        mode="outlined"
+        label="Enter your comment"
+        value={newComment}
+        onChangeText={setNewComment}
+        style={styles.commentInput}
+        outlineColor={colors.gray300}
+        activeOutlineColor={colors.primary}
+        multiline
+      />
+      <Button
+        mode="contained"
+        onPress={handleCommentSubmit}
+        style={styles.commentButton}
+        labelStyle={{ color: colors.white }}
+        disabled={!newComment.trim()}
+      >
+        Post
+      </Button>
+    </View>
+  );
 
   return (
     <TheLayout header={<TheBaseHeader title="Blog Detail" isShowBackBtn />}>
@@ -121,6 +226,18 @@ const BlogDetailScreen = () => {
               <Text style={{ ...typography.caption }}>{blog!.statusBlog}</Text>
             </Chip> */}
           </View>
+          <TouchableOpacity onPress={handleLike} style={styles.likeButton}>
+            <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+              <MaterialCommunityIcons
+                name={
+                  blog.likes.includes(user!._id) ? "heart" : "heart-outline"
+                }
+                size={24}
+                color={colors.error}
+              />
+            </Animated.View>
+            <Text style={styles.likeCount}>{blog.likes?.length}</Text>
+          </TouchableOpacity>
 
           <View style={styles.contentContainer}>
             <RenderHtml
@@ -129,6 +246,9 @@ const BlogDetailScreen = () => {
               baseStyle={styles.htmlContent}
             />
           </View>
+
+          {renderComments()}
+          {renderCommentInput()}
         </ScrollView>
       ) : loading ? (
         <LoadingScreen />
@@ -205,6 +325,62 @@ const styles = StyleSheet.create({
     ...typography.caption,
     color: colors.white,
     lineHeight: 18,
+  },
+
+  likeButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    padding: 8,
+  },
+  likeCount: {
+    ...typography.body2,
+    color: colors.gray600,
+  },
+  commentsContainer: {
+    marginTop: 16,
+    paddingHorizontal: spacing[0],
+  },
+  sectionTitle: {
+    ...typography.subtitle2,
+    color: colors.gray900,
+    marginBottom: 12,
+  },
+  commentItem: {
+    flexDirection: "row",
+    gap: 12,
+    marginBottom: 16,
+    backgroundColor: colors.gray100,
+    borderRadius: 8,
+    padding: 12,
+  },
+  commentContent: {
+    flex: 1,
+  },
+  commentAuthor: {
+    ...typography.body2,
+    fontWeight: "bold",
+    color: colors.gray900,
+  },
+  commentText: {
+    ...typography.body1,
+    color: colors.gray800,
+    marginVertical: 4,
+  },
+  commentDate: {
+    ...typography.caption,
+    color: colors.gray500,
+  },
+  commentInputContainer: {
+    marginTop: 16,
+    gap: 12,
+  },
+  commentInput: {
+    backgroundColor: colors.white,
+  },
+  commentButton: {
+    borderRadius: 8,
+    backgroundColor: colors.primary,
   },
 });
 
