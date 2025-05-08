@@ -619,6 +619,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: spacing[0],
+    paddingBottom: spacing[5],
     width: "100%",
   },
   questionContainer: {

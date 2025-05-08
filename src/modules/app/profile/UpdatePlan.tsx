@@ -7,7 +7,7 @@ import { colors, LightTheme } from "@styles/theme";
 import TheLayout from "@components/layout/TheLayOut";
 import TheBaseHeader from "@components/layout/TheBaseHeader";
 import Icon from "react-native-vector-icons/Ionicons";
-import { AntDesign, MaterialIcons } from "@expo/vector-icons";
+import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
 import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
 import { authService } from "@src/services";
 import WebView from "react-native-webview";
@@ -125,7 +125,7 @@ export default function UpdatePlan() {
                 <Card style={[styles.planCard, { borderColor: plan.color }]}>
                   <Card.Content>
                     <View style={styles.cardHeader}>
-                      <MaterialIcons
+                      <MaterialCommunityIcons
                         name={plan.icon as any}
                         size={32}
                         color={plan.color}
@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: "bold",
     textAlign: "center",
-    marginVertical: 20,
+    marginVertical: 10,
     color: colors.primary,
   },
   plansContainer: {
