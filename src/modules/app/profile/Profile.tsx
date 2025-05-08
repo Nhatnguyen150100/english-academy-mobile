@@ -21,6 +21,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 import { authService, examService } from "@src/services";
 import Visibility from "@components/base/visibility";
 import Toast from "react-native-toast-message";
+import { spacing } from "@styles/spacing";
 
 function InformationSection({
   label,

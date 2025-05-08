@@ -3,6 +3,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Text, View, StyleSheet, Button, StatusBar } from "react-native";
 import TheHeader from "./TheHeader";
 import { LightTheme } from "@styles/theme";
+import { spacing } from "@styles/spacing";
 
 interface IProps {
   children: React.ReactNode;
@@ -44,6 +45,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 20,
+    paddingVertical: spacing[3],
     width: "100%",
   },
 });
