@@ -1,19 +1,6 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  ActivityIndicator,
-  ScrollView,
-} from "react-native";
-import {
-  TextInput,
-  Text,
-  Card,
-  IconButton,
-  Divider,
-  Searchbar,
-} from "react-native-paper";
+import { View, StyleSheet, ActivityIndicator, ScrollView } from "react-native";
+import { Text, Card, IconButton, Searchbar } from "react-native-paper";
 import {
   MaterialIcons,
   Ionicons,
@@ -52,13 +39,13 @@ const DictionaryScreen = () => {
       const data = await response.json();
 
       if (data.title === "No Definitions Found") {
-        setError("Không tìm thấy từ này trong từ điển");
+        setError("No Definitions Found");
         setResult(null);
       } else {
         setResult(data[0]);
       }
     } catch (err) {
-      setError("Lỗi kết nối mạng");
+      setError("Error");
     } finally {
       setLoading(false);
     }
@@ -72,7 +59,7 @@ const DictionaryScreen = () => {
       setSound(sound);
       await sound.playAsync();
     } catch (err) {
-      console.error("Không thể phát audio");
+      console.error("Can't start radio");
     }
   };
 
