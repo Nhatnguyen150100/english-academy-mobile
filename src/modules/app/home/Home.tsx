@@ -22,12 +22,8 @@ import mobileAds, {
   BannerAdSize,
   TestIds,
 } from "react-native-google-mobile-ads";
-import FakeAdBanner from "./components/FakeAdBanner";
-import { useSelector } from "react-redux";
-import { IRootState } from "@store/index";
 
 function Home() {
-  const user = useSelector((state: IRootState) => state.AppReducer.user);
   const [isAdLoaded, setIsAdLoaded] = React.useState<boolean>(false);
   const navigation = useNavigation<StackNavigationProp<RootStackParams>>();
   const dispatch = useDispatch();
@@ -125,7 +121,6 @@ function Home() {
           }}
         />
       </View> */}
-      {user?.accountType === "FREE" && <FakeAdBanner />}
     </TheLayout>
   );
 }

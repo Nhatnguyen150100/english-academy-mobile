@@ -81,7 +81,7 @@ const DictionaryScreen = () => {
   );
 
   return (
-    <TheLayout header={<TheBaseHeader title="Course" isShowBackBtn />}>
+    <TheLayout header={<TheBaseHeader title="Dictionary" isShowBackBtn />}>
       <View style={styles.container}>
         <Animated.View entering={FadeInUp.duration(500)}>
           <Searchbar

@@ -26,6 +26,9 @@ import ConfirmDialog from "@components/base/ConfirmDialog";
 import ExamControlButton from "./_components/ExamControlButton";
 import Visibility from "@components/base/visibility";
 import Fireworks from "@components/base/Fireworks";
+import { useSelector } from "react-redux";
+import { IRootState } from "@store/index";
+import FakeAdBanner from "@components/base/FakeAdBanner";
 
 interface IAnswer {
   questionId: string;
@@ -34,6 +37,7 @@ interface IAnswer {
 }
 
 function Exam() {
+  const user = useSelector((state: IRootState) => state.AppReducer.user);
   const navigation = useNavigation<StackNavigationProp<RootStackParams>>();
   const route = useRoute<RouteProp<CourseStackParams, Routes.Exam>>();
   const examId = route?.params.examId;
@@ -49,6 +53,7 @@ function Exam() {
   const [loading, setLoading] = useState(false);
   const [isShowDialogSubmit, setIsShowDialogSubmit] = useState(false);
   const [score, setScore] = useState(0);
+  const [openAds, setOpenAds] = useState(false);
 
   const handleGetExamDetail = async () => {
     if (!examId) {
@@ -142,6 +147,10 @@ function Exam() {
           correctAnswer: element.correctAnswer,
           questionId: element.questionId,
         };
+      }
+
+      if (user?.accountType === "FREE") {
+        setOpenAds(true);
       }
 
       setScore(rs.data.score);
@@ -596,6 +605,12 @@ function Exam() {
         }}
       />
       <Fireworks play={score === 100} />
+      <FakeAdBanner
+        open={openAds}
+        close={() => {
+          setOpenAds(false);
+        }}
+      />
     </TheLayout>
   );
 }
