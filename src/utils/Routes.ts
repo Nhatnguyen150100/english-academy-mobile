@@ -34,10 +34,12 @@ export enum Routes {
   CourseDetail = "CourseDetail",
   Exam = "Exam",
   HistoryExam = "HistoryExam",
+  Dictionary = "Dictionary",
 
   // Rank sub-routes
   RankList = "RankList",
   UserProfile = "UserProfile",
+  UpdatePlan = "UpdatePlan",
 
   // Profile sub-routes
   Profile = "Profile",
@@ -90,6 +92,7 @@ export type CourseStackParams = {
   [Routes.CourseDetail]: { courseId: string };
   [Routes.ChapterDetail]: { chapterId: string };
   [Routes.Exam]: { examId: string };
+  [Routes.Dictionary]: undefined;
 };
 
 /**
@@ -101,7 +104,6 @@ export type RankStackParams = {
   [Routes.UserProfile]: { userId: string };
 };
 
-
 /**
  * Profile stack parameters
  */
@@ -110,6 +112,7 @@ export type ProfileStackParams = {
   [Routes.Profile]: undefined;
   [Routes.EditProfile]: undefined;
   [Routes.HistoryExam]: undefined;
+  [Routes.UpdatePlan]: undefined;
 };
 
 /**

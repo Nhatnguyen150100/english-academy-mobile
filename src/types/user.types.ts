@@ -1,4 +1,4 @@
-export type IAccountType = "FREE" | "PREMIUM"
+export type IAccountType = "FREE" | "PREMIUM";
 
 export interface IUser {
   _id: string;
@@ -10,6 +10,7 @@ export interface IUser {
   accountType: IAccountType;
   address: string;
   __v: number;
+  premiumExpiresAt: Date;
   createdAt: string;
   updatedAt: string;
 }
@@ -21,7 +22,7 @@ export interface IQueryUser {
   nameLike: string;
 }
 
-export type IRole = 'USER' | 'ADMIN';
+export type IRole = "USER" | "ADMIN";
 
 export interface IUserUpdate {
   name: string;

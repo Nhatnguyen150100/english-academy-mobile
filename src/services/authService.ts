@@ -19,9 +19,14 @@ class AuthService {
     }
   }
 
-  public async requestToPremiumAccount(): Promise<IBaseResponse<any>> {
+  public async requestToPremiumAccount(
+    data: Record<string, any>
+  ): Promise<IBaseResponse<string>> {
     try {
-      const rs = await axiosRequest.post(`${this._prefixURL}/request-premium`);
+      const rs = await axiosRequest.post(
+        `${this._prefixURL}/request-premium`,
+        data
+      );
       return Promise.resolve(rs.data);
     } catch (error) {
       return Promise.reject(error);

@@ -16,6 +16,7 @@
     "axios": "^1.7.7",
     "expo": "~52.0.46",
     "expo-auth-session": "~6.0.3",
+    "expo-av": "^15.1.4",
     "expo-build-properties": "~0.13.2",
     "expo-constants": "~17.0.3",
     "expo-crypto": "~14.0.2",
@@ -31,6 +32,7 @@
     "expo-system-ui": "^4.0.9",
     "expo-tracking-transparency": "^5.1.1",
     "expo-updates": "~0.27.4",
+    "expo-video": "^2.1.8",
     "i18n-js": "^4.4.3",
     "jest-expo": "~52.0.6",
     "lodash.throttle": "^4.1.1",
@@ -55,6 +57,7 @@
     "react-native-svg": "15.8.0",
     "react-native-toast-message": "^2.2.1",
     "react-native-vector-icons": "^10.2.0",
+    "react-native-video": "^6.13.0",
     "react-native-web": "~0.19.6",
     "react-native-webview": "13.12.5",
     "react-redux": "^9.1.0",
@@ -100,4 +103,3 @@
   "name": "english-academy-mobile",
   "version": "1.0.0"
 }
-

@@ -54,9 +54,7 @@ function InformationSection({
 function Profile() {
   const navigation = useNavigation<StackNavigationProp<ProfileStackParams>>();
   const user = useSelector((state: IRootState) => state.AppReducer.user);
-  console.log("🚀 ~ Profile ~ user:", user)
   const [numberAttempt, setNumberAttempt] = useState<number | "UNLIMITED">();
-  const [loading, setLoading] = useState<boolean>(false);
 
   const handleGetExamAttempt = async () => {
     const rs = await examService.checkNumberExamAttempt();
@@ -81,17 +79,7 @@ function Profile() {
   );
 
   const handleUpdatePlan = async () => {
-    setLoading(true);
-    try {
-      await authService.requestToPremiumAccount();
-      Toast.show({
-        type: "info",
-        text1: "Upgrade to premium",
-        text2: "Send request to ADMIN success.",
-      });
-    } finally {
-      setLoading(false);
-    }
+    navigation.navigate(Routes.UpdatePlan);
   };
 
   return (
@@ -114,6 +102,25 @@ function Profile() {
               <Text style={styles.title}>{user?.name ?? user?.email}</Text>
               <Text style={styles.subTitle}>{user?._id}</Text>
               <AccountChip accountType={user?.accountType ?? "FREE"} />
+              <Visibility visibility={user?.accountType === "PREMIUM"}>
+                <View style={styles.rowInfo}>
+                  <Text style={styles.label}>Premium will be expired at:</Text>
+                  <Text style={{ color: "#000", fontWeight: "bold" }}>
+                    {user?.premiumExpiresAt
+                      ? new Date(user.premiumExpiresAt).toLocaleDateString(
+                          "vi-VN",
+                          {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          }
+                        )
+                      : "undefined"}
+                  </Text>
+                </View>
+              </Visibility>
             </View>
             <View style={styles.infoContainer}>
               <InformationSection
@@ -148,7 +155,6 @@ function Profile() {
               <Visibility visibility={user?.accountType === "FREE"}>
                 <Button
                   mode="contained"
-                  loading={loading}
                   buttonColor={colors.primary}
                   onPress={handleUpdatePlan}
                   style={styles.editInfoButton}

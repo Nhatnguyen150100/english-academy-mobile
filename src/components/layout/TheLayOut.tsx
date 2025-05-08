@@ -5,19 +5,20 @@ import TheHeader from "./TheHeader";
 import { LightTheme } from "@styles/theme";
 
 interface IProps {
-  children: React.ReactNode,
-  header?: React.ReactElement
+  children: React.ReactNode;
+  header?: React.ReactElement;
 }
 
-function TheLayout({children, header}: IProps) {
+function TheLayout({ children, header }: IProps) {
   return (
     <SafeAreaView style={styles.safeView}>
-      <StatusBar barStyle="light-content" backgroundColor={LightTheme.primary} />
+      <StatusBar
+        barStyle="light-content"
+        backgroundColor={LightTheme.primary}
+      />
       {header ?? <TheHeader />}
       <View style={styles.root}>
-        <View style={styles.container}>
-          {children}
-        </View>
+        <View style={styles.container}>{children}</View>
       </View>
     </SafeAreaView>
   );
@@ -43,7 +44,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 20,
-    paddingVertical: 20,
     width: "100%",
   },
 });

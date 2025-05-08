@@ -2,7 +2,7 @@ import React, { useState, useCallback } from "react";
 import { View, StyleSheet, TouchableOpacity, Text, Image } from "react-native";
 import TheLayout from "@components/layout/TheLayOut";
 import TheBaseHeader from "@components/layout/TheBaseHeader";
-import { ActivityIndicator, Searchbar } from "react-native-paper";
+import { ActivityIndicator, FAB, Searchbar } from "react-native-paper";
 import { ICourse } from "@src/types/course.types";
 import { courseService } from "@src/services";
 import Visibility from "@components/base/visibility";
@@ -168,6 +168,21 @@ function Courses() {
           />
         </Visibility>
       </View>
+      <FAB
+        icon="book"
+        color={colors.white}
+        size="medium"
+        style={{
+          position: "absolute",
+          right: 10,
+          bottom: 20,
+          backgroundColor: colors.primary,
+          zIndex: 2,
+        }}
+        onPress={() => {
+          navigation.navigate(Routes.Dictionary);
+        }}
+      />
     </TheLayout>
   );
 }

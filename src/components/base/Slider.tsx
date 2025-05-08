@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 
-const width = Dimensions.get("window").width - 40;
+const width = Dimensions.get("window").width - 60;
 
 function Slider() {
   const data = [
@@ -42,7 +42,8 @@ function Slider() {
 
 const styles = StyleSheet.create({
   container: {
-    height: 160,
+    height: 140,
+    marginTop: 20,
   },
   slide: {
     justifyContent: "center",
