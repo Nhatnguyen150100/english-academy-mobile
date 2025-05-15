@@ -260,7 +260,7 @@ function Exam() {
         style={styles.startButton}
         onPress={() => setIsStarted(true)}
       >
-        <Text style={styles.startButtonText}>Start now</Text>
+        <Text style={styles.startButtonText}>{exam?.isAttempted ? "Try again" : "Start now"}</Text>
         <MaterialCommunityIcons
           name="rocket-launch"
           size={24}

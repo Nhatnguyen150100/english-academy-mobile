@@ -14,6 +14,7 @@ import WebView from "react-native-webview";
 import Toast from "react-native-toast-message";
 import { useDispatch } from "react-redux";
 import { setUser } from "@store/redux/appSlice";
+import { ScrollView } from "react-native-gesture-handler";
 
 const DEFINE_PLANS = [
   {
@@ -97,9 +98,12 @@ export default function UpdatePlan() {
   if (webViewUrl) {
     return (
       <WebView
+      nestedScrollEnabled
         source={{ uri: webViewUrl }}
         onNavigationStateChange={handleNavigationChange}
         startInLoadingState
+        scrollEnabled
+        style={{ flex: 1 }}
         renderLoading={() => <ActivityIndicator size="small" />}
       />
     );

@@ -26,6 +26,7 @@ export interface IExamDetail {
   createdAt: string;
   updatedAt: string;
   isCompleted: boolean;
+  isAttempted: boolean;
 }
 
 export interface IQuestion {
